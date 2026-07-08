@@ -2651,6 +2651,14 @@ document.querySelectorAll('#screen0 button').forEach(b => b.addEventListener('cl
   @media (hover: none) {
     .btn-primary:hover, .choice-btn:hover, .ox-btn:hover, .badge-item:hover, .gallery-card:hover { transform: none; }
   }
+
+  /* 시작 화면 배지 도감 축소 */
+  #screen0 .badges-grid { gap: 10px; margin: 16px 0; }
+  #screen0 .badge-item { padding: 10px 6px; }
+  #screen0 .badge-item .badge-img { width: 34px; height: 34px; margin-bottom: 4px; }
+  #screen0 .badge-item .badge-emoji { font-size: 26px; }
+  #screen0 .badge-item .badge-name { font-size: 11px; }
+  #screen0 .badge-item.locked::after { font-size: 11px; top: 4px; right: 6px; }
 </style>
 <script id="v3respjs">
 (function(){
