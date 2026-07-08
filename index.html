@@ -603,6 +603,10 @@
     .license-main-title { font-size: 22px; }
   }
 </style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 </head>
 <body>
 
@@ -1909,6 +1913,173 @@ document.addEventListener('input', () => saveProgress());
 /* 첫 화면 에셋 적용 + 시작 버튼 사운드 */
 applyAssets();
 document.querySelectorAll('#screen0 button').forEach(b => b.addEventListener('click', () => SFX.click()));
+</script>
+
+
+<!-- ═══════════ 디자인 v2: 발산형 비주얼 스킨 ═══════════ -->
+<style id="designV2">
+  :root {
+    --g1:#6366F1; --g2:#8B5CF6; --g3:#EC4899; --g4:#F59E0B;
+    --grad: linear-gradient(135deg,#6366F1,#8B5CF6 45%,#EC4899);
+    --grad-warm: linear-gradient(135deg,#F59E0B,#EC4899);
+    --grad-cool: linear-gradient(135deg,#38BDF8,#34D399);
+  }
+  body {
+    font-family:'Pretendard Variable',Pretendard,-apple-system,'Segoe UI',sans-serif;
+    background:#EEF2FF; overflow-x:hidden;
+  }
+  /* ── 오로라 배경 ── */
+  .bg-blob { position:fixed; border-radius:50%; filter:blur(90px); z-index:-2; opacity:.55; pointer-events:none; }
+  .bg-blob.b1 { width:52vw; height:52vw; left:-14vw; top:-18vh; background:radial-gradient(circle,#A5B4FC,transparent 65%); animation:blob1 22s ease-in-out infinite alternate; }
+  .bg-blob.b2 { width:46vw; height:46vw; right:-12vw; top:22vh; background:radial-gradient(circle,#F9A8D4,transparent 65%); animation:blob2 26s ease-in-out infinite alternate; }
+  .bg-blob.b3 { width:40vw; height:40vw; left:24vw; bottom:-22vh; background:radial-gradient(circle,#FDE68A,transparent 65%); animation:blob1 30s ease-in-out infinite alternate-reverse; }
+  @keyframes blob1 { to { transform:translate(9vw,7vh) scale(1.15); } }
+  @keyframes blob2 { to { transform:translate(-7vw,-6vh) scale(.9); } }
+  .bg-spark { position:fixed; z-index:-1; font-size:14px; color:#818CF8; opacity:.5; pointer-events:none; animation:sparkFloat linear infinite; }
+  @keyframes sparkFloat {
+    0% { transform:translateY(105vh) scale(.6) rotate(0deg); opacity:0; }
+    12% { opacity:.55; } 88% { opacity:.4; }
+    100% { transform:translateY(-8vh) scale(1.1) rotate(200deg); opacity:0; }
+  }
+  /* ── 글래스 카드 ── */
+  .card {
+    background:rgba(255,255,255,.74);
+    backdrop-filter:blur(20px) saturate(1.3); -webkit-backdrop-filter:blur(20px) saturate(1.3);
+    border:1px solid rgba(255,255,255,.95); border-radius:28px;
+    box-shadow:0 20px 50px -18px rgba(99,102,241,.35), 0 4px 14px rgba(30,41,59,.06);
+    position:relative; overflow:hidden;
+  }
+  .card::before { content:''; position:absolute; top:0; left:8%; right:8%; height:3px;
+    background:var(--grad); border-radius:0 0 6px 6px; opacity:.85; }
+  .card-title { font-family:'Jua',sans-serif; font-weight:400; letter-spacing:.5px;
+    background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  h1.card-title { font-size:34px !important; }
+  h2 { font-family:'Jua',sans-serif; font-weight:400; }
+  /* ── 버튼 ── */
+  .btn { border-radius:999px !important; font-weight:800; }
+  .btn-primary {
+    background:var(--grad) !important; border:none;
+    box-shadow:0 10px 26px -6px rgba(139,92,246,.55), inset 0 1px 0 rgba(255,255,255,.35);
+    position:relative; overflow:hidden;
+  }
+  .btn-primary::after { content:''; position:absolute; inset:0;
+    background:linear-gradient(105deg,transparent 42%,rgba(255,255,255,.5) 50%,transparent 58%);
+    transform:translateX(-120%); animation:btnShine 3.2s 1.2s infinite; }
+  @keyframes btnShine { 0%{transform:translateX(-120%);} 42%{transform:translateX(120%);} 100%{transform:translateX(120%);} }
+  .btn-primary:hover { transform:translateY(-3px) scale(1.02); box-shadow:0 16px 34px -6px rgba(139,92,246,.6); }
+  .btn-secondary { background:#fff; border:2px solid #C7D2FE; color:var(--g1); }
+  /* ── 진행 바(글래스 도크) ── */
+  .progress-bar { background:rgba(255,255,255,.65); backdrop-filter:blur(16px);
+    border-bottom:1px solid rgba(255,255,255,.9); box-shadow:0 8px 24px -12px rgba(99,102,241,.25); }
+  .step-circle { border-radius:14px; }
+  .step-circle.active { background:var(--grad); box-shadow:0 0 0 5px rgba(139,92,246,.18); animation:stepPulse 1.6s infinite; }
+  @keyframes stepPulse { 50% { box-shadow:0 0 0 9px rgba(139,92,246,.08); } }
+  .step-circle.done { background:var(--grad-cool); }
+  /* ── 배지 ── */
+  .badge-item { border-radius:22px; transition:all .35s cubic-bezier(.175,.885,.32,1.275); }
+  .badge-item.locked { filter:grayscale(.9); background:rgba(241,245,249,.8); border:2px dashed #CBD5E1; }
+  .badge-item.locked::after { content:'🔒'; position:absolute; top:6px; right:8px; font-size:13px; opacity:.6; }
+  .badge-item.earned {
+    background:linear-gradient(160deg,#FFFBEB,#FFF); border:2px solid transparent;
+    background-clip:padding-box; box-shadow:0 10px 24px -8px rgba(245,158,11,.45);
+    animation:earnedGlow 2.6s ease-in-out infinite;
+  }
+  @keyframes earnedGlow { 50% { box-shadow:0 10px 30px -6px rgba(245,158,11,.65); } }
+  .badge-item.earned::before { content:''; position:absolute; inset:-2px; z-index:-1; border-radius:24px;
+    background:conic-gradient(#F59E0B,#FDE68A,#F59E0B,#FBBF24,#F59E0B); animation:ringSpin 4s linear infinite; }
+  @keyframes ringSpin { to { transform:rotate(360deg); } }
+  .badge-item:hover { transform:translateY(-5px) rotate(-1.5deg) scale(1.03); }
+  .badge-img { filter:drop-shadow(0 6px 10px rgba(30,41,59,.18)); }
+  .badge-earned-label { background:var(--grad-warm); color:#fff; border-radius:999px; padding:2px 10px; font-weight:900; }
+  /* ── 퀴즈 ── */
+  .ox-btn { border-radius:26px !important; font-family:'Jua',sans-serif;
+    transition:all .18s; border-width:3px !important; }
+  .ox-btn:hover { transform:translateY(-4px) scale(1.04); }
+  .ox-btn.selected-o { box-shadow:0 0 0 6px rgba(52,211,153,.25), 0 14px 30px -8px rgba(52,211,153,.5); }
+  .ox-btn.selected-x { box-shadow:0 0 0 6px rgba(248,113,113,.25), 0 14px 30px -8px rgba(248,113,113,.5); }
+  .choice-btn { border-radius:18px !important; font-weight:800; transition:all .18s; }
+  .choice-btn:hover { transform:translateY(-3px); box-shadow:0 10px 22px -10px rgba(99,102,241,.4); }
+  .choice-btn.selected { background:var(--grad) !important; color:#fff !important; border-color:transparent !important;
+    box-shadow:0 0 0 5px rgba(139,92,246,.2), 0 12px 26px -8px rgba(139,92,246,.5); }
+  .feedback-box.correct.show { animation:popIn .4s cubic-bezier(.175,.885,.32,1.275); border-left:6px solid #34D399; }
+  .feedback-box.wrong.show { animation:shakeX .45s; border-left:6px solid #F87171; }
+  @keyframes popIn { from { transform:scale(.85); opacity:0; } }
+  @keyframes shakeX { 20%{transform:translateX(-7px);} 40%{transform:translateX(6px);} 60%{transform:translateX(-4px);} 80%{transform:translateX(3px);} }
+  .xp-fill { background:linear-gradient(90deg,#6366F1,#EC4899,#F59E0B) !important; }
+  .all-done-banner { background:var(--grad-cool) !important; color:#fff !important; border:none !important;
+    box-shadow:0 18px 40px -12px rgba(52,211,153,.55); border-radius:26px; }
+  .all-done-banner h2, .all-done-banner p { color:#fff !important; }
+  /* ── 배지 팝업: 방사형 버스트 ── */
+  .badge-popup { border-radius:30px; overflow:hidden; }
+  .badge-popup::before { content:''; position:absolute; inset:-60%; z-index:-1;
+    background:repeating-conic-gradient(rgba(251,191,36,.22) 0 9deg, transparent 9deg 18deg);
+    animation:ringSpin 9s linear infinite; }
+  .badge-popup-emoji { animation:badgeBounce .6s cubic-bezier(.175,.885,.32,1.275); }
+  @keyframes badgeBounce { 0%{transform:scale(0) rotate(-30deg);} 70%{transform:scale(1.2) rotate(6deg);} 100%{transform:scale(1);} }
+  /* ── 라이선스 카드: 홀로그램 ID ── */
+  #licenseCard { position:relative; border-radius:26px !important; overflow:hidden;
+    border:2px solid rgba(253,230,138,.8) !important;
+    box-shadow:0 30px 70px -22px rgba(49,46,129,.65), 0 0 0 1px rgba(255,255,255,.15) inset;
+    transform-style:preserve-3d; transition:transform .25s ease; }
+  #licenseCard::before { content:''; position:absolute; inset:-40%; pointer-events:none; z-index:1; opacity:.16;
+    background:conic-gradient(from 0deg,#FF6B6B,#FDE68A,#6EE7B7,#60A5FA,#C084FC,#FF6B6B);
+    animation:holoSpin 10s linear infinite; mix-blend-mode:screen; }
+  @keyframes holoSpin { to { transform:rotate(360deg); } }
+  #licenseCard::after { content:''; position:absolute; top:18px; right:18px; width:46px; height:46px; z-index:2;
+    border-radius:50%; background:conic-gradient(#FDE68A,#F9A8D4,#A5F3FC,#FDE68A); opacity:.9;
+    box-shadow:0 2px 8px rgba(0,0,0,.35), inset 0 0 6px rgba(255,255,255,.8); }
+  .license-main-title { font-family:'Jua',sans-serif; letter-spacing:2px;
+    background:linear-gradient(90deg,#FDE68A,#FEF3C7,#F59E0B,#FDE68A); -webkit-background-clip:text; background-clip:text; color:transparent;
+    background-size:220% auto; animation:foil 4.2s linear infinite; }
+  @keyframes foil { to { background-position:220% center; } }
+  .lic-badge { filter:drop-shadow(0 3px 6px rgba(0,0,0,.35)); }
+  /* ── 도장 버스트 ── */
+  .stamp.landed { animation:stampSlam .5s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes stampSlam { 0%{transform:scale(2.4) rotate(-18deg); opacity:0;} 60%{transform:scale(.92) rotate(-10deg); opacity:1;} 100%{transform:scale(1) rotate(-12deg);} }
+  /* ── 갤러리·토스트·기타 ── */
+  .gallery-card { border-radius:22px; transition:transform .25s; }
+  .gallery-card:hover { transform:translateY(-6px) rotate(-1deg) scale(1.03); }
+  #toast { border-radius:999px; backdrop-filter:blur(10px); font-weight:800; }
+  #sfxToggle { background:rgba(255,255,255,.8); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,.95);
+    box-shadow:0 8px 22px -6px rgba(99,102,241,.4); }
+  .hero-img { max-width:210px; animation:heroFloat 3.4s ease-in-out infinite; filter:drop-shadow(0 18px 26px rgba(99,102,241,.35)); position:relative; z-index:1; }
+  @keyframes heroFloat { 50% { transform:translateY(-12px) rotate(1.2deg); } }
+  .hero-halo { position:absolute; left:50%; top:96px; width:250px; height:250px; transform:translateX(-50%);
+    background:radial-gradient(circle,rgba(165,180,252,.55),transparent 70%); border-radius:50%; z-index:0;
+    animation:haloPulse 3.4s ease-in-out infinite; pointer-events:none; }
+  @keyframes haloPulse { 50% { transform:translateX(-50%) scale(1.12); opacity:.8; } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration:.001s !important; animation-iteration-count:1 !important; transition-duration:.001s !important; }
+  }
+</style>
+<script>
+/* 배경 블롭 + 별 파티클 */
+(function(){
+  ['b1','b2','b3'].forEach(c => { const d=document.createElement('div'); d.className='bg-blob '+c; document.body.appendChild(d); });
+  const glyphs=['✦','✧','✨','⬩'];
+  for (let i=0;i<10;i++){
+    const s=document.createElement('span'); s.className='bg-spark';
+    s.textContent=glyphs[i%glyphs.length];
+    s.style.left=(4+Math.random()*92)+'vw';
+    s.style.fontSize=(9+Math.random()*13)+'px';
+    s.style.animationDuration=(11+Math.random()*14)+'s';
+    s.style.animationDelay=(-Math.random()*20)+'s';
+    document.body.appendChild(s);
+  }
+  /* 시작 화면 히어로 후광 */
+  const c0=document.querySelector('#screen0 .card');
+  if (c0){ const h=document.createElement('div'); h.className='hero-halo'; c0.appendChild(h); }
+  /* 라이선스 카드 3D 틸트 */
+  const lic=document.getElementById('licenseCard');
+  if (lic){
+    lic.addEventListener('mousemove', e => {
+      const r=lic.getBoundingClientRect();
+      const rx=((e.clientY-r.top)/r.height-0.5)*-7, ry=((e.clientX-r.left)/r.width-0.5)*9;
+      lic.style.transform=`perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+    });
+    lic.addEventListener('mouseleave', () => lic.style.transform='');
+  }
+})();
 </script>
 
 </body>
