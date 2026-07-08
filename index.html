@@ -605,7 +605,7 @@
 </style>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Montserrat:wght@800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 </head>
 <body>
@@ -1096,61 +1096,257 @@ const BADGES = [
 
 const QUIZZES = [
   {
-    gate: '관문 1',
-    type: 'ox',
-    question: 'AI가 사과와 토마토처럼 종류를 나누는 것은 "분류"에 해당한다.',
-    answer: 'O',
-    badge: 0,
-    correctFeedback: '✅ 맞아요! 분류는 데이터를 정해진 종류로 나누는 방법이에요.',
-    wrongHint: '💡 사과인지 토마토인지 나누는 활동을 떠올려 보세요.',
+    "gate": "관문 1",
+    "tier": 1,
+    "type": "ox",
+    "question": "사과와 토마토처럼 정해진 이름표로 나누는 것을 분류라고 한다.",
+    "answer": "O",
+    "badge": null,
+    "correctFeedback": "✅ 분류는 미리 정해진 이름표(라벨)로 데이터를 나누는 일이에요.",
+    "wrongHint": "💡 이름표가 미리 정해져 있는지 다시 떠올려 보세요."
   },
   {
-    gate: '관문 2',
-    type: 'choice',
-    question: '기온을 보고 체육대회에 필요한 슬러시 수를 예상하는 AI는 숫자를 무엇 하는 AI일까요?',
-    choices: ['분류', '예측', '군집화', '번역'],
-    answer: '예측',
-    badge: 1,
-    correctFeedback: '✅ 맞아요! 과거 숫자 데이터를 보고 새로운 숫자를 예상하는 것은 예측이에요.',
-    wrongHint: '💡 새로운 숫자를 미리 짐작하는 말이에요.',
+    "gate": "관문 1",
+    "tier": 2,
+    "type": "choice",
+    "question": "급식 의견에서 '오이'라는 단어가 가장 많이 나왔다. 바르게 판단한 친구는?",
+    "answer": "단어 수만으로는 뜻을 알 수 없어 문장을 다시 봐야 한다",
+    "badge": null,
+    "correctFeedback": "✅ '오이 빼 주세요'처럼 같은 단어라도 뜻이 다를 수 있어요.",
+    "wrongHint": "💡 단어가 자주 나온 것과 그 단어를 좋아하는 것은 다를 수 있어요.",
+    "choices": [
+      "많이 나왔으니 모두 오이를 좋아하는 것이다",
+      "단어 수만으로는 뜻을 알 수 없어 문장을 다시 봐야 한다",
+      "단어가 많으면 항상 칭찬을 뜻한다",
+      "오이 의견이니 오이를 더 많이 주면 된다"
+    ]
   },
   {
-    gate: '관문 3',
-    type: 'ox',
-    question: '군집화는 정답 이름표가 없어도 비슷한 특징끼리 데이터를 묶을 수 있다.',
-    answer: 'O',
-    badge: 2,
-    correctFeedback: '✅ 맞아요! 군집화는 비슷한 특징끼리 묶는 방법이에요.',
-    wrongHint: '💡 정답 이름표가 없어도 "끼리끼리" 묶는 활동을 떠올려 보세요.',
+    "gate": "관문 1",
+    "tier": 3,
+    "type": "choice",
+    "question": "사과·토마토만 배운 AI에 '배' 사진을 넣었더니 '사과 92%'가 나왔다. 옳은 해석은?",
+    "answer": "배를 배운 적이 없어 아는 답 중 사과를 고른 것일 수 있다",
+    "badge": 0,
+    "correctFeedback": "✅ 배운 범위 밖에서는 높은 신뢰도도 그대로 믿기 어려워요.",
+    "wrongHint": "💡 이 AI가 '배'를 배운 적이 있는지 먼저 생각해 보세요.",
+    "choices": [
+      "92%니까 배는 거의 사과가 맞다",
+      "신뢰도가 높으면 언제나 정답이다",
+      "배를 배운 적이 없어 아는 답 중 사과를 고른 것일 수 있다",
+      "정확도가 높은 모델이라 배도 잘 맞힌다"
+    ]
   },
   {
-    gate: '관문 4',
-    type: 'ox',
-    question: '생성형 AI가 자연스럽게 쓴 글은 항상 사실이므로 확인하지 않아도 된다.',
-    answer: 'X',
-    badge: 3,
-    correctFeedback: '✅ 맞아요! 생성형 AI는 그럴듯하지만 틀린 정보를 만들 수 있어요.',
-    wrongHint: '💡 AI가 자신 있게 말해도 틀릴 수 있다는 내용을 떠올려 보세요.',
+    "gate": "관문 2",
+    "tier": 1,
+    "type": "choice",
+    "question": "기온을 보고 슬러시가 몇 컵 팔릴지 숫자로 예상하는 AI가 하는 일은?",
+    "answer": "예측",
+    "badge": null,
+    "correctFeedback": "✅ 과거 숫자 흐름을 보고 새 숫자를 예상하는 것을 예측이라고 해요.",
+    "wrongHint": "💡 숫자를 미리 예상하는 일이 무엇인지 떠올려 보세요.",
+    "choices": [
+      "예측",
+      "군집화",
+      "이름표 붙이기",
+      "사진 분류"
+    ]
   },
   {
-    gate: '관문 5',
-    type: 'choice',
-    question: 'AI가 특정 사람이나 상황에서 더 자주 틀리는 문제를 무엇이라고 할까요?',
-    choices: ['편향', '압축', '복사', '저장'],
-    answer: '편향',
-    badge: 4,
-    correctFeedback: '✅ 맞아요! AI 편향은 특정 사람이나 상황에 불리한 결과가 반복되는 문제예요.',
-    wrongHint: '💡 데이터가 한쪽으로 치우쳤을 때 생길 수 있는 문제예요.',
+    "gate": "관문 2",
+    "tier": 2,
+    "type": "ox",
+    "question": "선형회귀가 알려 준 예측값은 정답이 아니라 참고할 예상값이다.",
+    "answer": "O",
+    "badge": null,
+    "correctFeedback": "✅ 예측값은 과거 기록으로 만든 예상이라 다른 조건도 함께 봐야 해요.",
+    "wrongHint": "💡 예측은 정답을 딱 맞히는 마법이 아니라는 점을 떠올려 보세요."
   },
   {
-    gate: '관문 6',
-    type: 'ox',
-    question: 'AI 결과가 중요한 판단에 쓰일 때는 사람이 마지막에 확인해야 한다.',
-    answer: 'O',
-    badge: 5,
-    correctFeedback: '✅ 맞아요! AI 결과는 도움을 줄 수 있지만, 중요한 판단은 사람이 확인해야 해요.',
-    wrongHint: '💡 출입, 안전, 평가처럼 중요한 상황을 떠올려 보세요.',
+    "gate": "관문 2",
+    "tier": 3,
+    "type": "choice",
+    "question": "AI가 과거 장부는 잘 맞히는데 새 체육대회에선 자꾸 틀린다. 무슨 상태일까?",
+    "answer": "과적합, 학습 데이터에 지나치게 맞춰진 상태",
+    "badge": 1,
+    "correctFeedback": "✅ 과적합은 옛 자료만 외운 것처럼 새 상황에 약해요.",
+    "wrongHint": "💡 옛 자료는 잘 맞히는데 새 상황에서 틀리는 경우를 뭐라 했는지 떠올려 보세요.",
+    "choices": [
+      "과소적합, 너무 적게 배운 상태",
+      "과적합, 학습 데이터에 지나치게 맞춰진 상태",
+      "학습을 딱 알맞게 한 상태",
+      "데이터가 많으니 문제가 없는 상태"
+    ]
   },
+  {
+    "gate": "관문 3",
+    "tier": 1,
+    "type": "ox",
+    "question": "군집화는 정답 이름표가 없어도 비슷한 특징끼리 묶을 수 있다.",
+    "answer": "O",
+    "badge": null,
+    "correctFeedback": "✅ 군집화는 이름표 없이 비슷한 점들끼리 모으는 방법이에요.",
+    "wrongHint": "💡 군집화에 정답 이름표가 꼭 필요한지 다시 생각해 보세요."
+  },
+  {
+    "gate": "관문 3",
+    "tier": 2,
+    "type": "choice",
+    "question": "매운맛·단맛 점수만 있고 그룹 이름이 없는 입맛 데이터를 나누려 한다. 알맞은 방법은?",
+    "answer": "비슷한 점수끼리 묶는 군집화를 쓸 수 있다",
+    "badge": null,
+    "correctFeedback": "✅ 이름표가 없을 때 비슷함으로 묶는 것이 군집화예요.",
+    "wrongHint": "💡 정답 이름표가 없을 때 쓰는 방법이 무엇이었는지 떠올려 보세요.",
+    "choices": [
+      "이름표가 없어 아무것도 할 수 없다",
+      "먼저 사람이 정답 이름표를 붙여야만 한다",
+      "비슷한 점수끼리 묶는 군집화를 쓸 수 있다",
+      "정확도를 계산하면 그룹이 정해진다"
+    ]
+  },
+  {
+    "gate": "관문 3",
+    "tier": 3,
+    "type": "choice",
+    "question": "같은 입맛 데이터를 군집화했다. 바르게 생각한 것은?",
+    "answer": "그룹 수에 따라 결과가 달라져 목적에 맞는지 봐야 한다",
+    "badge": 2,
+    "correctFeedback": "✅ 2개·3개·4개로 나누면 결과가 달라져 사람이 확인해야 해요.",
+    "wrongHint": "💡 그룹 수를 바꾸면 묶임이 어떻게 달라졌는지 떠올려 보세요.",
+    "choices": [
+      "그룹 수가 많을수록 항상 더 좋다",
+      "AI가 묶으면 사람이 확인할 필요가 없다",
+      "그룹 수에 따라 결과가 달라져 목적에 맞는지 봐야 한다",
+      "군집화 결과는 언제나 정답이다"
+    ]
+  },
+  {
+    "gate": "관문 4",
+    "tier": 1,
+    "type": "ox",
+    "question": "생성형 AI가 자연스럽게 쓴 글은 항상 사실이라 확인하지 않아도 된다.",
+    "answer": "X",
+    "badge": null,
+    "correctFeedback": "✅ AI 글은 초안이라 실제 기록과 비교해 확인해야 해요.",
+    "wrongHint": "💡 AI가 멋지게 쓴 글도 사실과 다를 수 있다는 점을 떠올려 보세요."
+  },
+  {
+    "gate": "관문 4",
+    "tier": 2,
+    "type": "choice",
+    "question": "AI가 만든 상식 퀴즈에 '화성 위성은 3개'라는 자신 있는 문장이 있다. 바른 행동은?",
+    "answer": "믿을 만한 자료와 비교해 사실인지 확인한다",
+    "badge": null,
+    "correctFeedback": "✅ 숫자·이름처럼 확인 가능한 정보는 근거 자료와 비교해야 해요.",
+    "wrongHint": "💡 자세하고 자신 있어 보이는 답일수록 더 확인해야 해요.",
+    "choices": [
+      "자신 있게 말했으니 그대로 쓴다",
+      "숫자가 있으니 무조건 정확하다",
+      "믿을 만한 자료와 비교해 사실인지 확인한다",
+      "길고 자세하니 사실이 분명하다"
+    ]
+  },
+  {
+    "gate": "관문 4",
+    "tier": 3,
+    "type": "choice",
+    "question": "정확한 설명이 필요한 안내문을 만들 때 생성형 AI의 창의성 설정은?",
+    "answer": "정확함이 필요하면 낮게, 새 아이디어가 필요하면 높게 고른다",
+    "badge": 3,
+    "correctFeedback": "✅ 창의성 설정은 높다고 좋은 게 아니라 목적에 맞게 골라야 해요.",
+    "wrongHint": "💡 안내문과 상상 동화 중 어느 쪽이 안정적인 답이 필요한지 생각해 보세요.",
+    "choices": [
+      "높을수록 무조건 좋다",
+      "정확함이 필요하면 낮게, 새 아이디어가 필요하면 높게 고른다",
+      "항상 가장 높게 두어야 한다",
+      "설정값은 결과에 영향을 주지 않는다"
+    ]
+  },
+  {
+    "gate": "관문 5",
+    "tier": 1,
+    "type": "ox",
+    "question": "얼굴 정보는 비밀번호처럼 쉽게 바꿀 수 있는 정보다.",
+    "answer": "X",
+    "badge": null,
+    "correctFeedback": "✅ 얼굴은 쉽게 바꾸기 어려운 민감한 개인정보예요.",
+    "wrongHint": "💡 얼굴과 비밀번호 중 무엇을 더 바꾸기 어려운지 생각해 보세요."
+  },
+  {
+    "gate": "관문 5",
+    "tier": 2,
+    "type": "choice",
+    "question": "AI가 농구공을 맞혔지만 공이 아니라 주황색 배경을 보고 판단했다. 옳은 생각은?",
+    "answer": "엉뚱한 근거라면 다른 상황에서 틀릴 수 있다",
+    "badge": null,
+    "correctFeedback": "✅ 무엇을 보고 맞혔는지도 확인해야 안전해요.",
+    "wrongHint": "💡 이번엔 맞았어도 배경만 봤다면 다음엔 어떻게 될지 생각해 보세요.",
+    "choices": [
+      "맞혔으니 근거는 볼 필요 없다",
+      "정답만 맞으면 어떤 근거든 괜찮다",
+      "엉뚱한 근거라면 다른 상황에서 틀릴 수 있다",
+      "신뢰도가 높으면 근거는 중요하지 않다"
+    ]
+  },
+  {
+    "gate": "관문 5",
+    "tier": 3,
+    "type": "choice",
+    "question": "AI 스피커 전체 정확도가 82%로 높다. 데이터 편향에 대해 바르게 판단한 것은?",
+    "answer": "전체 점수가 높아도 특정 말투에선 더 자주 틀릴 수 있다",
+    "badge": 4,
+    "correctFeedback": "✅ 전체 82%여도 지역 말투 50%처럼 상황별로 확인해야 해요.",
+    "wrongHint": "💡 전체 점수만으로 특정 상황의 오류까지 알 수 있을지 생각해 보세요.",
+    "choices": [
+      "전체 정확도가 높으면 편향은 없다",
+      "정확도가 높으면 모두에게 공정하다",
+      "전체 점수가 높아도 특정 말투에선 더 자주 틀릴 수 있다",
+      "틀린 사람이 발음을 잘못한 탓이다"
+    ]
+  },
+  {
+    "gate": "관문 6",
+    "tier": 1,
+    "type": "ox",
+    "question": "AI 결과가 중요한 판단에 쓰일 때는 사람이 마지막에 확인해야 한다.",
+    "answer": "O",
+    "badge": null,
+    "correctFeedback": "✅ AI는 도움을 주지만 최종 확인은 사람의 몫이에요.",
+    "wrongHint": "💡 중요한 일을 AI 혼자 결정해도 되는지 떠올려 보세요."
+  },
+  {
+    "gate": "관문 6",
+    "tier": 2,
+    "type": "choice",
+    "question": "AI가 '사과 52%, 토마토 48%'처럼 애매하게 판단했다. 알맞은 행동은?",
+    "answer": "신뢰도가 비슷하니 사람이 다시 확인한다",
+    "badge": null,
+    "correctFeedback": "✅ 신뢰도가 비슷하게 애매하면 사람이 다시 봐야 해요.",
+    "wrongHint": "💡 두 값이 거의 비슷할 때 그대로 믿어도 될지 생각해 보세요.",
+    "choices": [
+      "더 높은 쪽이니 그냥 믿는다",
+      "숫자가 나왔으니 확인하지 않는다",
+      "신뢰도가 비슷하니 사람이 다시 확인한다",
+      "AI 판단이니 무조건 맞다"
+    ]
+  },
+  {
+    "gate": "관문 6",
+    "tier": 3,
+    "type": "choice",
+    "question": "AI DJ가 '속상했지만 뿌듯했다'는 일기를 슬픈 음악으로 추천했다. 가장 알맞은 태도는?",
+    "answer": "여러 감정이 섞였는지 보고 내 기분에 맞는지 내가 확인한다",
+    "badge": 5,
+    "correctFeedback": "✅ 추천은 예상이라 내 상황에 맞는지 스스로 확인해야 해요.",
+    "wrongHint": "💡 한 문장에 감정이 두 가지 섞여 있지 않은지 살펴보세요.",
+    "choices": [
+      "AI 추천이니 무조건 따른다",
+      "한 감정만 골랐어도 AI는 틀리지 않는다",
+      "여러 감정이 섞였는지 보고 내 기분에 맞는지 내가 확인한다",
+      "추천은 정답이라 바꿀 수 없다"
+    ]
+  }
 ];
 
 // ── STATE ──
@@ -1286,7 +1482,7 @@ function submitQuiz() {
     state.quizAnswered = true;
     document.getElementById('quizSubmitBtn').style.display = 'none';
     document.getElementById('quizNextBtn').style.display = 'inline-flex';
-    awardBadge(q.badge);
+    if (q.badge != null) awardBadge(q.badge);
   } else {
     feedback.className = 'feedback-box wrong show';
     feedback.textContent = q.wrongHint + '\n다시 시도해 보세요!';
@@ -1679,34 +1875,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-<!-- ═══════════ 업그레이드 레이어: 효과음 · 에셋 · 게임 연출 ═══════════ -->
-<style>
-  .screen.active { animation: screenIn .45s cubic-bezier(.22,1,.36,1); }
-  @keyframes screenIn { from { opacity:0; transform: translateY(18px) scale(.985); } to { opacity:1; transform:none; } }
-  button { transition: transform .08s ease; }
-  button:active { transform: scale(.94); }
-  .xp-wrap { display:flex; align-items:center; gap:10px; margin:0 0 16px; }
-  .xp-track { flex:1; height:14px; background:#E2E8F0; border-radius:999px; overflow:hidden; }
-  .xp-fill { height:100%; width:0%; border-radius:999px;
-    background: linear-gradient(90deg,#5B9CF6,#34D399);
-    transition: width .6s cubic-bezier(.22,1,.36,1); position:relative; }
-  .xp-fill::after { content:''; position:absolute; inset:0;
-    background: linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);
-    animation: xpShine 1.6s infinite; }
-  @keyframes xpShine { from { transform:translateX(-100%);} to { transform:translateX(100%);} }
-  .xp-label { font-size:13px; font-weight:800; color:#5B9CF6; min-width:44px; text-align:right; }
-  #sfxToggle { position:fixed; right:16px; bottom:16px; z-index:300;
-    width:52px; height:52px; border-radius:50%; border:2px solid #E2E8F0;
-    background:#fff; font-size:22px; cursor:pointer; box-shadow:0 4px 14px rgba(30,41,59,.15); }
-  .badge-img { width:44px; height:44px; object-fit:contain; display:block; margin:0 auto 6px; }
-  .badge-popup .badge-img { width:72px; height:72px; }
-  .hero-img { display:block; margin:0 auto 14px; max-width:180px; }
-  #stampImg { width:86px; height:86px; object-fit:contain; }
-  .perfect-ribbon { display:inline-block; margin-top:10px; padding:6px 16px; border-radius:999px;
-    background:linear-gradient(90deg,#FBBF24,#FB923C); color:#fff; font-weight:900; font-size:14px;
-    animation: popRibbon .5s cubic-bezier(.175,.885,.32,1.275); }
-  @keyframes popRibbon { from { transform:scale(0);} to { transform:scale(1);} }
-</style>
+
 <button id="sfxToggle" title="효과음 켜기/끄기" aria-label="효과음 켜기/끄기">🔊</button>
 <script>
 /* ── 효과음 엔진 (Web Audio 합성 — 파일 불필요) ── */
@@ -1916,171 +2085,492 @@ document.querySelectorAll('#screen0 button').forEach(b => b.addEventListener('cl
 </script>
 
 
-<!-- ═══════════ 디자인 v2: 발산형 비주얼 스킨 ═══════════ -->
-<style id="designV2">
+
+
+<!-- ═══════════ 디자인 v3: GOLD QUEST — 수집형 게임 아카데미 ═══════════ -->
+<style id="designV3">
   :root {
-    --g1:#6366F1; --g2:#8B5CF6; --g3:#EC4899; --g4:#F59E0B;
-    --grad: linear-gradient(135deg,#6366F1,#8B5CF6 45%,#EC4899);
-    --grad-warm: linear-gradient(135deg,#F59E0B,#EC4899);
-    --grad-cool: linear-gradient(135deg,#38BDF8,#34D399);
+    --ink:#2B2350; --ink-muted:#6B6690;
+    --bg-top:#F7F4FF; --bg-bottom:#FFF4E4;
+    --primary:#5B4DF0; --primary-deep:#3B2FB8;
+    --gold:#F5A623; --gold-light:#FFD65C; --gold-deep:#C97E10;
+    --seal-red:#E23D3D; --success:#18B87A; --warn:#FF9F43;
+    --grad-primary: linear-gradient(135deg,#6C5CFF,#4A3AE8);
+    --grad-gold: linear-gradient(120deg,#FFE29A,#F5A623 45%,#C97E10 80%,#FFD65C);
+    --grad-success: linear-gradient(135deg,#2BD98F,#0EA5E9);
+    --r-lg:28px; --r-md:18px; --r-sm:12px; --r-pill:999px;
+    --sh-card:0 18px 44px -16px rgba(59,47,184,.28), 0 3px 10px rgba(43,35,80,.06);
+    --sh-float:0 10px 24px -8px rgba(59,47,184,.45);
+    --sh-gold:0 12px 28px -8px rgba(245,166,35,.55);
   }
-  body {
-    font-family:'Pretendard Variable',Pretendard,-apple-system,'Segoe UI',sans-serif;
-    background:#EEF2FF; overflow-x:hidden;
-  }
-  /* ── 오로라 배경 ── */
-  .bg-blob { position:fixed; border-radius:50%; filter:blur(90px); z-index:-2; opacity:.55; pointer-events:none; }
-  .bg-blob.b1 { width:52vw; height:52vw; left:-14vw; top:-18vh; background:radial-gradient(circle,#A5B4FC,transparent 65%); animation:blob1 22s ease-in-out infinite alternate; }
-  .bg-blob.b2 { width:46vw; height:46vw; right:-12vw; top:22vh; background:radial-gradient(circle,#F9A8D4,transparent 65%); animation:blob2 26s ease-in-out infinite alternate; }
-  .bg-blob.b3 { width:40vw; height:40vw; left:24vw; bottom:-22vh; background:radial-gradient(circle,#FDE68A,transparent 65%); animation:blob1 30s ease-in-out infinite alternate-reverse; }
-  @keyframes blob1 { to { transform:translate(9vw,7vh) scale(1.15); } }
-  @keyframes blob2 { to { transform:translate(-7vw,-6vh) scale(.9); } }
-  .bg-spark { position:fixed; z-index:-1; font-size:14px; color:#818CF8; opacity:.5; pointer-events:none; animation:sparkFloat linear infinite; }
-  @keyframes sparkFloat {
-    0% { transform:translateY(105vh) scale(.6) rotate(0deg); opacity:0; }
-    12% { opacity:.55; } 88% { opacity:.4; }
-    100% { transform:translateY(-8vh) scale(1.1) rotate(200deg); opacity:0; }
-  }
-  /* ── 글래스 카드 ── */
-  .card {
-    background:rgba(255,255,255,.74);
-    backdrop-filter:blur(20px) saturate(1.3); -webkit-backdrop-filter:blur(20px) saturate(1.3);
-    border:1px solid rgba(255,255,255,.95); border-radius:28px;
-    box-shadow:0 20px 50px -18px rgba(99,102,241,.35), 0 4px 14px rgba(30,41,59,.06);
-    position:relative; overflow:hidden;
-  }
-  .card::before { content:''; position:absolute; top:0; left:8%; right:8%; height:3px;
-    background:var(--grad); border-radius:0 0 6px 6px; opacity:.85; }
-  .card-title { font-family:'Jua',sans-serif; font-weight:400; letter-spacing:.5px;
-    background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
-  h1.card-title { font-size:34px !important; }
+  body { font-family:'Pretendard Variable',Pretendard,-apple-system,'Segoe UI',sans-serif;
+    background:linear-gradient(180deg,var(--bg-top),var(--bg-bottom)) fixed; color:var(--ink); overflow-x:hidden; }
+  .mono-label { font-family:'Montserrat',sans-serif; font-weight:800; letter-spacing:2px; text-transform:uppercase; }
+
+  /* ── 배경: 블롭 2 + 별 6, 퀴즈·폼·서명 화면에선 숨김 ── */
+  .bg-blob { position:fixed; border-radius:50%; filter:blur(90px); z-index:-2; opacity:.35; pointer-events:none; transition:opacity .5s; }
+  .bg-blob.b1 { width:50vw; height:50vw; left:-14vw; top:-16vh; background:radial-gradient(circle,#A5B4FC,transparent 65%); animation:blob1 24s ease-in-out infinite alternate; }
+  .bg-blob.b2 { width:44vw; height:44vw; right:-12vw; bottom:-18vh; background:radial-gradient(circle,#FFD65C,transparent 65%); animation:blob2 28s ease-in-out infinite alternate; }
+  @keyframes blob1 { to { transform:translate(8vw,6vh) scale(1.12); } }
+  @keyframes blob2 { to { transform:translate(-6vw,-5vh) scale(.92); } }
+  .bg-spark { position:fixed; z-index:-1; color:#C9A227; opacity:.45; pointer-events:none; animation:sparkFloat linear infinite; transition:opacity .5s; }
+  @keyframes sparkFloat { 0%{transform:translateY(105vh) scale(.6);opacity:0;} 12%{opacity:.5;} 88%{opacity:.35;} 100%{transform:translateY(-8vh) scale(1.05) rotate(160deg);opacity:0;} }
+  body[data-screen="1"] .bg-blob, body[data-screen="2"] .bg-blob, body[data-screen="3"] .bg-blob,
+  body[data-screen="1"] .bg-spark, body[data-screen="2"] .bg-spark, body[data-screen="3"] .bg-spark { opacity:0; }
+
+  /* ── 카드 공통 ── */
+  .card { background:rgba(255,255,255,.8); backdrop-filter:blur(18px) saturate(1.2); -webkit-backdrop-filter:blur(18px) saturate(1.2);
+    border:1px solid rgba(255,255,255,.95); border-radius:var(--r-lg); box-shadow:var(--sh-card); position:relative; overflow:hidden; }
+  .card::before { content:''; position:absolute; top:0; left:8%; right:8%; height:3px; background:var(--grad-gold); border-radius:0 0 6px 6px; }
+  .card-title { font-family:'Jua',sans-serif; font-weight:400; letter-spacing:.5px; color:var(--ink); }
   h2 { font-family:'Jua',sans-serif; font-weight:400; }
-  /* ── 버튼 ── */
-  .btn { border-radius:999px !important; font-weight:800; }
-  .btn-primary {
-    background:var(--grad) !important; border:none;
-    box-shadow:0 10px 26px -6px rgba(139,92,246,.55), inset 0 1px 0 rgba(255,255,255,.35);
-    position:relative; overflow:hidden;
-  }
+  .screen.active { animation:screenIn .35s cubic-bezier(.22,1,.36,1); }
+  @keyframes screenIn { from { opacity:0; transform:translateY(16px); } }
+  button { transition:transform .08s ease; }
+  button:active { transform:scale(.94); }
+
+  /* ── 버튼 위계 ── */
+  .btn { border-radius:var(--r-pill); font-weight:800; }
+  .btn-primary { background:var(--grad-primary); border:none; box-shadow:var(--sh-float); position:relative; overflow:hidden; }
   .btn-primary::after { content:''; position:absolute; inset:0;
-    background:linear-gradient(105deg,transparent 42%,rgba(255,255,255,.5) 50%,transparent 58%);
-    transform:translateX(-120%); animation:btnShine 3.2s 1.2s infinite; }
-  @keyframes btnShine { 0%{transform:translateX(-120%);} 42%{transform:translateX(120%);} 100%{transform:translateX(120%);} }
-  .btn-primary:hover { transform:translateY(-3px) scale(1.02); box-shadow:0 16px 34px -6px rgba(139,92,246,.6); }
-  .btn-secondary { background:#fff; border:2px solid #C7D2FE; color:var(--g1); }
-  /* ── 진행 바(글래스 도크) ── */
-  .progress-bar { background:rgba(255,255,255,.65); backdrop-filter:blur(16px);
-    border-bottom:1px solid rgba(255,255,255,.9); box-shadow:0 8px 24px -12px rgba(99,102,241,.25); }
-  .step-circle { border-radius:14px; }
-  .step-circle.active { background:var(--grad); box-shadow:0 0 0 5px rgba(139,92,246,.18); animation:stepPulse 1.6s infinite; }
-  @keyframes stepPulse { 50% { box-shadow:0 0 0 9px rgba(139,92,246,.08); } }
-  .step-circle.done { background:var(--grad-cool); }
-  /* ── 배지 ── */
-  .badge-item { border-radius:22px; transition:all .35s cubic-bezier(.175,.885,.32,1.275); }
-  .badge-item.locked { filter:grayscale(.9); background:rgba(241,245,249,.8); border:2px dashed #CBD5E1; }
-  .badge-item.locked::after { content:'🔒'; position:absolute; top:6px; right:8px; font-size:13px; opacity:.6; }
-  .badge-item.earned {
-    background:linear-gradient(160deg,#FFFBEB,#FFF); border:2px solid transparent;
-    background-clip:padding-box; box-shadow:0 10px 24px -8px rgba(245,158,11,.45);
-    animation:earnedGlow 2.6s ease-in-out infinite;
-  }
-  @keyframes earnedGlow { 50% { box-shadow:0 10px 30px -6px rgba(245,158,11,.65); } }
-  .badge-item.earned::before { content:''; position:absolute; inset:-2px; z-index:-1; border-radius:24px;
-    background:conic-gradient(#F59E0B,#FDE68A,#F59E0B,#FBBF24,#F59E0B); animation:ringSpin 4s linear infinite; }
-  @keyframes ringSpin { to { transform:rotate(360deg); } }
-  .badge-item:hover { transform:translateY(-5px) rotate(-1.5deg) scale(1.03); }
-  .badge-img { filter:drop-shadow(0 6px 10px rgba(30,41,59,.18)); }
-  .badge-earned-label { background:var(--grad-warm); color:#fff; border-radius:999px; padding:2px 10px; font-weight:900; }
-  /* ── 퀴즈 ── */
-  .ox-btn { border-radius:26px !important; font-family:'Jua',sans-serif;
-    transition:all .18s; border-width:4px !important;
-    padding:44px 24px !important; font-size:72px !important; gap:14px !important; line-height:1 !important; }
-  .ox-btn span:last-child { font-size:26px !important; font-weight:900 !important; }
-  .ox-btn:hover { transform:translateY(-4px) scale(1.04); }
-  .ox-btn.selected-o { box-shadow:0 0 0 6px rgba(52,211,153,.25), 0 14px 30px -8px rgba(52,211,153,.5); }
-  .ox-btn.selected-x { box-shadow:0 0 0 6px rgba(248,113,113,.25), 0 14px 30px -8px rgba(248,113,113,.5); }
-  .choice-btn { border-radius:18px !important; font-weight:800; transition:all .18s; }
-  .choice-btn:hover { transform:translateY(-3px); box-shadow:0 10px 22px -10px rgba(99,102,241,.4); }
-  .choice-btn.selected { background:var(--grad) !important; color:#fff !important; border-color:transparent !important;
-    box-shadow:0 0 0 5px rgba(139,92,246,.2), 0 12px 26px -8px rgba(139,92,246,.5); }
-  .feedback-box.correct.show { animation:popIn .4s cubic-bezier(.175,.885,.32,1.275); border-left:6px solid #34D399; }
-  .feedback-box.wrong.show { animation:shakeX .45s; border-left:6px solid #F87171; }
-  @keyframes popIn { from { transform:scale(.85); opacity:0; } }
+    background:linear-gradient(105deg,transparent 42%,rgba(255,255,255,.45) 50%,transparent 58%);
+    transform:translateX(-120%); animation:btnShine 3.4s 1.4s infinite; }
+  @keyframes btnShine { 0%{transform:translateX(-120%);} 40%{transform:translateX(120%);} 100%{transform:translateX(120%);} }
+  .btn-primary:hover { transform:translateY(-3px); box-shadow:0 16px 32px -8px rgba(59,47,184,.55); }
+  .btn-secondary, .btn-outline { background:#fff; border:2px solid #C9C2F2; color:var(--primary); }
+  .cta-pulse { animation:ctaPulse 2.4s ease-in-out infinite; }
+  @keyframes ctaPulse { 50% { transform:scale(1.03); box-shadow:0 14px 34px -6px rgba(91,77,240,.6); } }
+  .cta-chip { display:inline-block; margin-top:12px; padding:6px 16px; border-radius:var(--r-pill);
+    background:rgba(255,255,255,.75); color:var(--ink-muted); font-size:12px; font-weight:700; }
+
+  /* ── HUD(진행 바) ── */
+  .progress-bar { background:rgba(255,255,255,.72); backdrop-filter:blur(14px); border-bottom:1px solid rgba(255,255,255,.95);
+    box-shadow:0 8px 22px -14px rgba(59,47,184,.35); }
+  .hud-logo { display:flex; align-items:center; gap:8px; margin-right:12px; flex-shrink:0; }
+  .hud-logo img { width:28px; height:28px; }
+  .hud-logo span { font-family:'Jua',sans-serif; font-size:16px; color:var(--ink); }
+  .step-circle { border-radius:12px; }
+  .step-circle.active { background:var(--grad-primary); box-shadow:0 0 0 5px rgba(91,77,240,.16); animation:stepPulse 1.8s infinite; }
+  @keyframes stepPulse { 50% { box-shadow:0 0 0 8px rgba(91,77,240,.07); } }
+  .step-circle.done { background:var(--grad-gold); color:#4A3007; }
+  .step-label.done { color:var(--gold-deep); }
+
+  /* ── 시작 화면: 게임 타이틀 ── */
+  #screen0 .card { text-align:center; }
+  .hero-emblem { position:absolute; top:-24px; left:50%; transform:translateX(-50%); width:340px; opacity:.10;
+    filter:saturate(0) brightness(1.15); pointer-events:none; z-index:0; }
+  .hero-img { max-width:220px; position:relative; z-index:1; animation:heroFloat 3.4s ease-in-out infinite;
+    filter:drop-shadow(0 18px 26px rgba(59,47,184,.3)); }
+  @keyframes heroFloat { 50% { transform:translateY(-12px) rotate(1deg); } }
+  .hero-overline { display:block; font-size:12px; color:var(--gold-deep); margin-bottom:6px; }
+  #screen0 h1.card-title { font-size:36px !important; background:var(--grad-gold);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(0 2px 0 rgba(201,126,16,.35)); }
+  /* 미수집 도감 */
+  .badge-item { border-radius:var(--r-md); transition:all .3s cubic-bezier(.175,.885,.32,1.275); position:relative; }
+  .badge-item.locked { background:rgba(244,242,255,.7); border:2px dashed #CFC8EE; }
+  .badge-item.locked .badge-img, .badge-item.locked .badge-emoji { filter:grayscale(1) brightness(.55) opacity(.5); }
+  .badge-item.locked::after { content:'🔒'; position:absolute; top:6px; right:8px; font-size:14px; opacity:.65; }
+  .badge-item.earned { background:linear-gradient(160deg,#FFFBEB,#FFF); border:2px solid var(--gold-light); box-shadow:var(--sh-gold); }
+  .badge-item.earned .badge-img { filter:drop-shadow(0 6px 10px rgba(201,126,16,.35)); }
+  .badge-item:hover { transform:translateY(-4px); }
+  .badge-earned-label { background:var(--grad-gold); color:#4A3007; border-radius:var(--r-pill); padding:2px 10px; font-weight:900; }
+
+  /* ── 퀴즈: 관문 스테이지 ── */
+  #screen1 .badges-grid { display:flex; gap:6px; margin:8px 0 4px; align-items:center; justify-content:space-between; }
+  #screen1 .badge-item { flex:1; padding:6px 2px; border-radius:12px; min-width:0; }
+  #screen1 .badge-item .badge-name { display:none; }
+  #screen1 .badge-item .badge-img { width:30px; height:30px; margin:0 auto; }
+  #screen1 .badge-item .badge-emoji { font-size:22px; }
+  #screen1 .badge-item .badge-earned-label { display:none; }
+  .quiz-gate-chip { display:inline-flex; align-items:center; gap:8px; }
+  .quiz-gate-chip img { width:26px; height:26px; filter:grayscale(1) brightness(.7); }
+  .quiz-tier { color:var(--gold); letter-spacing:2px; font-size:14px; }
+  .choice-btn { border-radius:var(--r-md); border:2.5px solid #D9D4F5; background:#fff; font-weight:800; transition:all .18s; position:relative; }
+  .choice-btn:hover { transform:translateY(-2px); border-color:#B9AFF0; }
+  .choice-btn.selected { border:4px solid var(--primary); box-shadow:0 0 0 5px rgba(91,77,240,.18); }
+  .choice-btn.selected::after { content:'✓'; position:absolute; top:6px; right:10px; color:var(--primary); font-weight:900; }
+  .ox-btn { border-radius:26px; font-family:'Jua',sans-serif; transition:all .18s; border-width:4px;
+    padding:44px 24px; font-size:72px; gap:14px; line-height:1; }
+  .ox-btn span:last-child { font-size:26px; font-weight:900; }
+  .ox-btn:hover { transform:translateY(-4px); }
+  .ox-btn.selected-o { box-shadow:0 0 0 6px rgba(24,184,122,.22), 0 14px 28px -8px rgba(24,184,122,.45); }
+  .ox-btn.selected-x { box-shadow:0 0 0 6px rgba(255,159,67,.25), 0 14px 28px -8px rgba(255,159,67,.5); }
+  .feedback-box.correct.show { animation:popIn .4s cubic-bezier(.175,.885,.32,1.275); border-left:6px solid var(--success);
+    display:flex; align-items:center; gap:12px; }
+  .feedback-box.correct.show .cheer-mini { width:56px; height:56px; flex-shrink:0; }
+  .feedback-box.wrong.show { animation:shakeX .45s; border-left:6px solid var(--warn);
+    background:#FFF6EA; color:#8A5A16; border-color:var(--warn); }
+  @keyframes popIn { from { transform:scale(.86); opacity:0; } }
   @keyframes shakeX { 20%{transform:translateX(-7px);} 40%{transform:translateX(6px);} 60%{transform:translateX(-4px);} 80%{transform:translateX(3px);} }
-  .xp-fill { background:linear-gradient(90deg,#6366F1,#EC4899,#F59E0B) !important; }
-  .all-done-banner { background:var(--grad-cool) !important; color:#fff !important; border:none !important;
-    box-shadow:0 18px 40px -12px rgba(52,211,153,.55); border-radius:26px; }
-  .all-done-banner h2, .all-done-banner p { color:#fff !important; }
-  /* ── 배지 팝업: 방사형 버스트 ── */
-  .badge-popup { border-radius:30px; overflow:hidden; }
-  .badge-popup::before { content:''; position:absolute; inset:-60%; z-index:-1;
-    background:repeating-conic-gradient(rgba(251,191,36,.22) 0 9deg, transparent 9deg 18deg);
-    animation:ringSpin 9s linear infinite; }
-  .badge-popup-emoji { animation:badgeBounce .6s cubic-bezier(.175,.885,.32,1.275); }
-  @keyframes badgeBounce { 0%{transform:scale(0) rotate(-30deg);} 70%{transform:scale(1.2) rotate(6deg);} 100%{transform:scale(1);} }
-  /* ── 라이선스 카드: 홀로그램 ID ── */
+  .xp-wrap { margin:0 0 12px; }
+  .xp-fill { background:var(--grad-gold) !important; }
+  .all-done-banner { background:var(--grad-gold) !important; border:none !important; border-radius:var(--r-lg);
+    box-shadow:var(--sh-gold); color:#4A3007 !important; }
+  .all-done-banner h2, .all-done-banner p { color:#4A3007 !important; }
+  .done-medals { display:flex; justify-content:center; gap:8px; margin:14px 0 4px; }
+  .done-medals img { width:52px; height:52px; animation:medalPop .5s backwards; }
+  .done-medals img:nth-child(1){ transform:translateY(14px); animation-delay:.00s; }
+  .done-medals img:nth-child(2){ transform:translateY(5px);  animation-delay:.08s; }
+  .done-medals img:nth-child(3){ animation-delay:.16s; }
+  .done-medals img:nth-child(4){ animation-delay:.24s; }
+  .done-medals img:nth-child(5){ transform:translateY(5px);  animation-delay:.32s; }
+  .done-medals img:nth-child(6){ transform:translateY(14px); animation-delay:.40s; }
+  @keyframes medalPop { from { opacity:0; scale:.3; } }
+  .medal-fly { position:fixed; z-index:400; width:64px; height:64px; pointer-events:none;
+    transition:all .55s cubic-bezier(.5,-0.1,.3,1.1); }
+
+  /* ── 설계 폼: 공방 ── */
+  .form-input:focus { border-color:var(--primary) !important; box-shadow:0 0 0 4px rgba(91,77,240,.14) !important; }
+  .form-input.filled { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2318B87A'%3E%3Cpath d='M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 12px center; background-size:18px; padding-right:38px; }
+  .gauge-pill { display:flex; align-items:center; gap:10px; padding:8px 14px; margin-bottom:12px;
+    background:rgba(255,255,255,.18); border-radius:var(--r-pill); }
+  .gauge-pill .g-track { flex:1; height:10px; border-radius:999px; background:rgba(255,255,255,.25); overflow:hidden; }
+  .gauge-pill .g-fill { height:100%; width:0%; background:var(--grad-gold); border-radius:999px; transition:width .5s cubic-bezier(.22,1,.36,1); }
+  .gauge-pill .g-label { font-size:12px; font-weight:800; color:#FFD65C; white-space:nowrap; }
+  .preview-card { background:linear-gradient(160deg,#191637,#2A2159) !important; border:2px solid rgba(255,214,92,.65) !important;
+    border-radius:22px !important; position:relative; overflow:hidden; box-shadow:0 20px 44px -16px rgba(25,22,55,.6); }
+  .preview-card::before { content:''; position:absolute; inset:0; opacity:.06; pointer-events:none;
+    background:repeating-radial-gradient(circle at 30% 20%, #FFD65C 0 2px, transparent 2px 14px),
+               repeating-radial-gradient(circle at 80% 90%, #A5B4FC 0 2px, transparent 2px 18px); }
+  .preview-card::after { content:''; position:absolute; right:-40px; bottom:-40px; width:180px; height:180px;
+    background:url('assets/license_logo.png') center/contain no-repeat; opacity:.08; pointer-events:none; }
+  .shield-item { border-radius:var(--r-md); min-height:64px; transition:all .2s; }
+  .shield-item:has(input:checked) { border:2.5px solid var(--gold) !important;
+    background:linear-gradient(160deg,#FFFDF4,#FFF6DF) !important; box-shadow:0 6px 16px -6px rgba(245,166,35,.4);
+    animation:shieldPop .25s; }
+  @keyframes shieldPop { 50% { transform:scale(1.05); } }
+  .shield-counter { display:inline-block; margin-bottom:8px; padding:4px 14px; border-radius:var(--r-pill);
+    font-size:13px; font-weight:900; background:#F1EEFF; color:var(--primary); }
+  .shield-counter.ok { background:var(--grad-gold); color:#4A3007; }
+
+  /* ── 다짐·서명: 증서 ── */
+  .pledge-sentence { background:#FFFDF5 !important; border:3px double var(--gold-deep) !important; border-radius:var(--r-md); position:relative; }
+  .pledge-sentence::before, .pledge-sentence::after { content:''; position:absolute; top:8px; width:24px; height:24px;
+    background:url('assets/license_logo.png') center/contain no-repeat; opacity:.5; }
+  .pledge-sentence::before { left:8px; } .pledge-sentence::after { right:8px; }
+  .example-btn[aria-pressed="true"] { background:var(--grad-primary) !important; color:#fff !important; border-color:transparent !important; }
+  .btn-issue-gold { background:var(--grad-gold) !important; color:#4A3007 !important; border:none !important; box-shadow:var(--sh-gold); }
+  .btn-issue-gold.sig-wait { filter:saturate(.25) opacity(.6); pointer-events:auto; }
+  .btn-issue-gold.sig-ready { animation:issueReady .5s cubic-bezier(.175,.885,.32,1.275); }
+  @keyframes issueReady { 40% { transform:scale(1.08); } }
+
+  /* ── 라이선스 카드 ── */
   #licenseCard { position:relative; border-radius:26px !important; overflow:hidden;
-    border:2px solid rgba(253,230,138,.8) !important;
-    box-shadow:0 30px 70px -22px rgba(49,46,129,.65), 0 0 0 1px rgba(255,255,255,.15) inset;
-    transform-style:preserve-3d; transition:transform .25s ease; }
-  #licenseCard::before { content:''; position:absolute; inset:-40%; pointer-events:none; z-index:1; opacity:.16;
+    border:2px solid rgba(253,230,138,.85) !important;
+    box-shadow:0 30px 70px -22px rgba(25,22,55,.7); transform-style:preserve-3d; transition:transform .25s ease; }
+  #licenseCard.grade-silver { border-color:#C7CEDB !important; }
+  #licenseCard.grade-green { border-color:#7BD8B0 !important; }
+  #licenseCard::before { content:''; position:absolute; inset:-40%; pointer-events:none; z-index:1; opacity:.13;
     background:conic-gradient(from 0deg,#FF6B6B,#FDE68A,#6EE7B7,#60A5FA,#C084FC,#FF6B6B);
-    animation:holoSpin 10s linear infinite; mix-blend-mode:screen; }
+    animation:holoSpin 11s linear infinite; mix-blend-mode:screen; }
   @keyframes holoSpin { to { transform:rotate(360deg); } }
-  #licenseCard::after { content:''; position:absolute; top:18px; right:18px; width:46px; height:46px; z-index:2;
-    border-radius:50%; background:conic-gradient(#FDE68A,#F9A8D4,#A5F3FC,#FDE68A); opacity:.9;
-    box-shadow:0 2px 8px rgba(0,0,0,.35), inset 0 0 6px rgba(255,255,255,.8); }
+  #licenseCard::after { content:''; position:absolute; bottom:20px; right:120px; width:44px; height:44px; z-index:2;
+    border-radius:50%; background:conic-gradient(#FDE68A,#F9A8D4,#A5F3FC,#FDE68A); opacity:.85;
+    box-shadow:0 2px 8px rgba(0,0,0,.35), inset 0 0 6px rgba(255,255,255,.8); pointer-events:none; }
+  .license-header { display:flex; align-items:center; gap:14px; }
+  .license-header .lic-emblem { width:44px; height:44px; flex-shrink:0; }
   .license-main-title { font-family:'Jua',sans-serif; letter-spacing:2px;
-    background:linear-gradient(90deg,#FDE68A,#FEF3C7,#F59E0B,#FDE68A); -webkit-background-clip:text; background-clip:text; color:transparent;
-    background-size:220% auto; animation:foil 4.2s linear infinite; }
+    background:linear-gradient(90deg,#FDE68A,#FEF3C7,#F5A623,#FDE68A); -webkit-background-clip:text; background-clip:text;
+    color:transparent; background-size:220% auto; animation:foil 4.5s linear infinite; }
+  #licenseCard.grade-silver .license-main-title { background-image:linear-gradient(90deg,#E5E9F0,#FFFFFF,#AAB4C4,#E5E9F0); }
+  #licenseCard.grade-green .license-main-title { background-image:linear-gradient(90deg,#A7F3D0,#ECFDF5,#34D399,#A7F3D0); }
   @keyframes foil { to { background-position:220% center; } }
-  .lic-badge { filter:drop-shadow(0 3px 6px rgba(0,0,0,.35)); }
-  /* ── 도장 버스트 ── */
+  .license-body { position:relative; }
+  .license-body::before { content:''; position:absolute; inset:0; opacity:.05; pointer-events:none;
+    background:repeating-radial-gradient(circle at 30% 20%, #FFD65C 0 2px, transparent 2px 14px),
+               repeating-radial-gradient(circle at 80% 90%, #A5B4FC 0 2px, transparent 2px 18px); }
+  .lic-serial { font-family:'Montserrat',sans-serif; font-weight:800; letter-spacing:2px;
+    font-size:12px; color:var(--gold-light); margin-left:auto; text-align:right; line-height:1.5; }
+  .lic-title-line { font-size:13px; font-weight:800; color:var(--gold-light); margin-bottom:2px; }
+  .lic-grade-chip { display:inline-block; padding:3px 12px; border-radius:var(--r-pill); font-size:11px;
+    font-family:'Montserrat',sans-serif; font-weight:800; letter-spacing:1.5px;
+    background:var(--grad-gold); color:#4A3007; margin-left:8px; vertical-align:middle; }
+  #licenseCard.grade-silver .lic-grade-chip { background:linear-gradient(120deg,#E5E9F0,#AAB4C4); color:#2B3444; }
+  #licenseCard.grade-green .lic-grade-chip { background:linear-gradient(120deg,#A7F3D0,#34D399); color:#0B4A33; }
+  .lic-badge-img { width:36px; height:36px; filter:drop-shadow(0 3px 6px rgba(0,0,0,.35)); }
+  #screen4 { animation:none; }
+  .card-entrance { animation:cardUp .55s cubic-bezier(.34,1.4,.5,1) backwards; }
+  @keyframes cardUp { from { opacity:0; transform:translateY(60px) scale(.94); } }
+  .screen-shake { animation:scrShake .3s; }
+  @keyframes scrShake { 25%{transform:translate(3px,-3px);} 50%{transform:translate(-4px,2px);} 75%{transform:translate(2px,3px);} }
   .stamp.landed { animation:stampSlam .5s cubic-bezier(.34,1.56,.64,1); }
   @keyframes stampSlam { 0%{transform:scale(2.4) rotate(-18deg); opacity:0;} 60%{transform:scale(.92) rotate(-10deg); opacity:1;} 100%{transform:scale(1) rotate(-12deg);} }
-  /* ── 갤러리·토스트·기타 ── */
-  .gallery-card { border-radius:22px; transition:transform .25s; }
-  .gallery-card:hover { transform:translateY(-6px) rotate(-1deg) scale(1.03); }
-  #toast { border-radius:999px; backdrop-filter:blur(10px); font-weight:800; }
-  #sfxToggle { background:rgba(255,255,255,.8); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,.95);
-    box-shadow:0 8px 22px -6px rgba(99,102,241,.4); }
-  .hero-img { max-width:210px; animation:heroFloat 3.4s ease-in-out infinite; filter:drop-shadow(0 18px 26px rgba(99,102,241,.35)); position:relative; z-index:1; }
-  @keyframes heroFloat { 50% { transform:translateY(-12px) rotate(1.2deg); } }
-  .hero-halo { position:absolute; left:50%; top:96px; width:250px; height:250px; transform:translateX(-50%);
-    background:radial-gradient(circle,rgba(165,180,252,.55),transparent 70%); border-radius:50%; z-index:0;
-    animation:haloPulse 3.4s ease-in-out infinite; pointer-events:none; }
-  @keyframes haloPulse { 50% { transform:translateX(-50%) scale(1.12); opacity:.8; } }
+  .save-hint { text-align:center; color:var(--ink-muted); font-size:13px; margin-top:12px; }
+
+  /* ── 갤러리 ── */
+  .gallery-card { background:linear-gradient(160deg,#191637,#2A2159) !important; border-radius:20px;
+    position:relative; overflow:hidden; padding-top:18px !important; transition:transform .25s; }
+  .gallery-card::before { content:''; position:absolute; top:0; left:0; right:0; height:6px; background:var(--accent,var(--grad-gold)); }
+  .gallery-card::after { content:''; position:absolute; right:8px; bottom:8px; width:28px; height:28px;
+    background:url('assets/stamp_seal.png') center/contain no-repeat; opacity:.7; }
+  .gallery-card:hover { transform:translateY(-5px) rotate(-.6deg); }
+  .gallery-card .g-medal { width:18px; height:18px; vertical-align:middle; margin-right:2px; }
+  .gallery-new { animation:galleryIn 1.2s; }
+  @keyframes galleryIn { 0% { opacity:0; transform:translateY(20px); box-shadow:0 0 0 0 rgba(245,166,35,.0); }
+    30% { opacity:1; box-shadow:0 0 0 6px rgba(245,166,35,.45); } 100% { box-shadow:0 0 0 0 rgba(245,166,35,0); } }
+
+  /* ── 팝업·토스트·토글 ── */
+  .badge-popup { border-radius:30px; overflow:hidden; }
+  .badge-popup::before { content:''; position:absolute; inset:-60%; z-index:-1;
+    background:repeating-conic-gradient(rgba(245,166,35,.2) 0 9deg, transparent 9deg 18deg); animation:holoSpin 9s linear infinite; }
+  .badge-popup-emoji { animation:badgeBounce .6s cubic-bezier(.175,.885,.32,1.275); }
+  @keyframes badgeBounce { 0%{transform:scale(0) rotate(-30deg);} 70%{transform:scale(1.18) rotate(6deg);} 100%{transform:scale(1);} }
+  #toast { border-radius:var(--r-pill); backdrop-filter:blur(10px); font-weight:800; }
+  #sfxToggle { width:52px; height:52px; background:rgba(255,255,255,.85); backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,.95); box-shadow:0 8px 22px -6px rgba(59,47,184,.4); }
+  .hero-halo { display:none; }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration:.001s !important; animation-iteration-count:1 !important; transition-duration:.001s !important; }
   }
 </style>
-<script>
-/* 배경 블롭 + 별 파티클 */
+<script id="v3js">
 (function(){
-  ['b1','b2','b3'].forEach(c => { const d=document.createElement('div'); d.className='bg-blob '+c; document.body.appendChild(d); });
-  const glyphs=['✦','✧','✨','⬩'];
-  for (let i=0;i<10;i++){
-    const s=document.createElement('span'); s.className='bg-spark';
-    s.textContent=glyphs[i%glyphs.length];
-    s.style.left=(4+Math.random()*92)+'vw';
-    s.style.fontSize=(9+Math.random()*13)+'px';
-    s.style.animationDuration=(11+Math.random()*14)+'s';
-    s.style.animationDelay=(-Math.random()*20)+'s';
+  /* 배경: 블롭 2 + 별 6 */
+  ['b1','b2'].forEach(c => { const d=document.createElement('div'); d.className='bg-blob '+c; document.body.appendChild(d); });
+  for (let i=0;i<6;i++){
+    const s=document.createElement('span'); s.className='bg-spark'; s.textContent='✦';
+    s.style.left=(6+Math.random()*88)+'vw'; s.style.fontSize=(9+Math.random()*11)+'px';
+    s.style.animationDuration=(12+Math.random()*14)+'s'; s.style.animationDelay=(-Math.random()*20)+'s';
     document.body.appendChild(s);
   }
-  /* 시작 화면 히어로 후광 */
+  document.body.dataset.screen = 0;
+  const _go3 = goToScreen;
+  goToScreen = function(n){ _go3(n); document.body.dataset.screen = n; };
+
+  /* HUD 로고 */
+  const pb=document.querySelector('.progress-bar');
+  if (pb){ const lg=document.createElement('div'); lg.className='hud-logo';
+    lg.innerHTML='<img src="assets/license_logo.png" alt="" onerror="this.style.display=\'none\'"><span>AI 탐험가</span>';
+    pb.insertBefore(lg, pb.firstChild); }
+
+  /* 시작 화면: 엠블럼 워터마크 + 오버라인 + CTA */
   const c0=document.querySelector('#screen0 .card');
-  if (c0){ const h=document.createElement('div'); h.className='hero-halo'; c0.appendChild(h); }
-  /* 라이선스 카드 3D 틸트 */
+  if (c0){
+    const em=document.createElement('img'); em.src='assets/license_logo.png'; em.className='hero-emblem'; em.alt='';
+    em.onerror=()=>em.remove(); c0.insertBefore(em, c0.firstChild);
+    const h1=c0.querySelector('h1');
+    if (h1){ const ov=document.createElement('span'); ov.className='mono-label hero-overline';
+      ov.textContent='AI EXPLORER LICENSE MISSION'; h1.parentNode.insertBefore(ov, h1); }
+    const cta=c0.querySelector('.btn-primary');
+    if (cta){ cta.classList.add('cta-pulse');
+      const chip=document.createElement('div'); chip.className='cta-chip'; chip.textContent='🏅 배지 6개 · 약 15분';
+      cta.parentNode.appendChild(chip); }
+  }
+
+  /* 퀴즈: 관문 칩(메달 미니) + 진행 표기 + XP=문항 기준 */
+  const totalQ = QUIZZES.length;
+  updateXP = function(){
+    const f=document.getElementById('xpFill'), l=document.getElementById('xpLabel');
+    if (f) f.style.width = (Math.min(state.quizIndex,totalQ)/totalQ*100)+'%';
+    if (l) l.textContent = '🏅 ' + state.earnedBadges.length + '/6';
+  };
+  const _render3 = renderQuiz;
+  renderQuiz = function(){
+    _render3();
+    if (state.quizIndex >= totalQ) return;
+    const q = QUIZZES[state.quizIndex];
+    const numEl=document.getElementById('quizNum');
+    const gateIdx = parseInt(q.gate.replace(/[^0-9]/g,''),10)-1;
+    numEl.innerHTML = '<span class="quiz-gate-chip"><img src="assets/'+ASSETS.badges[gateIdx]+'" alt="" onerror="this.remove()">'
+      + q.gate + ' <span class="quiz-tier">' + '★'.repeat(q.tier) + '☆'.repeat(3-q.tier) + '</span></span>';
+    document.getElementById('quizProgress').textContent = (state.quizIndex+1) + ' / ' + totalQ;
+  };
+  /* 정답 피드백에 응원 캐릭터 */
+  const _submit3 = submitQuiz;
+  submitQuiz = function(){
+    _submit3();
+    if (state.quizAnswered){
+      const fb=document.getElementById('quizFeedback');
+      probeAsset(ASSETS.cheer, ok => {
+        if (ok && !fb.querySelector('.cheer-mini')){
+          const im=document.createElement('img'); im.src='assets/'+ASSETS.cheer; im.className='cheer-mini'; im.alt='';
+          fb.insertBefore(im, fb.firstChild);
+        }
+      });
+    }
+    updateXP();
+  };
+  /* 배지 획득: 메달 비행 */
+  const _award3 = awardBadge;
+  awardBadge = function(i){
+    _award3(i);
+    setTimeout(() => {
+      const slot=document.getElementById('qbadge'+i);
+      const pop=document.getElementById('popupEmoji');
+      if (!slot || !pop) return;
+      const r0=pop.getBoundingClientRect(), r1=slot.getBoundingClientRect();
+      const fly=document.createElement('img'); fly.src='assets/'+ASSETS.badges[i]; fly.className='medal-fly';
+      fly.onerror=()=>fly.remove();
+      fly.style.left=r0.left+'px'; fly.style.top=r0.top+'px';
+      document.body.appendChild(fly);
+      requestAnimationFrame(()=>{ fly.style.left=(r1.left+r1.width/2-16)+'px'; fly.style.top=(r1.top+r1.height/2-16)+'px';
+        fly.style.width='32px'; fly.style.height='32px'; fly.style.opacity='.9'; });
+      setTimeout(()=>fly.remove(), 650);
+    }, 1500);
+  };
+  /* 완료 배너: 메달 아치 */
+  const _done3 = showAllDone;
+  showAllDone = function(){
+    _done3();
+    const b=document.getElementById('allDoneBanner');
+    if (b && !b.querySelector('.done-medals')){
+      const row=document.createElement('div'); row.className='done-medals';
+      row.innerHTML = ASSETS.badges.map(f=>'<img src="assets/'+f+'" alt="" onerror="this.remove()">').join('');
+      b.insertBefore(row, b.firstChild);
+    }
+  };
+
+  /* 설계 폼: 완성도 게이지 + 방패 카운터 + 인풋 체크 */
+  const pv=document.getElementById('livePreview');
+  if (pv){ const g=document.createElement('div'); g.className='gauge-pill';
+    g.innerHTML='<div class="g-track"><div class="g-fill" id="gFill"></div></div><span class="g-label" id="gLabel">카드 완성도 0/7</span>';
+    pv.insertBefore(g, pv.firstChild); }
+  const sg=document.querySelector('.shield-grid');
+  if (sg){ const sc=document.createElement('div'); sc.className='shield-counter'; sc.id='shieldCounter';
+    sc.textContent='🛡️ 방패 0/2'; sg.parentNode.insertBefore(sc, sg); }
+  const FIELD_IDS=['nickname','serviceName','problem','aiFunc','dataType','aiOutput'];
+  const _preview3 = updatePreview;
+  updatePreview = function(){
+    _preview3();
+    let n=0; FIELD_IDS.forEach(id => { const el=document.getElementById(id);
+      const has = el && el.value.trim(); if (has) n++;
+      if (el) el.classList.toggle('filled', !!has);
+      const combo=document.getElementById(id+'-input'); if (combo) combo.classList.toggle('filled', !!has);
+    });
+    const checks=document.querySelectorAll('#screen2 input[type=checkbox]:checked').length;
+    if (checks>=2) n++;
+    const gf=document.getElementById('gFill'), gl=document.getElementById('gLabel');
+    if (gf) gf.style.width=(n/7*100)+'%';
+    if (gl) gl.textContent='카드 완성도 '+n+'/7';
+    const sc=document.getElementById('shieldCounter');
+    if (sc){ sc.textContent='🛡️ 방패 '+Math.min(checks,9)+'/2'; sc.classList.toggle('ok', checks>=2); }
+    /* 미리보기 배지 → 메달 PNG */
+    const pbg=document.getElementById('prev-badges');
+    if (pbg) pbg.innerHTML = state.earnedBadges.map(i =>
+      '<img src="assets/'+ASSETS.badges[i]+'" style="width:20px;height:20px;" onerror="this.outerHTML=\''+BADGES[i].emoji+'\'">').join('');
+  };
+
+  /* 다짐·서명: 예시 칩 상태 + 펜 굵기 + 발급 버튼 게이팅 */
+  document.querySelectorAll('.example-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.example-btn').forEach(x=>x.setAttribute('aria-pressed','false'));
+      b.setAttribute('aria-pressed','true');
+    });
+  });
+  const _initSig3 = initSig;
+  initSig = function(){ _initSig3(); if (sigCtx) sigCtx.lineWidth = 3.5; };
+  const issueBtn = document.querySelector('#screen3 .btn-primary');
+  if (issueBtn){
+    issueBtn.classList.add('btn-issue-gold','sig-wait');
+    setInterval(() => {
+      if (state.sigHasData && issueBtn.classList.contains('sig-wait')){
+        issueBtn.classList.remove('sig-wait'); issueBtn.classList.add('sig-ready');
+      }
+      if (!state.sigHasData && !issueBtn.classList.contains('sig-wait')){
+        issueBtn.classList.add('sig-wait'); issueBtn.classList.remove('sig-ready');
+      }
+    }, 400);
+  }
+
+  /* 라이선스: 엠블럼·일련번호·등급·칭호·발급 시퀀스·틸트 5° */
+  const TITLE_MAP = { '분류':'가려내는', '예측':'내다보는', '군집화':'모아 보는', '음성 인식':'귀 기울이는', '생성형 AI':'만들어 내는' };
+  function gradeInfo(){
+    const w = (typeof _wrongCount!=='undefined') ? _wrongCount : 0;
+    if (w===0) return ['GOLD',''];
+    if (w<=2) return ['SILVER','grade-silver'];
+    return ['GREEN','grade-green'];
+  }
+  const _license3 = buildLicenseCard;
+  buildLicenseCard = function(){
+    _license3();
+    const card=document.getElementById('licenseCard');
+    const header=card.querySelector('.license-header');
+    /* 엠블럼 + 일련번호(1회) */
+    if (header && !header.querySelector('.lic-emblem')){
+      const im=document.createElement('img'); im.src='assets/license_logo.png'; im.className='lic-emblem'; im.alt='';
+      im.onerror=()=>im.remove(); header.insertBefore(im, header.firstChild);
+      const flag=header.querySelector('.license-flag');
+      if (flag){ flag.classList.add('mono-label'); flag.textContent='REPUBLIC OF AI EXPLORERS'; }
+      const sn=document.createElement('div'); sn.className='lic-serial'; sn.id='licSerial';
+      header.appendChild(sn);
+    }
+    const now=new Date();
+    const serial='AIX-'+String(now.getFullYear()).slice(2)+String(now.getMonth()+1).padStart(2,'0')+'-'+String(1000+Math.floor(Math.random()*9000));
+    const sn=document.getElementById('licSerial');
+    if (sn) sn.innerHTML='NO. '+serial+'<br>ISSUED '+now.getFullYear()+'.'+String(now.getMonth()+1).padStart(2,'0')+'.'+String(now.getDate()).padStart(2,'0');
+    /* 등급 */
+    const [grade, cls]=gradeInfo();
+    card.classList.remove('grade-silver','grade-green'); if (cls) card.classList.add(cls);
+    const title=card.querySelector('.license-main-title');
+    if (title){
+      let chip=title.querySelector('.lic-grade-chip');
+      if (!chip){ chip=document.createElement('span'); chip.className='lic-grade-chip mono-label'; title.appendChild(chip); }
+      chip.textContent=grade;
+    }
+    /* 칭호 */
+    const func=document.getElementById('aiFunc').value||'';
+    const shield=document.querySelector('#screen2 input[type=checkbox]:checked');
+    const verb=TITLE_MAP[func]||'탐험하는';
+    const shieldName=shield? shield.value.replace(' 보호','').replace(' 확인','') : 'AI';
+    const nameEl=document.getElementById('lic-name');
+    if (nameEl && !document.getElementById('licTitleLine')){
+      const t=document.createElement('div'); t.className='lic-title-line'; t.id='licTitleLine';
+      nameEl.parentNode.insertBefore(t, nameEl);
+    }
+    const tl=document.getElementById('licTitleLine');
+    if (tl) tl.textContent='「'+shieldName+'를 지키며 '+verb+' 탐험가」';
+    /* 배지 → 메달 PNG */
+    const lb=document.getElementById('lic-badges');
+    if (lb) lb.innerHTML = state.earnedBadges.map(i =>
+      '<img class="lic-badge-img" src="assets/'+ASSETS.badges[i]+'" title="'+BADGES[i].name+'" onerror="this.outerHTML=\''+BADGES[i].emoji+'\'">').join('');
+    /* 발급 시퀀스: 카드 등장 → 인장+흔들림 (색종이·팡파레는 기존 타이밍) */
+    card.classList.remove('card-entrance'); void card.offsetWidth; card.classList.add('card-entrance');
+    setTimeout(() => { document.body.classList.add('screen-shake');
+      setTimeout(()=>document.body.classList.remove('screen-shake'), 320); }, 480);
+    /* 저장 안내(1회) */
+    const btnRow=document.querySelector('#screen4 .btn-row');
+    if (btnRow && !document.getElementById('saveHint')){
+      const p=document.createElement('p'); p.className='save-hint'; p.id='saveHint';
+      p.textContent='📸 스크린샷으로 저장해 선생님께 보여 주세요!';
+      btnRow.parentNode.insertBefore(p, btnRow);
+    }
+  };
   const lic=document.getElementById('licenseCard');
   if (lic){
     lic.addEventListener('mousemove', e => {
       const r=lic.getBoundingClientRect();
-      const rx=((e.clientY-r.top)/r.height-0.5)*-7, ry=((e.clientX-r.left)/r.width-0.5)*9;
-      lic.style.transform=`perspective(900px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+      const rx=((e.clientY-r.top)/r.height-0.5)*-5, ry=((e.clientX-r.left)/r.width-0.5)*5;
+      lic.style.transform='perspective(900px) rotateX('+rx+'deg) rotateY('+ry+'deg)';
     });
     lic.addEventListener('mouseleave', () => lic.style.transform='');
   }
+
+  /* 갤러리: 미니 라이선스 통일 */
+  const ACCENTS=['linear-gradient(90deg,#FFD65C,#F5A623)','linear-gradient(90deg,#6C5CFF,#4A3AE8)',
+    'linear-gradient(90deg,#2BD98F,#0EA5E9)','linear-gradient(90deg,#F9A8D4,#EC4899)',
+    'linear-gradient(90deg,#A5F3FC,#38BDF8)','linear-gradient(90deg,#FDBA74,#FB923C)'];
+  function skinGalleryCard(card){
+    card.style.background='';
+    card.style.setProperty('--accent', ACCENTS[Math.floor(Math.random()*ACCENTS.length)]);
+    const b=card.querySelector('.gallery-card-badges');
+    if (b && !b.querySelector('img')){
+      b.innerHTML = state.earnedBadges.length
+        ? state.earnedBadges.map(i=>'<img class="g-medal" src="assets/'+ASSETS.badges[i]+'" onerror="this.outerHTML=\''+BADGES[i].emoji+'\'">').join('')
+        : b.innerHTML;
+    }
+  }
+  document.querySelectorAll('.gallery-card').forEach(c => {
+    c.style.background=''; c.style.setProperty('--accent', ACCENTS[Math.floor(Math.random()*ACCENTS.length)]);
+  });
+  const _gallery3 = addToGallery;
+  addToGallery = function(){
+    _gallery3();
+    const cards=document.querySelectorAll('.gallery-card');
+    const last=cards[cards.length-1];
+    if (last){ skinGalleryCard(last); last.classList.add('gallery-new'); }
+  };
 })();
 </script>
 
