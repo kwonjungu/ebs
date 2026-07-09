@@ -2667,6 +2667,15 @@ document.querySelectorAll('#screen0 button').forEach(b => b.addEventListener('cl
     .stamp { width: 68px; height: 68px; }
     .stamp img, #stampImg { width: 64px; height: 64px; }
   }
+
+  /* 라이선스 헤더 정리: 남색 연속 + 금 헤어라인, 제목 줄바꿈 방지 */
+  .license-header { background: linear-gradient(160deg,#191637,#241D4E) !important;
+    border-bottom: 2px solid var(--gold); }
+  .license-main-title { white-space: nowrap; }
+  @media (max-width: 640px) { .license-main-title { white-space: normal; font-size: 19px; } }
+  /* 메달 흰 배경 → 동전 스티커화 */
+  .lic-badge-img, .g-medal, #prev-badges img { border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,.35); }
+  .stamp img, #stampImg { border-radius: 14px; box-shadow: 0 4px 10px rgba(0,0,0,.3); }
 </style>
 <script id="v3respjs">
 (function(){
