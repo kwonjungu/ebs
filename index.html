@@ -2659,6 +2659,14 @@ document.querySelectorAll('#screen0 button').forEach(b => b.addEventListener('cl
   #screen0 .badge-item .badge-emoji { font-size: 26px; }
   #screen0 .badge-item .badge-name { font-size: 11px; }
   #screen0 .badge-item.locked::after { font-size: 11px; top: 4px; right: 6px; }
+
+  /* 도장 이미지 크기 고정(서명 가림 수정) */
+  .stamp { width: 92px; height: 92px; flex-shrink: 0; }
+  .stamp img, #stampImg { width: 86px; height: 86px; object-fit: contain; display: block; }
+  @media (max-width: 640px) {
+    .stamp { width: 68px; height: 68px; }
+    .stamp img, #stampImg { width: 64px; height: 64px; }
+  }
 </style>
 <script id="v3respjs">
 (function(){
