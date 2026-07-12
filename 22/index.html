@@ -59,6 +59,8 @@
   .card{background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:22px}
 
   /* AI bubble */
+  .scene{display:block;width:100%;max-height:200px;object-fit:contain;background:var(--point-soft);
+    border:2.5px solid var(--ink);border-radius:var(--r-sm);box-shadow:var(--hard-sm);padding:8px;margin-bottom:16px}
   .ai{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px}
   .ai-icon{width:42px;height:42px;flex-shrink:0;border:2.5px solid var(--ink);border-radius:10px;
     background:var(--ink);display:grid;place-items:center;box-shadow:var(--hard-sm)}
@@ -179,6 +181,7 @@
   <div class="dots" id="dots"></div>
 
   <div class="card" id="stage">
+    <img class="scene" id="scene" src="../assets/fact/card0_moon.png" alt="이 카드가 다루는 상식 장면 그림">
     <div class="ai">
       <div class="ai-icon" aria-hidden="true">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="3" stroke="#FBF7EC" stroke-width="2"/><circle cx="9" cy="12" r="1.5" fill="#FBF7EC"/><circle cx="15" cy="12" r="1.5" fill="#FBF7EC"/><path d="M9 4v2M15 4v2" stroke="#FBF7EC" stroke-width="2" stroke-linecap="round"/></svg>
@@ -297,8 +300,10 @@ function renderDots(){
   $('dots').innerHTML=h+'<span>카드 '+Math.min(idx+1,5)+'/5</span>';
 }
 
+const SCENES=['card0_moon.png','card1_mars.png','card2_curie.png','card3_wall.png','card4_crater.png'];
 function show(){
   const c=CARDS[idx];
+  if(SCENES[idx]) $('scene').src='../assets/fact/'+SCENES[idx];
   $('aitxt').textContent=c.ai;
   $('gT').disabled=false; $('gF').disabled=false;
   $('gT').classList.remove('sel'); $('gF').classList.remove('sel');
