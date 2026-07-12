@@ -54,7 +54,7 @@
   /* 질문 탭 */
   .qtabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
   .qtab{cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:800;background:var(--surface);color:var(--ink);
-    border:2.5px solid var(--ink);border-radius:999px;padding:8px 15px;box-shadow:var(--hard-sm);transition:transform .1s}
+    border:2.5px solid var(--ink);border-radius:999px;padding:10px 16px;min-height:44px;box-shadow:var(--hard-sm);transition:transform .1s}
   .qtab[aria-pressed=true]{background:var(--point);color:#fff}
   .qtab:active{transform:translate(2px,2px);box-shadow:none}
   .qtab:focus-visible{outline:3px solid var(--point);outline-offset:3px}
@@ -68,7 +68,7 @@
   @keyframes blink{50%{opacity:0}}
   .atag{display:inline-block;font-size:11.5px;font-weight:900;border:2px solid var(--ink);border-radius:7px;padding:1px 9px;margin-bottom:10px}
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:inherit;font-size:15px;font-weight:900;
-    color:var(--ink);background:var(--amber);border:2.5px solid var(--ink);border-radius:13px;box-shadow:var(--hard-sm);padding:12px 20px;
+    color:var(--ink);background:var(--amber);border:2.5px solid var(--ink);border-radius:13px;box-shadow:var(--hard-sm);padding:13px 22px;min-height:48px;
     margin-top:16px;transition:transform .1s,box-shadow .1s}
   .btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
   .btn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
@@ -97,6 +97,14 @@
   footer a:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
   footer a:focus-visible{outline:3px solid var(--point);outline-offset:3px}
 
+  @media(max-width:520px){
+    .wrap{padding:14px 14px 56px}
+    .dial{padding:18px 16px}
+    .qcard{padding:18px 16px}
+    table{font-size:12.5px}
+    thead th,tbody th,td{padding:9px 8px}
+    .qtab{flex:1;text-align:center}
+  }
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
