@@ -3,413 +3,190 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>프롬프트 마스코트 체험 — AI 탐험대 20</title>
+<title>프롬프트 마스코트 · AI 탐험대 20</title>
 <style>
   :root{
     --ink:#141414; --paper:#FBF7EC; --surface:#FFFFFF;
     --point:#F59E0B; --point-soft:#FFF0C7;
-    --amber:#FFB800; --amber-soft:#FFF0C7;
-    --green:#12B76A; --red:#FF4D4D; --muted:#6B6B6B;
+    --amber:#FFB800; --green:#12B76A; --muted:#6B6B6B;
     --r:20px; --r-sm:13px;
     --hard:5px 5px 0 var(--ink); --hard-sm:3px 3px 0 var(--ink);
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  html{-webkit-text-size-adjust:100%}
-  body{
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-    background:var(--paper);color:var(--ink);
-    font-size:17px;line-height:1.55;
-    background-image:radial-gradient(var(--ink) .5px,transparent .5px);
-    background-size:22px 22px;background-position:-11px -11px;
-  }
-  .wrap{max-width:860px;margin:0 auto;padding:18px 18px 64px}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--paper);color:var(--ink);
+    font-size:17px;line-height:1.55;background-image:radial-gradient(var(--ink) .5px,transparent .5px);
+    background-size:22px 22px;background-position:-11px -11px}
+  .wrap{max-width:900px;margin:0 auto;padding:18px 18px 64px}
 
-  /* nav */
   .nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
-  .back{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink);
-    font-weight:800;font-size:14px;background:var(--surface);border:2.5px solid var(--ink);
-    border-radius:999px;padding:8px 16px;box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
+  .back{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink);font-weight:800;font-size:14px;
+    background:var(--surface);border:2.5px solid var(--ink);border-radius:999px;padding:8px 16px;box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
   .back:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
-  .back:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
-  .lesson-tag{font-weight:900;font-size:15px;letter-spacing:-.01em;background:var(--point);color:#fff;
-    border:2.5px solid var(--ink);border-radius:999px;padding:6px 16px;box-shadow:var(--hard-sm)}
+  .back:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .lesson-tag{font-weight:900;font-size:15px;background:var(--point);color:#fff;border:2.5px solid var(--ink);border-radius:999px;padding:6px 16px;box-shadow:var(--hard-sm)}
 
-  /* hero */
   .kicker{display:inline-block;font-weight:900;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
     background:var(--amber);border:2.5px solid var(--ink);border-radius:8px;padding:4px 12px;box-shadow:var(--hard-sm);margin-bottom:16px}
-  h1{font-size:clamp(30px,7vw,52px);font-weight:900;letter-spacing:-.035em;line-height:1.02;margin-bottom:2px}
-  .lead{font-size:17px;color:var(--muted);margin-top:14px;max-width:620px;font-weight:600}
-  .hero-art{display:block;margin:12px auto 0;height:96px;max-width:92%;object-fit:contain;
-    border:2.5px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard)}
-  @media(max-width:640px){.hero-art{height:auto;max-height:80px}}
+  h1{font-size:clamp(28px,6.5vw,46px);font-weight:900;letter-spacing:-.035em;line-height:1.05}
+  h1 .u{ -webkit-text-decoration:6px underline var(--point);text-decoration:6px underline var(--point);text-underline-offset:5px}
+  .lead{font-size:16px;color:var(--muted);margin-top:13px;font-weight:600;max-width:600px}
+  .lead b{color:var(--ink);font-weight:800}
 
-  /* safe */
-  .safe{display:flex;align-items:center;gap:10px;background:var(--surface);border:2.5px solid var(--ink);
-    border-radius:var(--r-sm);box-shadow:var(--hard-sm);padding:11px 16px;font-size:13.5px;font-weight:600;margin:22px 0 26px}
+  .safe{display:flex;align-items:center;gap:10px;background:var(--surface);border:2.5px solid var(--ink);border-radius:var(--r-sm);
+    box-shadow:var(--hard-sm);padding:11px 16px;font-size:13.5px;font-weight:600;margin:22px 0 26px}
   .safe svg{flex-shrink:0}
-  :focus-visible{outline:3px solid var(--point);outline-offset:3px}
 
-  /* layout */
-  .duo{display:grid;grid-template-columns:300px 1fr;gap:18px;align-items:start}
-  @media(max-width:680px){.duo{grid-template-columns:1fr}}
+  .studio{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:720px){.studio{grid-template-columns:1fr}}
 
-  /* canvas panel */
-  .canvasWrap{background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:18px}
-  .canvas{width:100%;aspect-ratio:1;border:3px solid var(--ink);border-radius:var(--r-sm);
-    background:var(--surface);display:block;box-shadow:var(--hard-sm)}
-  .canvas.pixel{shape-rendering:crispEdges}
+  /* 왼쪽: 그림 */
+  .canvas{background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:18px;position:relative;align-self:start}
+  .frame{border:3px solid var(--ink);border-radius:var(--r-sm);background:var(--point-soft);aspect-ratio:1;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center}
+  .frame img{width:100%;height:100%;object-fit:contain;transition:opacity .2s}
+  .addflash{position:absolute;left:12px;bottom:12px;right:12px;background:var(--ink);color:var(--paper);font-weight:900;font-size:13.5px;
+    border-radius:10px;padding:8px 12px;opacity:0;transform:translateY(8px);transition:opacity .25s,transform .25s}
+  .addflash.show{opacity:1;transform:none}
+  .addflash b{color:var(--amber)}
+  .steplabel{text-align:center;font-weight:900;font-size:14px;margin-top:12px;letter-spacing:-.01em}
 
-  /* aiTag */
-  .aiTag{display:none;margin-top:12px;background:var(--point-soft);border:2px dashed var(--ink);
-    border-radius:var(--r-sm);padding:8px 12px;font-size:13.5px;font-weight:700;text-align:center}
+  /* 오른쪽: 빌더 */
+  .builder{background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:20px}
+  .bh{font-size:16px;font-weight:900;letter-spacing:-.01em;margin-bottom:4px}
+  .prompt{border:2.5px dashed var(--ink);border-radius:var(--r-sm);background:var(--paper);padding:14px;font-size:15px;font-weight:700;line-height:1.6;min-height:74px;margin:10px 0 16px}
+  .prompt .chunk{display:inline;background:var(--point-soft);border-radius:5px;padding:0 3px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+  .prompt .base{background:none;font-weight:900}
+  .prompt .empty{color:var(--muted);font-weight:600}
 
-  /* prompt band */
-  .promptBand{
-    margin-top:12px;
-    background:var(--point-soft);
-    border:2.5px solid var(--ink);
-    border-radius:var(--r-sm);
-    box-shadow:var(--hard-sm);
-    padding:10px 14px;
-    font-size:15px;
-    font-weight:800;
-    min-height:54px;
-    text-align:center;
-    letter-spacing:-0.01em;
-    line-height:1.8;
-  }
-  /* placeholder slot — dashed outline tag */
-  .promptBand .q{
-    display:inline-block;
-    border:2px dashed var(--ink);
-    border-radius:8px;
-    padding:1px 8px;
-    color:var(--muted);
-    font-weight:800;
-    background:var(--paper);
-  }
-  /* selected chip inside prompt */
-  .promptBand .part{
-    display:inline-block;
-    background:var(--point);
-    color:#fff;
-    border:2px solid var(--ink);
-    border-radius:8px;
-    padding:1px 9px;
-    font-weight:900;
-  }
-  .promptBand .flash{
-    background:var(--point);
-    color:#fff;
-    border:2px solid var(--ink);
-    border-radius:8px;
-    padding:1px 9px;
-    animation:fl .6s;
-  }
-  @keyframes fl{from{background:#D97706}to{background:var(--point)}}
+  .addbtn{display:flex;align-items:center;gap:10px;width:100%;cursor:pointer;font-family:inherit;font-size:14.5px;font-weight:800;text-align:left;
+    color:var(--ink);background:var(--surface);border:2.5px solid var(--ink);border-radius:12px;box-shadow:var(--hard-sm);padding:11px 14px;min-height:48px;margin-bottom:10px;transition:transform .1s,box-shadow .1s}
+  .addbtn .n{flex-shrink:0;width:26px;height:26px;display:grid;place-items:center;font-weight:900;font-size:13px;background:var(--paper);border:2px solid var(--ink);border-radius:7px}
+  .addbtn:hover:not(:disabled){transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .addbtn:active:not(:disabled){transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+  .addbtn:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .addbtn.done{background:var(--point);color:#fff}
+  .addbtn.done .n{background:#fff}
+  .addbtn:disabled{opacity:.45;cursor:not-allowed}
+  .addbtn .tick{margin-left:auto;font-weight:900}
 
-  /* builder panel */
-  .builderPanel{background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:18px}
-  .catLabel{font-size:13.5px;font-weight:800;color:var(--muted);margin:12px 0 6px;letter-spacing:.04em;text-transform:uppercase}
-  .catLabel:first-child{margin-top:0}
-  .chips{display:flex;flex-wrap:wrap;gap:7px}
+  .row2{display:flex;gap:10px;margin-top:6px}
+  .mini{flex:1;cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:800;color:var(--ink);background:var(--paper);
+    border:2.5px solid var(--ink);border-radius:11px;box-shadow:var(--hard-sm);padding:11px;min-height:46px;transition:transform .1s,box-shadow .1s}
+  .mini:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .mini:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+  .mini:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .mini.vague{background:#FFE3E4}
 
-  /* outline tag chips */
-  .opt{border:2px solid var(--ink);background:var(--paper);border-radius:999px;padding:8px 16px;
-    font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer;min-height:44px;color:var(--ink);
-    box-shadow:var(--hard-sm);transition:transform .1s,box-shadow .1s}
-  .opt:hover:not(.on){transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
-  .opt:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
-  .opt.on{background:var(--point);color:#fff;border-color:var(--ink);box-shadow:var(--hard-sm)}
-  .opt:focus-visible{outline:3px solid var(--point);outline-offset:2px}
-
-  /* vague button */
-  .btnVague{display:block;width:100%;cursor:pointer;font-family:inherit;font-size:15.5px;font-weight:900;
-    color:var(--ink);background:var(--amber);border:2.5px solid var(--ink);border-radius:14px;
-    box-shadow:var(--hard-sm);padding:13px;min-height:50px;margin-top:18px;
-    transition:transform .1s,box-shadow .1s}
-  .btnVague:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
-  .btnVague:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
-  .btnVague:focus-visible{outline:3px solid var(--point);outline-offset:2px}
-  .hint{font-size:12.5px;color:var(--muted);text-align:center;margin-top:7px;font-weight:600}
-
-  /* obs */
-  .obs{display:flex;gap:12px;align-items:flex-start;background:var(--ink);color:var(--paper);
-    border-radius:var(--r);padding:18px 20px;font-size:14px;font-weight:600;margin:26px 0;line-height:1.55}
+  .obs{display:flex;gap:12px;align-items:flex-start;background:var(--ink);color:var(--paper);border-radius:var(--r);
+    padding:18px 20px;font-size:14px;font-weight:600;margin:26px 0;line-height:1.55}
   .obs svg{flex-shrink:0;margin-top:2px}
   .obs b{color:var(--amber);font-weight:900}
 
-  footer{text-align:center;margin-top:34px}
+  footer{text-align:center;margin-top:30px}
   footer a{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font-weight:900;color:var(--ink);
-    background:var(--surface);border:2.5px solid var(--ink);border-radius:999px;padding:11px 22px;
-    box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
+    background:var(--surface);border:2.5px solid var(--ink);border-radius:999px;padding:11px 22px;box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
   footer a:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
   footer a:focus-visible{outline:3px solid var(--point);outline-offset:3px}
 
-  @media(prefers-reduced-motion:reduce){
-    .promptBand .flash,.opt{animation:none!important;transition:none!important}
-  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
-
   <nav class="nav">
-    <a class="back" href="../">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5M5 12l7-7M5 12l7 7" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      전체 목록
-    </a>
-    <span class="lesson-tag">20강 · 프롬프트 마스코트</span>
+    <a class="back" href="../">← 전체 목록</a>
+    <span class="lesson-tag">20강 · 프롬프트</span>
   </nav>
 
   <header>
-    <span class="kicker">프롬프트가 그림이 돼요</span>
-    <h1>프롬프트로<br>마스코트를 그려요</h1>
-    <p class="lead">AI는 내 머릿속이 아니라 <b>내가 쓴 글(프롬프트)</b>을 읽고 그려요. 칩을 골라 봐요.</p>
-    <img class="hero-art" src="../assets/art/20_mascot.png" alt="" aria-hidden="true">
+    <span class="kicker">한 마디씩 더할수록 또렷해져요</span>
+    <h1>말을 <span class="u">더할수록</span><br>그림이 자세해져요</h1>
+    <p class="lead">AI 그림 도구는 내가 쓴 <b>말(프롬프트)</b>을 보고 그려요. 요소를 하나씩 더하면 그림이 어떻게 <b>또렷</b>해지는지 직접 만들어 봐요.<br><span style="font-size:13px">※ 실제 AI로 미리 만들어 둔 그림으로 원리를 체험해요.</span></p>
   </header>
 
   <div class="safe">
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6l-8-4Z" fill="var(--amber)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/></svg>
-    <span>친구 얼굴·유명 캐릭터·이름·학교 같은 개인정보는 넣지 않아요.</span>
+    <span>친구 얼굴 사진이나 유명 캐릭터는 넣지 않아요. 개인정보·저작권을 지켜요.</span>
   </div>
 
-  <div class="duo">
-    <!-- 캔버스 (아웃라인 액자) -->
-    <div class="canvasWrap">
-      <svg id="canvas" class="canvas" viewBox="0 0 200 200" role="img" aria-label="마스코트 미리보기">
-        <text x="100" y="105" text-anchor="middle" font-size="13" fill="#64748B">그림을 표시할 수 없어요</text>
-      </svg>
-      <p class="aiTag" id="aiTag">AI가 마음대로 정했어요! 원하는 그림이 나왔나요?</p>
-      <p class="promptBand" id="prompt"></p>
+  <div class="studio">
+    <!-- 그림 -->
+    <div class="canvas">
+      <div class="frame"><img id="pic" src="../assets/mascot/step0_base.png" alt="현재까지 만든 마스코트 그림"><div class="addflash" id="flash" role="status" aria-live="polite"></div></div>
+      <p class="steplabel" id="steplabel">기본 그림 — 아직 아무것도 안 더했어요</p>
     </div>
 
     <!-- 빌더 -->
-    <div class="builderPanel">
-      <div id="builder"></div>
-      <button class="btnVague" id="vague">막연하게 요청하기: "멋진 마스코트 그려 줘"</button>
-      <p class="hint">여러 번 눌러 봐요 — 매번 다른 엉뚱한 그림이 나와요!</p>
+    <div class="builder">
+      <div class="bh">주문서(프롬프트) 만들기</div>
+      <div class="prompt" id="prompt" aria-live="polite"><span class="base">고양이 마스코트</span><span class="empty">를 그려 줘 — 아래에서 하나씩 더해 봐요</span></div>
+
+      <button class="addbtn" id="b1" onclick="addStep(1)"><span class="n">1</span><span>“달리는 모습”을 더해요</span><span class="tick" aria-hidden="true"></span></button>
+      <button class="addbtn" id="b2" onclick="addStep(2)" disabled><span class="n">2</span><span>“탐험 모자”를 더해요</span><span class="tick" aria-hidden="true"></span></button>
+      <button class="addbtn" id="b3" onclick="addStep(3)" disabled><span class="n">3</span><span>“별 배지”를 더해요</span><span class="tick" aria-hidden="true"></span></button>
+      <button class="addbtn" id="b4" onclick="addStep(4)" disabled><span class="n">4</span><span>“탐험 가방”을 더해요</span><span class="tick" aria-hidden="true"></span></button>
+      <button class="addbtn" id="b5" onclick="addStep(5)" disabled><span class="n">5</span><span>“만화풍·밝은 분위기”로 다듬어요</span><span class="tick" aria-hidden="true"></span></button>
+
+      <div class="row2">
+        <button class="mini" onclick="reset()">↺ 처음부터</button>
+        <button class="mini vague" onclick="vague()">“멋지게 그려 줘”만 하면?</button>
+      </div>
     </div>
   </div>
 
   <div class="obs">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--amber)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/></svg>
-    <span><b>관찰 포인트</b> — 대상·행동·스타일을 <b>구체적으로</b> 말할수록 원하는 그림에 가까워요. 비워 두면 AI가 마음대로 채워요. 친구 얼굴·유명 캐릭터는 넣지 않아요.</span>
+    <span><b>발견해 봐요</b> — 대상·행동·소품·스타일을 <b>구체적으로 더할수록</b> 원하는 그림에 가까워져요. 반대로 “멋지게 그려 줘”처럼 막연하게 말하면 AI가 마음대로 정해서 엉뚱한 그림이 나와요.</span>
   </div>
 
-  <footer><a href="../">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5M5 12l7-7M5 12l7 7" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    AI 탐험대 체험 전체 목록
-  </a></footer>
+  <footer><a href="../">← AI 탐험대 체험 전체 목록</a></footer>
 </div>
 
 <script>
-const $ = id => document.getElementById(id);
-
-const CATS = {
-  subject: { label: '대상', opts: [
-    { id: 'robot', name: '로봇',   phrase: '로봇' },
-    { id: 'cat',   name: '고양이', phrase: '고양이' },
-    { id: 'bird',  name: '새',     phrase: '새' },
-  ]},
-  action: { label: '행동', opts: [
-    { id: 'run',  name: '달려요',      phrase: '달리는' },
-    { id: 'jump', name: '점프해요',    phrase: '높이 점프하는' },
-    { id: 'wave', name: '손 흔들어요', phrase: '손을 흔드는' },
-  ]},
-  prop: { label: '소품', opts: [
-    { id: 'hat',   name: '탐험 모자', phrase: '탐험 모자를 쓰고' },
-    { id: 'badge', name: '별 배지',   phrase: '별 배지를 달고' },
-    { id: 'bag',   name: '가방',      phrase: '가방을 메고' },
-  ]},
-  style: { label: '스타일', opts: [
-    { id: 'toon',  name: '만화풍', phrase: '만화풍' },
-    { id: 'pixel', name: '픽셀풍', phrase: '픽셀풍' },
-  ]},
-  mood: { label: '분위기', opts: [
-    { id: 'bright', name: '밝은',   phrase: '밝은' },
-    { id: 'calm',   name: '차분한', phrase: '차분한' },
-  ]},
-};
-const sel = { subject: null, action: null, prop: null, style: null, mood: null };
-let lastChanged = null, isVague = false;
-
-// 빌더 칩 생성
-for (const cat in CATS){
-  const lab = document.createElement('p');
-  lab.className = 'catLabel'; lab.textContent = CATS[cat].label;
-  $('builder').appendChild(lab);
-  const box = document.createElement('div'); box.className = 'chips';
-  CATS[cat].opts.forEach(o => {
-    const b = document.createElement('button');
-    b.className = 'opt'; b.textContent = o.name;
-    b.dataset.cat = cat; b.dataset.id = o.id;
-    b.setAttribute('aria-pressed', 'false');
-    b.onclick = () => { sel[cat] = o.id; lastChanged = cat; isVague = false; render(); };
-    box.appendChild(b);
-  });
-  $('builder').appendChild(box);
-}
-
-function optOf(cat, id){ return CATS[cat].opts.find(o => o.id === id); }
-function randOf(cat){ const o = CATS[cat].opts; return o[Math.floor(Math.random() * o.length)].id; }
-
-// 막연 요청: 전 항목 랜덤
-$('vague').onclick = () => {
-  for (const cat in CATS) sel[cat] = randOf(cat);
-  lastChanged = null; isVague = true;
-  render();
-};
-
-// 프롬프트 문장 조립
-function renderPrompt(){
-  if (isVague){
-    $('prompt').innerHTML = '"멋진 마스코트 그려 줘"<br><span style="font-size:12.5px;color:var(--muted)">→ AI가 읽은 건 이게 전부라서, 나머지는 전부 마음대로 골랐어요</span>';
-    return;
-  }
-  const piece = (cat, tail) => {
-    if (!sel[cat]) return '<span class="q">( ? )</span>' + (tail || '');
-    const f = lastChanged === cat ? ' flash' : '';
-    return '<span class="part' + f + '">' + optOf(cat, sel[cat]).phrase + '</span>' + (tail || '');
-  };
-  $('prompt').innerHTML = '"' + piece('prop', ' ') + piece('action', ' ') + piece('style', ' ')
-    + piece('subject', '') + ' 마스코트, ' + piece('mood', ' 분위기"');
-}
-
-// SVG 마스코트
-const PIXEL_FILTER = '<defs><filter id="pxl" x="-5%" y="-5%" width="110%" height="110%">'
-  + '<feFlood x="4" y="4" height="2" width="2"/><feComposite width="7" height="7"/>'
-  + '<feTile result="a"/><feComposite in="SourceGraphic" in2="a" operator="in"/>'
-  + '<feMorphology operator="dilate" radius="3.5"/></filter></defs>';
-
-function bgSVG(mood){
-  if (mood === 'calm')
-    return '<rect width="200" height="200" fill="#EBF3FF"/>'
-      + '<path d="M168 30 a15 15 0 1 0 8 26 a12 12 0 1 1 -8 -26" fill="#FBBF24"/>'
-      + '<text x="30" y="34" font-size="12">✦</text><text x="52" y="56" font-size="8">✦</text><text x="150" y="72" font-size="8">✦</text>';
-  return '<rect width="200" height="200" fill="#FEF3C7"/>'
-    + '<circle cx="168" cy="34" r="15" fill="#FBBF24"/>'
-    + '<g stroke="#FBBF24" stroke-width="3" stroke-linecap="round">'
-    + '<line x1="168" y1="8" x2="168" y2="14"/><line x1="146" y1="12" x2="150" y2="17"/><line x1="190" y1="12" x2="186" y2="17"/><line x1="141" y1="34" x2="147" y2="34"/><line x1="189" y1="34" x2="195" y2="34"/></g>';
-}
-
-function face(mood, ex, ey, gap, mw){
-  const e1 = ex - gap / 2, e2 = ex + gap / 2;
-  const eyes = mood === 'calm'
-    ? '<path d="M' + (e1-5) + ' ' + ey + ' q5 3 10 0" stroke="#1E293B" stroke-width="3" fill="none" stroke-linecap="round"/>'
-      + '<path d="M' + (e2-5) + ' ' + ey + ' q5 3 10 0" stroke="#1E293B" stroke-width="3" fill="none" stroke-linecap="round"/>'
-    : '<path d="M' + (e1-5) + ' ' + (ey+2) + ' q5 -7 10 0" stroke="#1E293B" stroke-width="3" fill="none" stroke-linecap="round"/>'
-      + '<path d="M' + (e2-5) + ' ' + (ey+2) + ' q5 -7 10 0" stroke="#1E293B" stroke-width="3" fill="none" stroke-linecap="round"/>';
-  if (!mw) return eyes;
-  const mouth = '<path d="M' + (ex - mw/2) + ' ' + (ey + 13) + ' q' + (mw/2) + ' ' + (mood==='calm'?5:9) + ' ' + mw + ' 0" stroke="#1E293B" stroke-width="3" fill="none" stroke-linecap="round"/>';
-  return eyes + mouth;
-}
-
-const LIMB = {
-  robot: { sh: [[72,110],[128,110]], hip: [[86,150],[114,150]], armC: '#64748B', legC: '#64748B', hat: [100,46], badge: [84,104], bag: [140,112] },
-  cat:   { sh: [[76,118],[124,118]], hip: [[88,152],[112,152]], armC: '#F59E0B', legC: '#F59E0B', hat: [100,44], badge: [100,122], bag: [136,120] },
-  bird:  { sh: [[70,112],[130,112]], hip: [[91,152],[109,152]], armC: '#38BDF8', legC: '#F59E0B', hat: [100,72], badge: [100,112], bag: [140,114] },
-};
-
-function limbs(subj, act){
-  const L = LIMB[subj], w = subj === 'bird' ? 10 : 8, lw = subj === 'bird' ? 4 : 8;
-  const line = (p, dx, dy, c, sw) => '<line x1="' + p[0] + '" y1="' + p[1] + '" x2="' + (p[0]+dx) + '" y2="' + (p[1]+dy) + '" stroke="' + c + '" stroke-width="' + sw + '" stroke-linecap="round"/>';
-  let arms, legs;
-  if (act === 'run'){
-    arms = line(L.sh[0], -18, 10, L.armC, w) + line(L.sh[1], 20, 12, L.armC, w);
-    legs = line(L.hip[0], -16, 18, L.legC, lw) + line(L.hip[1], 17, 15, L.legC, lw);
-  } else if (act === 'jump'){
-    arms = line(L.sh[0], -14, -20, L.armC, w) + line(L.sh[1], 14, -20, L.armC, w);
-    legs = line(L.hip[0], -3, 13, L.legC, lw) + line(L.hip[1], 3, 13, L.legC, lw);
-  } else if (act === 'wave'){
-    arms = line(L.sh[0], -8, 18, L.armC, w) + line(L.sh[1], 17, -24, L.armC, w)
-      + '<text x="' + (L.sh[1][0]+20) + '" y="' + (L.sh[1][1]-28) + '" font-size="14">✨</text>';
-    legs = line(L.hip[0], -2, 20, L.legC, lw) + line(L.hip[1], 2, 20, L.legC, lw);
-  } else {
-    arms = line(L.sh[0], -8, 18, L.armC, w) + line(L.sh[1], 8, 18, L.armC, w);
-    legs = line(L.hip[0], -2, 20, L.legC, lw) + line(L.hip[1], 2, 20, L.legC, lw);
-  }
-  return arms + legs;
-}
-
-function bodySVG(subj, mood){
-  if (subj === 'robot')
-    return '<rect x="70" y="96" width="60" height="56" rx="10" fill="#94A3B8" stroke="#475569" stroke-width="3"/>'
-      + '<rect x="86" y="112" width="28" height="20" rx="4" fill="#CBD5E1"/>'
-      + '<line x1="100" y1="48" x2="100" y2="38" stroke="#475569" stroke-width="3"/><circle cx="100" cy="34" r="5" fill="#F87171"/>'
-      + '<rect x="72" y="48" width="56" height="44" rx="10" fill="#CBD5E1" stroke="#475569" stroke-width="3"/>'
-      + face(mood, 100, 65, 24, 18);
-  if (subj === 'cat')
-    return '<path d="M128 138 q26 4 22 -20" stroke="#F59E0B" stroke-width="7" fill="none" stroke-linecap="round"/>'
-      + '<ellipse cx="100" cy="128" rx="31" ry="28" fill="#FDBA74" stroke="#EA580C" stroke-width="3"/>'
-      + '<polygon points="76,52 84,28 96,50" fill="#FDBA74" stroke="#EA580C" stroke-width="3" stroke-linejoin="round"/>'
-      + '<polygon points="104,50 116,28 124,52" fill="#FDBA74" stroke="#EA580C" stroke-width="3" stroke-linejoin="round"/>'
-      + '<polygon points="80,48 85,36 91,47" fill="#FDA4AF"/><polygon points="108,47 115,36 120,48" fill="#FDA4AF"/>'
-      + '<circle cx="100" cy="72" r="29" fill="#FDBA74" stroke="#EA580C" stroke-width="3"/>'
-      + '<g stroke="#EA580C" stroke-width="2" stroke-linecap="round"><line x1="66" y1="76" x2="80" y2="78"/><line x1="66" y1="86" x2="80" y2="84"/><line x1="134" y1="76" x2="120" y2="78"/><line x1="134" y1="86" x2="120" y2="84"/></g>'
-      + face(mood, 100, 68, 24, 14);
-  return '<ellipse cx="100" cy="118" rx="36" ry="42" fill="#7DD3FC" stroke="#0284C7" stroke-width="3"/>'
-    + '<ellipse cx="100" cy="132" rx="21" ry="24" fill="#E0F2FE"/>'
-    + '<path d="M64 118 q-16 10 -6 24 q8 -4 14 -12" fill="#38BDF8" stroke="#0284C7" stroke-width="2.5" stroke-linejoin="round"/>'
-    + '<polygon points="91,94 109,94 100,107" fill="#FBBF24" stroke="#D97706" stroke-width="2" stroke-linejoin="round"/>'
-    + face(mood, 100, 86, 26, 0);
-}
-
-function propSVG(subj, prop){
-  const L = LIMB[subj];
-  if (prop === 'hat'){
-    const [x, y] = L.hat;
-    return '<g transform="translate(' + x + ',' + y + ')">'
-      + '<rect x="-25" y="-6" width="50" height="7" rx="3.5" fill="#6B4226"/>'
-      + '<path d="M-16 -6 q0 -18 16 -18 q16 0 16 18 z" fill="#8B5E3C"/>'
-      + '<rect x="-16" y="-11" width="32" height="5" fill="#FBBF24"/></g>';
-  }
-  if (prop === 'badge'){
-    const [x, y] = L.badge;
-    return '<g transform="translate(' + x + ',' + y + ')"><polygon points="0,-9 2.6,-2.9 9,-2.9 3.9,1.3 5.6,7.8 0,4 -5.6,7.8 -3.9,1.3 -9,-2.9 -2.6,-2.9" fill="#FBBF24" stroke="#D97706" stroke-width="2" stroke-linejoin="round"/></g>';
-  }
-  const [x, y] = L.bag;
-  return '<g transform="translate(' + x + ',' + y + ')">'
-    + '<rect x="-10" y="-4" width="22" height="28" rx="6" fill="#34D399" stroke="#059669" stroke-width="2.5"/>'
-    + '<rect x="-4" y="6" width="12" height="9" rx="2" fill="#D1FAE5"/>'
-    + '<path d="M-10 0 q-14 4 -24 2" stroke="#059669" stroke-width="4" fill="none" stroke-linecap="round"/></g>';
-}
+const $=id=>document.getElementById(id);
+const STEPS=[
+  {img:'step0_base.png', chunk:'', label:'기본 그림 — 아직 아무것도 안 더했어요', add:''},
+  {img:'step1_run.png',  chunk:'달리는',            label:'① 행동을 더했어요', add:'달리는 모습'},
+  {img:'step2_hat.png',  chunk:'탐험 모자를 쓰고',  label:'② 소품(모자)을 더했어요', add:'탐험 모자'},
+  {img:'step3_badge.png',chunk:'별 배지를 달고',    label:'③ 소품(배지)을 더했어요', add:'별 배지'},
+  {img:'step4_bag.png',  chunk:'탐험 가방을 메고',  label:'④ 소품(가방)을 더했어요', add:'탐험 가방'},
+  {img:'step5_final.png',chunk:'만화풍의 밝은',      label:'⑤ 스타일로 다듬었어요 — 완성!', add:'만화풍·밝은 분위기'}
+];
+let at=0;
 
 function render(){
-  renderPrompt();
-  $('aiTag').style.display = isVague ? 'block' : 'none';
-
-  // 칩 활성 표시
-  document.querySelectorAll('.opt').forEach(b => {
-    const active = sel[b.dataset.cat] === b.dataset.id;
-    b.classList.toggle('on', active);
-    b.setAttribute('aria-pressed', active ? 'true' : 'false');
-  });
-
-  const svg = $('canvas');
-  if (!sel.subject && !isVague){
-    svg.innerHTML = '<rect width="200" height="200" fill="#FBF7EC"/><text x="100" y="96" text-anchor="middle" font-size="28" fill="#141414">?</text><text x="100" y="126" text-anchor="middle" font-size="12" fill="#6B6B6B">칩을 골라 마스코트를 만들어요</text>';
-    svg.classList.remove('pixel');
-    return;
+  $('pic').src='../assets/mascot/'+STEPS[at].img;
+  $('steplabel').textContent=STEPS[at].label;
+  let parts='';
+  for(let i=1;i<=at;i++) parts+='<span class="chunk">'+STEPS[i].chunk+'</span> ';
+  if(at===0){
+    $('prompt').innerHTML='<span class="base">고양이 마스코트</span><span class="empty">를 그려 줘 — 아래에서 하나씩 더해 봐요</span>';
+  }else{
+    $('prompt').innerHTML=parts+'<span class="base">고양이 마스코트</span>를 그려 줘';
   }
-  const subj = sel.subject || 'robot';
-  const mood = sel.mood || 'bright';
-  const act = sel.action;
-  const pixel = sel.style === 'pixel';
-
-  let charG = limbs(subj, act) + bodySVG(subj, mood) + (sel.prop ? propSVG(subj, sel.prop) : '');
-  let extra = '', wrapOpen = '<g' + (pixel ? ' filter="url(#pxl)"' : '') + '>', wrapClose = '</g>';
-  if (act === 'run'){
-    wrapOpen += '<g transform="rotate(-8 100 120)">'; wrapClose = '</g></g>';
-    extra = '<g stroke="#94A3B8" stroke-width="3" stroke-linecap="round"><line x1="18" y1="96" x2="44" y2="96"/><line x1="12" y1="114" x2="40" y2="114"/><line x1="20" y1="132" x2="46" y2="132"/></g>';
-  } else if (act === 'jump'){
-    wrapOpen += '<g transform="translate(0,-16)">'; wrapClose = '</g></g>';
-    extra = '<ellipse cx="100" cy="182" rx="30" ry="6" fill="rgba(30,41,59,.15)"/><text x="46" y="70" font-size="14">✨</text><text x="146" y="56" font-size="12">⭐</text>';
-  } else {
-    extra = '<ellipse cx="100" cy="178" rx="32" ry="6" fill="rgba(30,41,59,.12)"/>';
+  for(let i=1;i<=5;i++){
+    const b=$('b'+i);
+    b.classList.toggle('done', i<=at);
+    b.querySelector('.tick').textContent = i<=at ? '✓' : '';
+    b.disabled = (i!==at+1);
   }
-  svg.innerHTML = PIXEL_FILTER + bgSVG(mood) + extra + wrapOpen + charG + wrapClose;
-  svg.classList.toggle('pixel', pixel);
+}
+function flash(txt){
+  const f=$('flash'); f.innerHTML='이번에 더한 것 → <b>'+txt+'</b>'; f.classList.add('show');
+  clearTimeout(flash._t); flash._t=setTimeout(()=>f.classList.remove('show'),2200);
+}
+function addStep(n){
+  if(n!==at+1) return;
+  at=n; render(); flash(STEPS[n].add);
+}
+function reset(){ at=0; render(); $('flash').classList.remove('show'); }
+function vague(){
+  $('pic').src='../assets/mascot/vague.png';
+  $('steplabel').textContent='막연한 요청의 결과 — AI가 마음대로 정했어요';
+  $('prompt').innerHTML='<span class="base">멋진 마스코트</span> 그려 줘 <span class="empty">(무엇을·어떻게가 없어요)</span>';
+  const f=$('flash'); f.innerHTML='구체적인 말이 없으면 <b>이렇게 엉뚱해져요</b>'; f.classList.add('show');
+  clearTimeout(flash._t); flash._t=setTimeout(()=>f.classList.remove('show'),2600);
+  for(let i=1;i<=5;i++){ const b=$('b'+i); b.classList.remove('done'); b.querySelector('.tick').textContent=''; b.disabled=(i!==1); }
+  at=0;
 }
 render();
 </script>
