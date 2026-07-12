@@ -175,6 +175,30 @@
   .dl:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
   .dl:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
   .dl .arw{margin-left:auto}
+
+  /* 탐지 가능 물품 리스트 */
+  .itemlist{margin-top:26px;background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:20px}
+  .itemlist h2{font-size:17px;font-weight:900;letter-spacing:-.02em;margin-bottom:4px}
+  .itemlist .sub{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:14px}
+  .itemgrp{margin-bottom:14px}
+  .itemgrp:last-child{margin-bottom:0}
+  .itemgrp .gl{font-size:12px;font-weight:900;color:#fff;background:var(--ink);border-radius:7px;padding:2px 10px;display:inline-block;margin-bottom:8px}
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+  .chips span{font-size:13px;font-weight:800;background:var(--point-soft);border:2px solid var(--ink);border-radius:999px;padding:4px 12px}
+  /* 한계 한 마디 */
+  .limitcard{margin-top:26px;background:var(--ink);color:var(--paper);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:20px}
+  .limitcard h2{font-size:17px;font-weight:900;letter-spacing:-.02em;margin-bottom:4px;color:var(--paper)}
+  .limitcard .sub{font-size:13px;color:#C9C4B8;font-weight:600;margin-bottom:14px}
+  .limitrow{display:flex;gap:10px;flex-wrap:wrap}
+  .limitrow input{flex:1;min-width:180px;font-family:inherit;font-size:15px;font-weight:600;color:var(--ink);
+    background:var(--paper);border:2.5px solid var(--paper);border-radius:12px;padding:13px 15px;min-height:50px}
+  .limitrow input:focus-visible{outline:3px solid var(--point);outline-offset:2px}
+  .limitrow .lbtn{cursor:pointer;font-family:inherit;font-size:15px;font-weight:900;color:var(--ink);background:var(--point);
+    border:2.5px solid var(--paper);border-radius:12px;padding:13px 20px;min-height:50px;transition:transform .1s}
+  .limitrow .lbtn:active{transform:scale(.97)}
+  .limitrow .lbtn:focus-visible{outline:3px solid var(--paper);outline-offset:2px}
+  .limithint{font-size:12.5px;color:#C9C4B8;font-weight:600;margin-top:12px;line-height:1.55}
+  .limitsaved{font-size:14px;font-weight:800;color:#7CF0B8;margin-top:12px;min-height:20px}
 </style>
 </head>
 <body>
@@ -214,7 +238,7 @@
         아래 버튼을 누르면 카메라가 켜져요
       </div>
     </div>
-    <p class="caption">엔트리 사물 인식처럼 <b>한 번에 3개까지만</b> 찾아요.</p>
+    <p class="caption">잘 보이는 물건을 <b>한 번에 5개까지</b> 찾아요. (엔트리는 3개까지)</p>
     <p class="stateline" id="stateline">준비되면 시작 버튼을 눌러요</p>
     <div class="btnrow">
       <button class="btn" id="btnStart">
@@ -287,7 +311,26 @@
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--amber)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/></svg>
     <span><b>관찰 포인트</b> — 물건을 <b>멀리</b> 두거나, <b>손으로 가리거나</b>, <b>불을 어둡게</b> 하면 박스가 사라지나요? AI가 언제 잘 못 찾는지 관찰해요.</span>
   </div>
-  <div class="entdl">
+  
+  <div class="itemlist">
+    <h2>🔎 이런 물건을 찾을 수 있어요</h2>
+    <p class="sub">아래 물건을 카메라에 비추면 AI가 이름과 네모 박스로 짚어 줘요. 여러 개를 함께 놓아도 좋아요.</p>
+    <div class="itemgrp"><span class="gl">학용품·책상</span><div class="chips"><span>컵</span><span>병</span><span>유리컵</span><span>책</span><span>가위</span><span>휴대전화</span><span>키보드</span><span>마우스</span><span>노트북</span><span>모니터</span><span>리모컨</span><span>시계</span><span>가방</span><span>손가방</span><span>우산</span><span>꽃병</span><span>화분</span><span>책상</span><span>의자</span><span>곰인형</span></div></div>
+    <div class="itemgrp"><span class="gl">급식·음식</span><div class="chips"><span>사과</span><span>바나나</span><span>오렌지</span><span>샌드위치</span><span>피자</span><span>도넛</span><span>케이크</span><span>브로콜리</span><span>당근</span><span>핫도그</span><span>공</span><span>그릇</span><span>숟가락</span><span>포크</span><span>칼</span></div></div>
+    <div class="itemgrp"><span class="gl">생활·기타</span><div class="chips"><span>칫솔</span><span>드라이어</span><span>전자레인지</span><span>오븐</span><span>토스터</span><span>냉장고</span><span>싱크대</span><span>넥타이</span><span>여행가방</span><span>새</span><span>고양이</span><span>강아지</span></div></div>
+  </div>
+
+  <div class="limitcard">
+    <h2>✍️ 객체 탐지의 한계, 한 마디로 적어보기</h2>
+    <p class="sub">직접 실험하며 느낀 AI 객체 탐지의 한계를 한 문장으로 적어 봐요.</p>
+    <div class="limitrow">
+      <input id="limitInput" type="text" maxlength="120" placeholder="예: 물건이 손에 가려지면 AI가 잘 못 찾는다." aria-label="객체 탐지의 한계 한 문장">
+      <button class="lbtn" id="limitBtn" onclick="saveLimit()">적기</button>
+    </div>
+    <p class="limitsaved" id="limitSaved" role="status" aria-live="polite"></p>
+    <p class="limithint">💡 힌트 — 멀리 있을 때, 가려질 때, 어두울 때, 처음 보는 물건일 때, 겹쳐 있을 때 어땠나요?</p>
+  </div>
+<div class="entdl">
     <a class="dl" href="../assets/entry/object-box.ent" download="(중급23차시)찰칵! AI 카메라의 네모 박스.ent"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 19h16" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>엔트리 파일 내려받기 (AI 카메라 네모 박스)<span class="arw" aria-hidden="true">↓</span></a>
   </div>
 
@@ -310,12 +353,19 @@ const video = $('video'), canvas = $('canvas'), ctx = canvas.getContext('2d');
 
 // COCO 라벨 → 한글 (매핑에 없는 라벨은 표시하지 않아요)
 const KO_LABEL = {
-  cup:'컵', bottle:'병', book:'책', scissors:'가위', 'cell phone':'휴대전화',
-  keyboard:'키보드', mouse:'마우스', laptop:'노트북', tv:'모니터', remote:'리모컨',
-  clock:'시계', chair:'의자', backpack:'가방', umbrella:'우산', 'teddy bear':'인형',
-  'sports ball':'공', apple:'사과', banana:'바나나', orange:'오렌지', bowl:'그릇',
-  spoon:'숟가락', fork:'포크', vase:'꽃병', toothbrush:'칫솔',
-  cat:'고양이', dog:'강아지', person:'사람' // person은 박스를 그리지 않아요
+  // 학용품·책상
+  cup:'컵', bottle:'병', 'wine glass':'유리컵', book:'책', scissors:'가위', 'cell phone':'휴대전화',
+  keyboard:'키보드', mouse:'마우스', laptop:'노트북', tv:'모니터', remote:'리모컨', clock:'시계',
+  backpack:'가방', handbag:'손가방', suitcase:'여행가방', umbrella:'우산', tie:'넥타이', 'teddy bear':'곰인형',
+  vase:'꽃병', 'potted plant':'화분', 'dining table':'책상', chair:'의자',
+  // 급식·음식
+  'sports ball':'공', apple:'사과', banana:'바나나', orange:'오렌지', sandwich:'샌드위치', pizza:'피자',
+  donut:'도넛', cake:'케이크', broccoli:'브로콜리', carrot:'당근', 'hot dog':'핫도그',
+  bowl:'그릇', spoon:'숟가락', fork:'포크', knife:'칼',
+  // 생활·기타
+  toothbrush:'칫솔', 'hair drier':'드라이어', microwave:'전자레인지', oven:'오븐', toaster:'토스터',
+  refrigerator:'냉장고', sink:'싱크대', bird:'새', cat:'고양이', dog:'강아지',
+  person:'사람' // person은 박스를 그리지 않아요
 };
 
 let detector = null, stream = null, running = false, raf = 0;
@@ -327,7 +377,7 @@ $('btnStart').onclick = async function () {
   overlay('<div class="spinner"></div><span>카메라를 켜고 있어요…</span>');
   try {
     stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment', width: { ideal: 640 } }, audio: false
+      video: { facingMode: 'environment', width: { ideal: 960 }, height: { ideal: 720 } }, audio: false
     });
   } catch (e) { toSim('카메라를 쓸 수 없어서 연습 모드로 바꿨어요.'); return; }
   video.srcObject = stream;
@@ -350,7 +400,7 @@ function stopCam(msg) {
   running = false; cancelAnimationFrame(raf);
   releaseStream();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  setCount(0);
+  setCount(0); tracks = [];
   $('btnStart').innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="3" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="2.2"/></svg> 카메라 켜고 찾기 시작';
   $('btnStart').classList.remove('stop');
   $('stateline').textContent = msg || '준비되면 시작 버튼을 눌러요';
@@ -374,10 +424,10 @@ async function loadDetector() {
       '../assets/mediapipe/wasm');
     const make = delegate => ObjectDetector.createFromOptions(vision, {
       baseOptions: {
-        modelAssetPath: '../assets/mediapipe/efficientdet_lite0.tflite',
+        modelAssetPath: '../assets/mediapipe/efficientdet_lite2.tflite',
         delegate
       },
-      runningMode: 'VIDEO', scoreThreshold: 0.4, maxResults: 8
+      runningMode: 'VIDEO', scoreThreshold: 0.35, maxResults: 25
     });
     try { return await make('GPU'); } catch (e) { return await make('CPU'); }
   })();
@@ -385,15 +435,25 @@ async function loadDetector() {
   return Promise.race([job, timeout]);
 }
 
-// ── 탐지 루프 (100ms 스로틀) ──
-function loop(now) {
+// ── 탐지 루프: requestVideoFrameCallback 우선(효율↑), 없으면 rAF 스로틀 ──
+const hasRVFC = 'requestVideoFrameCallback' in HTMLVideoElement.prototype;
+function pump() {
   if (!running) return;
-  if (video.readyState >= 2 && video.currentTime !== lastVideoTime && now - lastRun > 100) {
-    lastVideoTime = video.currentTime; lastRun = now;
+  const now = performance.now();
+  if (video.readyState >= 2 && now - lastRun > 90) {
+    lastRun = now;
     try { render(detector.detectForVideo(video, now).detections || []); } catch (e) {}
   }
-  raf = requestAnimationFrame(loop);
+  schedule();
 }
+function schedule() {
+  if (!running) return;
+  if (hasRVFC) video.requestVideoFrameCallback(() => pump());
+  else raf = requestAnimationFrame(() => pump());
+}
+function loop() { schedule(); }
+
+let tracks = []; // 스무딩용 이전 프레임 박스
 
 function render(detections) {
   if (canvas.width !== video.videoWidth) { canvas.width = video.videoWidth; canvas.height = video.videoHeight; }
@@ -403,41 +463,87 @@ function render(detections) {
   const found = [];
   for (const d of detections) {
     const c = d.categories && d.categories[0]; if (!c) continue;
-    if (c.categoryName === 'person') { personSeen = true; continue; } // 사람은 박스 없이 안내만
+    if (c.categoryName === 'person') { personSeen = true; continue; }
     if (!KO_LABEL[c.categoryName]) continue;
-    found.push({ box: d.boundingBox, name: KO_LABEL[c.categoryName], score: c.score });
+    const b = d.boundingBox;
+    found.push({ name: KO_LABEL[c.categoryName], score: c.score,
+                 x: b.originX, y: b.originY, w: b.width, h: b.height });
   }
   found.sort((a, b) => b.score - a.score);
-  const top3 = found.slice(0, 3); // 엔트리처럼 최대 3개만
+  const top = found.slice(0, 5); // 잘 보이는 것 최대 5개
 
-  for (const f of top3) drawBox(f);
-  setCount(top3.length);
+  // 이전 박스와 이름+겹침으로 매칭해 위치를 부드럽게 이어 줌(떨림 감소)
+  const A = 0.45; // 스무딩 계수
+  const next = top.map(t => {
+    let best = null, bestIoU = 0;
+    for (const pr of tracks) {
+      if (pr.name !== t.name) continue;
+      const i = iou(pr, t); if (i > bestIoU) { bestIoU = i; best = pr; }
+    }
+    if (best && bestIoU > 0.2) {
+      return { name: t.name, score: t.score,
+        x: best.x + (t.x - best.x) * A, y: best.y + (t.y - best.y) * A,
+        w: best.w + (t.w - best.w) * A, h: best.h + (t.h - best.h) * A };
+    }
+    return t;
+  });
+  tracks = next;
+
+  for (const f of next) drawBox(f);
+  setCount(next.length);
   if (personSeen) showToast();
-  $('stateline').textContent = top3.length
+  $('stateline').textContent = next.length
     ? '박스가 위치를 짚고 있어요! 물건을 옮기면 따라와요'
     : '아직 물건을 못 찾았어요. 컵이나 책을 가까이 비춰 봐요';
 }
 
+function iou(a, b) {
+  const x1 = Math.max(a.x, b.x), y1 = Math.max(a.y, b.y);
+  const x2 = Math.min(a.x + a.w, b.x + b.w), y2 = Math.min(a.y + a.h, b.y + b.h);
+  const iw = Math.max(0, x2 - x1), ih = Math.max(0, y2 - y1), inter = iw * ih;
+  const uni = a.w * a.h + b.w * b.h - inter;
+  return uni > 0 ? inter / uni : 0;
+}
+
+function rrect(x, y, w, h, r) {
+  r = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
 function drawBox(f) {
-  const { originX: x, originY: y, width: w, height: h } = f.box;
-  // 탐지 박스
-  ctx.strokeStyle = '#12B76A'; ctx.lineWidth = 3;
-  ctx.strokeRect(x, y, w, h);
-  // 네 모서리 브래킷 강조
-  const bLen = Math.min(18, w * 0.18, h * 0.18);
-  ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.5;
+  const x = f.x, y = f.y, w = f.w, h = f.h, r = 14;
+  ctx.save();
+  // 반투명 채움 + 둥근 테두리
+  rrect(x, y, w, h, r);
+  ctx.fillStyle = 'rgba(18,183,106,0.12)'; ctx.fill();
+  ctx.lineJoin = 'round';
+  ctx.strokeStyle = '#0B0F0D'; ctx.lineWidth = 5; ctx.stroke(); // 잉크 외곽(대비)
+  ctx.strokeStyle = '#12B76A'; ctx.lineWidth = 3; ctx.stroke();
+  // 모서리 브래킷(뷰파인더 느낌)
+  const bLen = Math.min(20, w * 0.2, h * 0.2);
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.lineCap = 'round';
   [[x,y],[x+w,y],[x,y+h],[x+w,y+h]].forEach(([cx,cy],i)=>{
     const dx = i%2===0 ? 1 : -1, dy = i<2 ? 1 : -1;
     ctx.beginPath(); ctx.moveTo(cx+dx*bLen,cy); ctx.lineTo(cx,cy); ctx.lineTo(cx,cy+dy*bLen); ctx.stroke();
   });
-  // HUD 라벨 (모노스페이스 숫자)
-  const pct = String(Math.round(f.score * 100)).padStart(2,' ');
-  const label = f.name + ' ' + pct + '%';
-  ctx.font = 'bold 14px "Courier New",Consolas,monospace';
-  const tw = ctx.measureText(label).width + 12;
-  const ly = Math.max(y - 22, 0);
-  ctx.fillStyle = 'rgba(15,26,18,0.88)'; ctx.fillRect(x, ly, tw, 22);
-  ctx.fillStyle = '#12B76A'; ctx.fillText(label, x + 6, ly + 16);
+  // 알약 라벨 (이름 + 신뢰도%)
+  const label = f.name + '  ' + Math.round(f.score * 100) + '%';
+  ctx.font = '900 15px -apple-system,"Segoe UI",sans-serif';
+  const pad = 10, tw = ctx.measureText(label).width, bw = tw + pad * 2, bh = 26;
+  let ly = y - bh - 4; if (ly < 2) ly = y + 4;
+  let lx = x; if (lx + bw > canvas.width) lx = canvas.width - bw - 2; if (lx < 2) lx = 2;
+  rrect(lx, ly, bw, bh, 9);
+  ctx.fillStyle = '#12B76A'; ctx.fill();
+  ctx.strokeStyle = '#0B0F0D'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.fillStyle = '#062015'; ctx.textBaseline = 'middle';
+  ctx.fillText(label, lx + pad, ly + bh / 2 + 1);
+  ctx.restore();
 }
 
 function setCount(n) {
@@ -498,5 +604,19 @@ document.addEventListener('visibilitychange', () => {
   if (document.hidden && running) stopCam('화면을 벗어나서 카메라를 껐어요');
 });
 </script>
+
+<script>
+(function(){
+  window.saveLimit=function(){
+    var v=document.getElementById('limitInput').value.trim();
+    var out=document.getElementById('limitSaved');
+    if(!v){ out.textContent='한 문장을 먼저 적어 주세요.'; return; }
+    out.textContent='✓ 적었어요: “'+v+'”  — 친구와 이야기 나눠 봐요!';
+  };
+  var inp=document.getElementById('limitInput');
+  if(inp) inp.addEventListener('keydown',function(e){ if(e.key==='Enter') saveLimit(); });
+})();
+</script>
+
 </body>
 </html>
