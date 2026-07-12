@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 편향 탐정 — AI 탐험대 24</title>
+<style>
+  :root {
+    --sky: #5B9CF6; --sky-light: #EBF3FF;
+    --mint: #34D399; --mint-light: #D1FAE5;
+    --amber: #FBBF24; --amber-light: #FEF3C7;
+    --coral: #F87171; --coral-light: #FEE2E2;
+    --purple: #A78BFA; --purple-light: #EDE9FE;
+    --bg: #F0F7FF; --card: #FFFFFF;
+    --text: #1E293B; --text-muted: #64748B; --border: #E2E8F0;
+    --radius: 20px; --radius-sm: 12px;
+    --shadow: 0 4px 20px rgba(91,156,246,0.12);
+    --shadow-lg: 0 8px 40px rgba(91,156,246,0.2);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.6; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 50px; }
+  header { text-align: center; margin-bottom: 14px; }
+  .chip { display: inline-block; background: var(--amber); color: white; font-size: 13px; font-weight: 700; padding: 4px 14px; border-radius: 999px; margin-bottom: 8px; }
+  h1 { font-size: 24px; line-height: 1.3; }
+  .sub { color: var(--text-muted); font-size: 15px; margin-top: 4px; }
+  .safe { background: var(--amber-light); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 13.5px; text-align: center; margin: 12px 0; }
+
+  .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px 20px; margin-top: 16px; }
+  .card h2 { font-size: 18px; margin-bottom: 4px; text-align: center; }
+  .card .desc { font-size: 14px; color: var(--text-muted); text-align: center; }
+  .vcap { font-size: 12.5px; color: var(--text-muted); text-align: center; margin-top: 8px; }
+
+  .hidden { display: none; }
+  .reveal { animation: rise .45s ease; }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .reveal { animation: none; } * { transition: none !important; } }
+
+  /* 도넛 게이지 */
+  .donutbox { display: flex; align-items: center; justify-content: center; gap: 18px; margin: 12px 0 4px; flex-wrap: wrap; }
+  .donut { position: relative; width: 150px; height: 150px; flex: 0 0 auto; }
+  .donut svg { transform: rotate(-90deg); }
+  .donut .track { fill: none; stroke: var(--amber-light); stroke-width: 15; }
+  .donut .val { fill: none; stroke: var(--amber); stroke-width: 15; stroke-linecap: round; stroke-dasharray: 339.3; stroke-dashoffset: 339.3; transition: stroke-dashoffset .8s ease; }
+  .donut .num { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; font-size: 32px; line-height: 1.1; }
+  .donut .num small { font-size: 12px; color: var(--text-muted); font-weight: 700; }
+  .adcopy { max-width: 240px; background: var(--sky-light); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 14.5px; }
+  .adcopy b { font-size: 16px; }
+
+  .btn { display: block; width: 100%; border: 0; cursor: pointer; font-family: inherit; font-size: 16px; font-weight: 700; color: white; background: var(--amber); padding: 13px 10px; border-radius: var(--radius-sm); min-height: 48px; margin-top: 14px; }
+  .btn:active { transform: scale(.97); }
+  .btn:disabled { background: var(--border); color: var(--text-muted); cursor: default; }
+
+  /* 막대 차트 */
+  .chart { margin-top: 12px; }
+  .row { display: grid; grid-template-columns: 118px 1fr 44px; align-items: center; gap: 8px; margin: 9px 0; font-size: 13.5px; }
+  .row .lab { text-align: right; line-height: 1.3; font-weight: 600; }
+  .track2 { background: #F1F5F9; border-radius: 999px; height: 20px; overflow: hidden; }
+  .fill { height: 100%; width: 0%; border-radius: 999px; background: var(--amber); transition: width .7s ease, background .4s; }
+  .fill.mint { background: var(--mint); } .fill.coral { background: var(--coral); }
+  .row .pct { font-weight: 800; font-variant-numeric: tabular-nums; }
+  .row.low .lab, .row.low .pct { color: var(--coral); }
+  .twist { background: var(--coral-light); border-radius: var(--radius-sm); padding: 9px 14px; font-size: 14.5px; text-align: center; font-weight: 700; margin-top: 12px; }
+
+  /* 원인 카드 */
+  .causes { display: grid; gap: 10px; margin-top: 12px; }
+  .cause { border: 2px solid var(--border); background: white; border-radius: var(--radius-sm); padding: 12px 14px; font-size: 15px; font-weight: 700; cursor: pointer; text-align: left; font-family: inherit; min-height: 48px; }
+  .cause:active { transform: scale(.98); }
+  .cause.no { border-color: var(--coral); background: var(--coral-light); animation: shake .4s; }
+  .cause.yes { border-color: var(--mint); background: var(--mint-light); }
+  @keyframes shake { 0%,100%{transform:none} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+  .feedback { font-size: 14px; margin-top: 10px; border-radius: var(--radius-sm); padding: 9px 13px; display: none; }
+  .feedback.show { display: block; }
+  .feedback.bad { background: var(--coral-light); }
+  .feedback.good { background: var(--mint-light); font-weight: 700; }
+
+  /* 데이터 접시 */
+  .plates { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
+  @media (max-width: 560px) { .plates { grid-template-columns: repeat(2, 1fr); } }
+  .plate { background: var(--sky-light); border-radius: var(--radius-sm); padding: 8px 6px 10px; text-align: center; position: relative; }
+  .plate .pl-name { font-size: 12.5px; font-weight: 700; line-height: 1.3; }
+  .plate .grains { min-height: 52px; display: flex; flex-wrap: wrap; gap: 3px; justify-content: center; align-content: flex-start; padding: 6px 2px 2px; }
+  .grain { width: 9px; height: 9px; border-radius: 50%; background: var(--amber); box-shadow: 0 1px 2px rgba(0,0,0,.15); }
+  .grain.new { animation: drop .35s ease; }
+  @keyframes drop { from { transform: translateY(-14px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .plate .cnt { font-size: 11.5px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .plate .warn { position: absolute; top: -7px; right: -5px; background: var(--coral); color: white; font-size: 12px; font-weight: 800; width: 22px; height: 22px; border-radius: 50%; line-height: 22px; }
+  .refchip { text-align: center; font-size: 12.5px; color: var(--text-muted); margin-top: 8px; }
+  .limit { background: var(--purple-light); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 14.5px; margin-top: 12px; display: none; }
+  .limit.show { display: block; animation: rise .45s ease; }
+
+  .obs { background: white; border-radius: var(--radius-sm); box-shadow: var(--shadow); padding: 12px 16px; font-size: 14.5px; margin-top: 16px; }
+  footer { text-align: center; margin-top: 26px; font-size: 14px; }
+  footer a { color: var(--sky); text-decoration: none; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="chip">AI 탐험대 · 24 AI 편향 탐정</span>
+  <h1>⚖️ 점수 하나에 숨은 비밀</h1>
+  <p class="sub">전체 점수가 좋아 보이는 AI, 정말 모두에게 공정할까요? 직접 파헤쳐 봐요.</p>
+</header>
+<p class="safe">🧪 이 체험의 점수는 전부 수업용 가상 데이터예요. 입력하거나 저장되는 정보는 없어요.</p>
+
+<!-- 1. 전체 점수 -->
+<div class="card">
+  <h2>🎤 우리 학교 음성 인식 AI</h2>
+  <p class="desc">AI 회사가 자랑하는 전체 점수예요.</p>
+  <div class="donutbox">
+    <div class="donut">
+      <svg width="150" height="150" viewBox="0 0 120 120">
+        <circle class="track" cx="60" cy="60" r="54"></circle>
+        <circle class="val" id="donutVal" cx="60" cy="60" r="54"></circle>
+      </svg>
+      <div class="num"><span id="donutNum">0%</span><small>전체 정확도</small></div>
+    </div>
+    <div class="adcopy">📢 <b>"전체 정확도 82%!"</b><br>열 번 중 여덟 번은 알아들어요. 문제없어 보이죠?</div>
+  </div>
+  <p class="vcap">🧪 가상 데이터예요</p>
+  <button class="btn" id="btnSplit">🔍 상황별로 나누어 보기</button>
+</div>
+
+<!-- 2. 상황별 차트 -->
+<div class="card hidden" id="secChart">
+  <h2>📊 상황별 기록</h2>
+  <p class="desc">같은 AI인데, 누구의 말인지·어디인지에 따라 점수가 달라요.</p>
+  <div class="chart" id="chart"></div>
+  <p class="twist">🚨 전체 점수에 가려져 있던 편향이 보여요!</p>
+  <p class="vcap">🧪 가상 데이터예요</p>
+</div>
+
+<!-- 3. 원인 추리 -->
+<div class="card hidden" id="secCause">
+  <h2>🕵️ 왜 이런 일이 생겼을까요?</h2>
+  <p class="desc">원인이라고 생각하는 카드를 골라 봐요.</p>
+  <div class="causes">
+    <button class="cause" data-k="blame">🗣️ 도윤이 말투 탓이에요</button>
+    <button class="cause" data-k="data">📉 데이터가 부족하고 치우쳤어요</button>
+    <button class="cause" data-k="hate">😠 AI가 미워해서요</button>
+  </div>
+  <p class="feedback" id="causeFb"></p>
+</div>
+
+<!-- 4. 해결 시뮬레이션 -->
+<div class="card hidden" id="secFix">
+  <h2>🍽️ 데이터 급식판 — 골고루 담아 봐요</h2>
+  <p class="desc">부족한 접시에 데이터를 더하면 위의 차트와 전체 점수가 실시간으로 바뀌어요.</p>
+  <div class="plates" id="plates"></div>
+  <p class="refchip">참고: 조용한 교실·표준 말투 데이터는 이미 5,000개나 있어요 (치우침!)</p>
+  <button class="btn" id="btnAdd">➕ 데이터 골고루 추가</button>
+  <p class="feedback" id="fixFb"></p>
+  <div class="limit" id="limitMsg">🧭 <b>90%에서 멈췄어요.</b> 데이터만으로 100%는 안 돼요 — 그래서 AI가 못 알아들을 때를 위한 <b>버튼 입력 같은 대체 방법</b>과 <b>사람의 확인</b>이 함께 필요해요.</div>
+  <p class="vcap">🧪 가상 데이터예요</p>
+</div>
+
+<div class="obs">🔍 <b>관찰 포인트</b> — AI가 공정한지 보려면 전체 평균이 아니라 <b>상황별로 나눠 봐야 해요</b>. 그리고 편향은 사람 탓이 아니라 <b>데이터의 부족·치우침</b> 때문이에요.</div>
+
+<footer><a href="../">← AI 탐험대 체험 전체 목록</a></footer>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+// ── 가상 데이터 (설계서 CASE1 활용) ──
+const SITS = [
+  { key:'quiet',  label:'조용한 교실',   acc:95, w:.56, addable:false },
+  { key:'adult',  label:'어른 말투',     acc:88, w:.20, addable:true, plate:'👔 다양한 어른', data:600,
+    steps:[88,89,89,90,90] },
+  { key:'child',  label:'어린이 말투',   acc:55, w:.08, addable:true, plate:'🧒 어린이 말투', data:400,
+    steps:[55,70,81,88,90] },
+  { key:'accent', label:'지역 말투',     acc:50, w:.08, addable:true, plate:'🗣️ 지역 말투', data:300,
+    steps:[50,66,79,87,90] },
+  { key:'noise',  label:'시끄러운 교실', acc:40, w:.08, addable:true, plate:'🔊 소음 환경', data:250,
+    steps:[40,58,73,84,90] },
+];
+const MAX_TAP = 4;
+let taps = 0;
+
+// ── 도넛 게이지 ──
+const CIRC = 339.3;
+let shownNum = 0, animId = 0;
+function overall(){ return Math.round(SITS.reduce((s,x)=>s+x.acc*x.w,0)); }
+function setDonut(v){
+  $('donutVal').style.strokeDashoffset = CIRC*(1-v/100);
+  const from = shownNum, t0 = performance.now(), me = ++animId;
+  (function tick(t){
+    if(me !== animId) return;
+    const p = Math.min(1,(t-t0)/700);
+    shownNum = Math.round(from+(v-from)*p);
+    $('donutNum').textContent = shownNum+'%';
+    if(p<1) requestAnimationFrame(tick);
+  })(t0);
+}
+setTimeout(()=>setDonut(overall()), 300);
+
+// ── 막대 차트 ──
+function barClass(a){ return a>=85 ? 'mint' : a>=60 ? '' : 'coral'; }
+function buildChart(){
+  $('chart').innerHTML = SITS.map(s=>
+    `<div class="row${s.acc<60?' low':''}" id="row-${s.key}">
+       <span class="lab">${s.label}</span>
+       <div class="track2"><div class="fill ${barClass(s.acc)}" id="fill-${s.key}"></div></div>
+       <span class="pct" id="pct-${s.key}">${s.acc}%</span>
+     </div>`).join('');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    SITS.forEach(s=>{ $('fill-'+s.key).style.width = s.acc+'%'; });
+  }));
+}
+function updateChart(){
+  SITS.forEach(s=>{
+    const f = $('fill-'+s.key);
+    f.style.width = s.acc+'%';
+    f.className = 'fill '+barClass(s.acc);
+    $('pct-'+s.key).textContent = s.acc+'%';
+    $('row-'+s.key).classList.toggle('low', s.acc<60);
+  });
+}
+
+// ── 1→2. 상황별로 나누어 보기 ──
+$('btnSplit').onclick = function(){
+  this.disabled = true;
+  show('secChart'); buildChart();
+  setTimeout(()=>show('secCause'), 900);
+};
+function show(id){ const el=$(id); el.classList.remove('hidden'); el.classList.add('reveal'); }
+
+// ── 3. 원인 추리 ──
+const CAUSE_FB = {
+  blame:{ ok:false, msg:'❌ 사람 탓이 아니에요! AI가 그런 말투 데이터를 충분히 배우지 못한 거예요.' },
+  hate:{ ok:false, msg:'❌ AI는 미워하는 마음이 없어요. AI가 배운 데이터가 문제예요.' },
+  data:{ ok:true,  msg:'✅ 정답! 조용한 곳의 어른 목소리만 잔뜩 배워서 데이터가 치우쳤어요. 그럼 데이터를 골고루 더해 볼까요?' },
+};
+let solved = false;
+document.querySelectorAll('.cause').forEach(btn=>{
+  btn.onclick = ()=>{
+    if(solved) return;
+    const r = CAUSE_FB[btn.dataset.k];
+    const fb = $('causeFb');
+    fb.textContent = r.msg;
+    fb.className = 'feedback show ' + (r.ok?'good':'bad');
+    btn.classList.remove('no'); void btn.offsetWidth;
+    btn.classList.add(r.ok?'yes':'no');
+    if(r.ok){ solved = true; setTimeout(()=>{ show('secFix'); buildPlates(); }, 500); }
+  };
+});
+
+// ── 4. 데이터 접시 + 시뮬레이션 ──
+function buildPlates(){
+  $('plates').innerHTML = SITS.filter(s=>s.addable).map(s=>
+    `<div class="plate" id="plate-${s.key}">
+       ${s.data<500?'<span class="warn">!</span>':''}
+       <div class="pl-name">${s.plate}</div>
+       <div class="grains" id="gr-${s.key}"></div>
+       <div class="cnt" id="cnt-${s.key}"></div>
+     </div>`).join('');
+  SITS.filter(s=>s.addable).forEach(s=>renderGrains(s,0));
+}
+function renderGrains(s, added){
+  const box = $('gr-'+s.key);
+  const total = Math.min(18, Math.round(s.data/125));
+  while(box.children.length < total){
+    const g = document.createElement('span');
+    g.className = 'grain' + (added?' new':'');
+    box.appendChild(g);
+  }
+  $('cnt-'+s.key).textContent = s.data.toLocaleString()+'개';
+  if(s.data>=500){ const w=$('plate-'+s.key).querySelector('.warn'); if(w) w.remove(); }
+}
+$('btnAdd').onclick = function(){
+  if(taps>=MAX_TAP) return;
+  taps++;
+  SITS.forEach(s=>{
+    if(!s.addable) return;
+    s.data += 500;
+    s.acc = s.steps[taps];
+    renderGrains(s, 1);
+  });
+  updateChart(); setDonut(overall());
+  const fb = $('fixFb');
+  if(taps < MAX_TAP){
+    fb.textContent = `📈 부족했던 상황의 점수가 올랐어요! 전체 점수도 ${overall()}%로 다시 계산됐어요. (${taps}/${MAX_TAP})`;
+    fb.className = 'feedback show good';
+  }else{
+    fb.textContent = '🎉 도윤이의 말투는 그대로인데 AI가 좋아졌어요. 범인은 사람이 아니라 데이터였어요!';
+    fb.className = 'feedback show good';
+    $('limitMsg').classList.add('show');
+    this.disabled = true; this.textContent = '이제 충분해요!';
+  }
+};
+</script>
+</body>
+</html>

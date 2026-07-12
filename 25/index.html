@@ -1,0 +1,2703 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 탐험가 라이선스 발급 미션</title>
+<style>
+  :root {
+    --sky: #5B9CF6;
+    --sky-light: #EBF3FF;
+    --mint: #34D399;
+    --mint-light: #D1FAE5;
+    --amber: #FBBF24;
+    --amber-light: #FEF3C7;
+    --coral: #F87171;
+    --coral-light: #FEE2E2;
+    --purple: #A78BFA;
+    --purple-light: #EDE9FE;
+    --bg: #F0F7FF;
+    --card: #FFFFFF;
+    --text: #1E293B;
+    --text-muted: #64748B;
+    --border: #E2E8F0;
+    --radius: 20px;
+    --radius-sm: 12px;
+    --shadow: 0 4px 20px rgba(91,156,246,0.12);
+    --shadow-lg: 0 8px 40px rgba(91,156,246,0.2);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: white;
+    border-bottom: 2px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+  }
+  .progress-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .step-circle {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700;
+    background: var(--border);
+    color: var(--text-muted);
+    transition: all 0.3s;
+  }
+  .step-circle.active { background: var(--sky); color: white; }
+  .step-circle.done { background: var(--mint); color: white; }
+  .step-label { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+  .step-label.active { color: var(--sky); }
+  .step-label.done { color: var(--mint); }
+  .step-arrow { color: var(--border); font-size: 16px; }
+
+  /* ── MAIN WRAPPER ── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 32px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+  .card-title {
+    font-size: 26px; font-weight: 800;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+  .card-sub {
+    color: var(--text-muted);
+    font-size: 16px;
+    margin-bottom: 24px;
+  }
+
+  /* ── BADGES ── */
+  .badges-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 24px 0;
+  }
+  .badge-item {
+    text-align: center;
+    padding: 16px 10px;
+    border-radius: var(--radius-sm);
+    background: #F8FAFC;
+    border: 2px solid var(--border);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+  }
+  .badge-item.locked { filter: grayscale(1); opacity: 0.5; }
+  .badge-item.earned {
+    background: linear-gradient(135deg, #FEF3C7 0%, #D1FAE5 100%);
+    border-color: var(--mint);
+    filter: none; opacity: 1;
+    transform: scale(1.04);
+  }
+  .badge-item.pop {
+    animation: badgePop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  @keyframes badgePop {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.25) rotate(-5deg); }
+    75%  { transform: scale(0.95) rotate(3deg); }
+    100% { transform: scale(1.04); }
+  }
+  .badge-emoji { font-size: 32px; display: block; margin-bottom: 6px; }
+  .badge-name { font-size: 13px; font-weight: 700; color: var(--text); }
+  .badge-earned-label {
+    position: absolute; top: 6px; right: 6px;
+    background: var(--mint); color: white;
+    font-size: 10px; font-weight: 800;
+    padding: 2px 6px; border-radius: 20px;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .badge-item.earned .badge-earned-label { opacity: 1; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 28px;
+    border-radius: 50px;
+    border: none;
+    font-size: 17px; font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    line-height: 1;
+  }
+  .btn:focus-visible { outline: 3px solid var(--sky); outline-offset: 3px; }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--sky) 0%, #7C3AED 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(91,156,246,0.4);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(91,156,246,0.5); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-secondary {
+    background: var(--sky-light);
+    color: var(--sky);
+  }
+  .btn-secondary:hover { background: #DBEAFE; }
+  .btn-danger {
+    background: var(--coral-light);
+    color: var(--coral);
+  }
+  .btn-mint {
+    background: var(--mint-light);
+    color: #059669;
+  }
+  .btn-outline {
+    background: transparent;
+    color: var(--sky);
+    border: 2px solid var(--sky);
+  }
+  .btn-sm { padding: 9px 18px; font-size: 14px; }
+  .btn-full { width: 100%; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+
+  /* ── QUIZ ── */
+  .quiz-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 20px;
+  }
+  .quiz-num {
+    background: var(--purple); color: white;
+    font-size: 13px; font-weight: 800;
+    padding: 4px 14px; border-radius: 20px;
+  }
+  .quiz-progress-text { color: var(--text-muted); font-size: 14px; }
+  .quiz-question {
+    font-size: 20px; font-weight: 700;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  /* OX Buttons */
+  .ox-buttons { display: flex; gap: 16px; }
+  .ox-btn {
+    flex: 1; padding: 24px;
+    border-radius: var(--radius); border: 3px solid var(--border);
+    background: white; cursor: pointer;
+    font-size: 36px; font-weight: 900;
+    transition: all 0.2s;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+  }
+  .ox-btn:focus-visible { outline: 3px solid var(--sky); }
+  .ox-btn span { font-size: 14px; font-weight: 700; }
+  .ox-btn.o:hover { border-color: var(--sky); background: var(--sky-light); }
+  .ox-btn.x:hover { border-color: var(--coral); background: var(--coral-light); }
+  .ox-btn.selected-o { border-color: var(--sky); background: var(--sky-light); }
+  .ox-btn.selected-x { border-color: var(--coral); background: var(--coral-light); }
+
+  /* Choice Buttons */
+  .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .choice-btn {
+    padding: 16px; border-radius: var(--radius-sm);
+    border: 2.5px solid var(--border);
+    background: white; cursor: pointer;
+    font-size: 16px; font-weight: 600;
+    text-align: left; transition: all 0.2s;
+  }
+  .choice-btn:focus-visible { outline: 3px solid var(--sky); }
+  .choice-btn:hover { border-color: var(--sky); background: var(--sky-light); }
+  .choice-btn.selected { border-color: var(--sky); background: var(--sky-light); }
+
+  /* Feedback */
+  .feedback-box {
+    margin-top: 20px; padding: 16px 20px;
+    border-radius: var(--radius-sm);
+    font-size: 16px; font-weight: 600;
+    display: none;
+  }
+  .feedback-box.correct {
+    background: var(--mint-light);
+    color: #065F46;
+    border-left: 4px solid var(--mint);
+  }
+  .feedback-box.wrong {
+    background: var(--amber-light);
+    color: #92400E;
+    border-left: 4px solid var(--amber);
+  }
+  .feedback-box.show { display: block; }
+
+  /* ── FORM ── */
+  .form-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 640px) { .form-layout { grid-template-columns: 1fr; } }
+
+  .form-group { margin-bottom: 18px; }
+  .form-label { display: block; font-weight: 700; font-size: 15px; margin-bottom: 8px; color: var(--text); }
+  .form-input, .form-select {
+    width: 100%; padding: 12px 16px;
+    border-radius: var(--radius-sm); border: 2px solid var(--border);
+    font-size: 16px; font-family: inherit;
+    transition: border-color 0.2s;
+    color: var(--text);
+    background: white;
+  }
+  .form-input:focus, .form-select:focus {
+    outline: none; border-color: var(--sky);
+  }
+  .form-hint { font-size: 12px; color: var(--text-muted); margin-top: 5px; }
+
+  /* Checkboxes */
+  .shield-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .shield-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 12px; border-radius: var(--radius-sm);
+    border: 2px solid var(--border);
+    cursor: pointer; transition: all 0.2s;
+    background: white;
+  }
+  .shield-item:has(input:checked) {
+    border-color: var(--mint); background: var(--mint-light);
+  }
+  .shield-item input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--mint); cursor: pointer; flex-shrink: 0; }
+  .shield-name { font-weight: 700; font-size: 14px; }
+  .shield-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+  /* Preview Card */
+  .preview-card {
+    background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+    border-radius: var(--radius);
+    padding: 24px;
+    color: white;
+    position: sticky;
+    top: 80px;
+    min-height: 300px;
+  }
+  .preview-title { font-size: 13px; font-weight: 800; letter-spacing: 2px; opacity: 0.8; text-transform: uppercase; }
+  .preview-name { font-size: 22px; font-weight: 900; margin: 8px 0 4px; }
+  .preview-service { font-size: 18px; font-weight: 700; opacity: 0.9; }
+  .preview-row { margin-top: 12px; }
+  .preview-label { font-size: 11px; opacity: 0.7; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+  .preview-value { font-size: 14px; font-weight: 600; }
+  .preview-shields { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+  .preview-shield-tag {
+    background: rgba(255,255,255,0.2); 
+    padding: 3px 10px; border-radius: 20px;
+    font-size: 12px; font-weight: 700;
+  }
+  .preview-badges-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+
+  /* ── PLEDGE ── */
+  .pledge-sentence {
+    font-size: 20px; font-weight: 700;
+    padding: 20px; border-radius: var(--radius-sm);
+    background: var(--purple-light);
+    border: 2px dashed var(--purple);
+    color: var(--text);
+    line-height: 1.8;
+    text-align: center;
+  }
+  .pledge-blank {
+    display: inline;
+    color: var(--purple);
+    border-bottom: 2.5px solid var(--purple);
+    min-width: 100px;
+    padding: 0 4px;
+  }
+
+  .example-btns { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+  .example-btn {
+    padding: 10px 16px; border-radius: 50px;
+    border: 2px solid var(--purple);
+    background: white; color: var(--purple);
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .example-btn:hover { background: var(--purple); color: white; }
+  .example-btn:focus-visible { outline: 3px solid var(--purple); }
+
+  /* Signature Canvas */
+  .sig-wrap {
+    position: relative;
+    border: 3px dashed var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden; cursor: crosshair;
+    background: #FAFAFA;
+  }
+  .sig-placeholder {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    color: var(--text-muted); font-size: 15px; pointer-events: none;
+    text-align: center; opacity: 0.6;
+  }
+  canvas#sigCanvas { display: block; width: 100%; height: 160px; }
+
+  /* ── LICENSE ── */
+  #licenseCard {
+    max-width: 680px; margin: 0 auto;
+    background: linear-gradient(145deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    border-radius: 24px;
+    padding: 0;
+    color: white;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    overflow: hidden;
+    position: relative;
+  }
+  .license-header {
+    background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+    padding: 24px 32px 20px;
+    position: relative;
+  }
+  .license-flag { 
+    font-size: 11px; font-weight: 800; letter-spacing: 3px; 
+    text-transform: uppercase; opacity: 0.8; 
+  }
+  .license-main-title {
+    font-size: 28px; font-weight: 900;
+    margin: 6px 0 2px;
+    letter-spacing: 0.5px;
+  }
+  .license-sub { font-size: 13px; opacity: 0.8; }
+  .license-body { padding: 28px 32px; }
+  .license-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 520px) { .license-grid { grid-template-columns: 1fr; } }
+  .lic-field { margin-bottom: 14px; }
+  .lic-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; opacity: 0.5; font-weight: 700; }
+  .lic-value { font-size: 17px; font-weight: 700; margin-top: 3px; }
+  .lic-divider { border: none; border-top: 1px solid rgba(255,255,255,0.12); margin: 18px 0; }
+  .lic-badges-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+  .lic-badge { font-size: 22px; }
+  .lic-shields { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .lic-shield {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 4px 12px; border-radius: 20px;
+    font-size: 12px; font-weight: 700;
+  }
+  .lic-pledge {
+    font-size: 15px; font-weight: 600;
+    padding: 14px; border-radius: 12px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    line-height: 1.7;
+    margin-top: 6px;
+  }
+  .lic-sig-wrap {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-top: 20px; gap: 20px;
+  }
+  .lic-sig-section { flex: 1; }
+  .lic-sig-canvas-wrap {
+    width: 100%; height: 90px;
+    background: #FFFFFF;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-bottom: 3px solid rgba(255,255,255,0.6);
+    border-radius: 8px 8px 0 0;
+    overflow: hidden;
+  }
+  .lic-sig-label { font-size: 10px; letter-spacing: 2px; opacity: 0.5; margin-top: 4px; text-transform: uppercase; }
+
+  /* Stamp */
+  .stamp {
+    position: relative; flex-shrink: 0;
+    width: 90px; height: 90px;
+    border: 4px solid #EF4444;
+    border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: #EF4444;
+    font-weight: 900; text-align: center;
+    font-size: 11px; line-height: 1.3;
+    letter-spacing: 0.5px;
+    opacity: 0;
+    transform: scale(1.5) rotate(15deg);
+    transition: all 0s;
+  }
+  .stamp.landed {
+    opacity: 1; transform: scale(1) rotate(-5deg);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .stamp-inner { font-size: 18px; }
+
+  /* Stamp animation overlay */
+  .stamp-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 999; pointer-events: none; opacity: 0;
+  }
+  .stamp-overlay.show {
+    animation: stampShow 1.5s forwards;
+  }
+  @keyframes stampShow {
+    0%   { opacity: 0; }
+    10%  { opacity: 1; }
+    60%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  .stamp-big {
+    font-size: 80px;
+    animation: stampBig 1.5s forwards;
+    text-shadow: 0 0 20px rgba(239,68,68,0.5);
+  }
+  @keyframes stampBig {
+    0%  { transform: scale(2.5) rotate(-20deg); opacity: 0; }
+    20% { transform: scale(0.9) rotate(3deg); opacity: 1; }
+    40% { transform: scale(1.05) rotate(-1deg); opacity: 1; }
+    60% { transform: scale(1) rotate(0deg); opacity: 1; }
+    100%{ transform: scale(1) rotate(0deg); opacity: 0; }
+  }
+
+  /* Gallery */
+  .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin-top: 24px; }
+  .gallery-card {
+    background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+    border-radius: 16px; padding: 20px; color: white;
+    box-shadow: var(--shadow);
+    animation: slideIn 0.4s ease;
+  }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .gallery-card-name { font-size: 18px; font-weight: 800; }
+  .gallery-card-service { font-size: 14px; opacity: 0.85; margin-top: 4px; }
+  .gallery-card-badges { font-size: 20px; margin-top: 10px; letter-spacing: 2px; }
+  .gallery-card-pledge { font-size: 12px; margin-top: 8px; opacity: 0.8; font-style: italic; }
+
+  /* Alert/Toast */
+  .toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: var(--text); color: white;
+    padding: 14px 24px; border-radius: 50px;
+    font-size: 15px; font-weight: 600;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 1000; white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Badge Popup */
+  .badge-popup {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%,-50%) scale(0);
+    background: white; border-radius: 24px;
+    padding: 32px 40px; text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    z-index: 500;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+  }
+  .badge-popup.show { transform: translate(-50%,-50%) scale(1); }
+  .badge-popup-emoji { font-size: 64px; display: block; }
+  .badge-popup-title { font-size: 22px; font-weight: 900; margin: 10px 0 4px; color: var(--mint); }
+  .badge-popup-sub { font-size: 15px; color: var(--text-muted); }
+  .popup-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 499;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  }
+  .popup-overlay.show { opacity: 1; }
+
+  /* All done banner */
+  .all-done-banner {
+    text-align: center; padding: 24px;
+    background: linear-gradient(135deg, var(--mint-light), var(--sky-light));
+    border-radius: var(--radius); border: 2px solid var(--mint);
+    margin-bottom: 24px;
+  }
+  .all-done-banner .emoji { font-size: 40px; }
+  .all-done-banner h2 { font-size: 22px; font-weight: 900; color: #065F46; margin: 8px 0 4px; }
+
+  /* Notice */
+  .notice-box {
+    background: var(--amber-light); border: 1px solid var(--amber);
+    border-radius: var(--radius-sm); padding: 12px 16px;
+    font-size: 14px; color: #78350F; margin-bottom: 16px;
+  }
+
+  /* Section title */
+  .section-title { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+  .section-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 16px; }
+
+  /* Confetti */
+  .confetti-piece {
+    position: fixed;
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    opacity: 0;
+    animation: confetti 1.2s forwards;
+    pointer-events: none; z-index: 1001;
+  }
+  @keyframes confetti {
+    0%   { opacity: 1; transform: translateY(0) rotate(0deg); }
+    100% { opacity: 0; transform: translateY(200px) rotate(720deg); }
+  }
+
+  /* ── COMBOBOX ── */
+  .combo-wrap {
+    position: relative;
+  }
+  .combo-input {
+    padding-right: 40px;
+  }
+  .combo-arrow {
+    position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; cursor: pointer;
+    font-size: 16px; color: var(--text-muted);
+    padding: 4px 6px; line-height: 1;
+    transition: transform 0.2s;
+  }
+  .combo-wrap.open .combo-arrow { transform: translateY(-50%) rotate(180deg); }
+  .combo-list {
+    display: none;
+    position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+    background: white;
+    border: 2px solid var(--sky);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 8px 24px rgba(91,156,246,0.18);
+    list-style: none;
+    z-index: 200;
+    max-height: 220px; overflow-y: auto;
+    padding: 4px 0;
+  }
+  .combo-wrap.open .combo-list { display: block; }
+  .combo-list li {
+    padding: 11px 16px;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .combo-list li:hover, .combo-list li.highlight { background: var(--sky-light); color: var(--sky); }
+
+  @media (max-width: 600px) {
+    .card { padding: 20px; }
+    .card-title { font-size: 22px; }
+    .badges-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .ox-buttons { gap: 10px; }
+    .ox-btn { padding: 16px; font-size: 28px; }
+    .choice-grid { grid-template-columns: 1fr; }
+    .shield-grid { grid-template-columns: 1fr; }
+    .btn { font-size: 15px; padding: 12px 22px; }
+    .license-body { padding: 20px; }
+    .license-header { padding: 20px; }
+    .license-main-title { font-size: 22px; }
+  }
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Montserrat:wght@800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+</head>
+<body>
+
+<!-- Progress Bar -->
+<nav class="progress-bar" aria-label="진행 단계">
+  <div class="progress-step">
+    <div class="step-circle active" id="step0c">🚀</div>
+    <span class="step-label active" id="step0l">시작</span>
+  </div>
+  <span class="step-arrow" aria-hidden="true">›</span>
+  <div class="progress-step">
+    <div class="step-circle" id="step1c">🏅</div>
+    <span class="step-label" id="step1l">배지 획득</span>
+  </div>
+  <span class="step-arrow" aria-hidden="true">›</span>
+  <div class="progress-step">
+    <div class="step-circle" id="step2c">📝</div>
+    <span class="step-label" id="step2l">라이선스 정보</span>
+  </div>
+  <span class="step-arrow" aria-hidden="true">›</span>
+  <div class="progress-step">
+    <div class="step-circle" id="step3c">✍️</div>
+    <span class="step-label" id="step3l">다짐 & 서명</span>
+  </div>
+  <span class="step-arrow" aria-hidden="true">›</span>
+  <div class="progress-step">
+    <div class="step-circle" id="step4c">🎓</div>
+    <span class="step-label" id="step4l">라이선스 발급!</span>
+  </div>
+</nav>
+
+<!-- STAMP OVERLAY -->
+<div class="stamp-overlay" id="stampOverlay" aria-hidden="true">
+  <div class="stamp-big">🔴</div>
+</div>
+
+<!-- BADGE POPUP -->
+<div class="popup-overlay" id="popupOverlay" aria-hidden="true"></div>
+<div class="badge-popup" id="badgePopup" role="dialog" aria-modal="true" aria-label="배지 획득">
+  <span class="badge-popup-emoji" id="popupEmoji"></span>
+  <div class="badge-popup-title" id="popupTitle">배지 획득! 🎉</div>
+  <div class="badge-popup-sub" id="popupSub"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SCREEN 0: START -->
+<!-- ══════════════════════════════════════════ -->
+<div class="screen active" id="screen0">
+  <div class="container">
+    <div class="card" style="text-align:center; padding: 40px 32px;">
+      <div style="font-size:56px; margin-bottom:12px;">🚀</div>
+      <h1 class="card-title" style="font-size:28px;">AI 탐험가 라이선스 발급 미션</h1>
+      <p class="card-sub">배지를 모으고, 나만의 AI 서비스를 설계한 뒤,<br>AI 사용 다짐에 서명하면 <strong>라이선스</strong>가 발급됩니다!</p>
+
+      <div class="notice-box" style="text-align:left;">
+        🔒 <strong>개인정보 주의:</strong> 이름 대신 <strong>닉네임 또는 번호</strong>만 사용하세요.
+      </div>
+
+      <p style="font-size:15px; color:var(--text-muted); margin-bottom:20px;">아래 6개의 배지를 모두 획득해 탐험가 자격을 증명하세요!</p>
+
+      <div class="badges-grid">
+        <div class="badge-item locked" id="previewBadge0">
+          <span class="badge-emoji">🍎</span>
+          <span class="badge-name">분류 배지</span>
+          <span class="badge-earned-label">✓ GET!</span>
+        </div>
+        <div class="badge-item locked" id="previewBadge1">
+          <span class="badge-emoji">📈</span>
+          <span class="badge-name">예측 배지</span>
+          <span class="badge-earned-label">✓ GET!</span>
+        </div>
+        <div class="badge-item locked" id="previewBadge2">
+          <span class="badge-emoji">🧩</span>
+          <span class="badge-name">군집화 배지</span>
+          <span class="badge-earned-label">✓ GET!</span>
+        </div>
+        <div class="badge-item locked" id="previewBadge3">
+          <span class="badge-emoji">✍️</span>
+          <span class="badge-name">생성형 AI 확인 배지</span>
+          <span class="badge-earned-label">✓ GET!</span>
+        </div>
+        <div class="badge-item locked" id="previewBadge4">
+          <span class="badge-emoji">🛡️</span>
+          <span class="badge-name">안전·윤리 배지</span>
+          <span class="badge-earned-label">✓ GET!</span>
+        </div>
+        <div class="badge-item locked" id="previewBadge5">
+          <span class="badge-emoji">👀</span>
+          <span class="badge-name">사람 확인 배지</span>
+          <span class="badge-earned-label">✓ GET!</span>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="goToScreen(1)" style="margin-top:24px; font-size:20px; padding:18px 40px;">
+        ✨ 미션 시작하기
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SCREEN 1: QUIZ -->
+<!-- ══════════════════════════════════════════ -->
+<div class="screen" id="screen1">
+  <div class="container">
+    <!-- Badge status at top -->
+    <div class="card" style="padding: 20px;">
+      <p style="font-size:13px; font-weight:700; color:var(--text-muted); margin-bottom:12px;">📦 내 배지 현황</p>
+      <div class="badges-grid" id="quizBadgeGrid"></div>
+    </div>
+
+    <!-- Quiz card -->
+    <div class="card" id="quizCard">
+      <div class="quiz-header">
+        <span class="quiz-num" id="quizNum">관문 1</span>
+        <span class="quiz-progress-text" id="quizProgress">1 / 6</span>
+      </div>
+      <p class="quiz-question" id="quizQuestion"></p>
+      <div id="quizAnswers"></div>
+      <div class="feedback-box" id="quizFeedback"></div>
+      <div class="btn-row" id="quizBtnRow">
+        <button class="btn btn-primary" id="quizSubmitBtn" onclick="submitQuiz()">확인하기</button>
+        <button class="btn btn-secondary" id="quizNextBtn" onclick="nextQuiz()" style="display:none;">다음 관문 →</button>
+      </div>
+    </div>
+
+    <!-- All done -->
+    <div id="allDoneBanner" class="all-done-banner" style="display:none;">
+      <div class="emoji">🏆</div>
+      <h2>자격 증명 완료!</h2>
+      <p style="color:#065F46;">배지 6개를 모두 획득했어요! 이제 라이선스 정보를 입력해 볼까요?</p>
+      <button class="btn btn-primary" onclick="goToScreen(2)" style="margin-top:16px;">라이선스 정보 입력하기 →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SCREEN 2: LICENSE INFO -->
+<!-- ══════════════════════════════════════════ -->
+<div class="screen" id="screen2">
+  <div class="container">
+    <div class="card">
+      <h2 class="card-title">📝 나만의 AI 서비스 설계</h2>
+      <p class="card-sub">아이디어를 채우면 오른쪽 카드가 실시간으로 완성돼요!</p>
+      <div class="notice-box">🔒 닉네임 또는 번호만 입력하세요. 실명을 쓰지 않아도 돼요.</div>
+
+      <div class="form-layout">
+        <!-- LEFT: Form -->
+        <div>
+          <div class="form-group">
+            <label class="form-label" for="nickname">👤 닉네임 또는 번호</label>
+            <input class="form-input" id="nickname" type="text" placeholder="예: 탐험가7, 별빛3" maxlength="20" oninput="updatePreview()">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="serviceName">🤖 AI 서비스 이름</label>
+            <input class="form-input" id="serviceName" type="text" placeholder="예: 슬러시 예측 AI" maxlength="30" oninput="updatePreview()">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="problem">🎯 해결하고 싶은 문제</label>
+            <input class="form-input" id="problem" type="text" placeholder="예: 체육대회 때 슬러시가 남거나 모자라는 문제" maxlength="60" oninput="updatePreview()">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="aiFunc-input">⚙️ 사용할 AI 기능</label>
+            <div class="combo-wrap" id="combo-aiFunc">
+              <input class="form-input combo-input" id="aiFunc-input" type="text" placeholder="선택하거나 직접 입력하세요" autocomplete="off" oninput="onComboInput('aiFunc')" onfocus="openCombo('aiFunc')" onblur="closeCombo('aiFunc')">
+              <button class="combo-arrow" tabindex="-1" onmousedown="toggleCombo(event,'aiFunc')" aria-label="목록 열기">▾</button>
+              <ul class="combo-list" id="combo-aiFunc-list">
+                <li onmousedown="pickCombo(event,'aiFunc','분류')">분류</li>
+                <li onmousedown="pickCombo(event,'aiFunc','예측')">예측</li>
+                <li onmousedown="pickCombo(event,'aiFunc','군집화')">군집화</li>
+                <li onmousedown="pickCombo(event,'aiFunc','음성 인식')">음성 인식</li>
+                <li onmousedown="pickCombo(event,'aiFunc','생성형 AI')">생성형 AI</li>
+                <li onmousedown="pickCombo(event,'aiFunc','공정성 점검')">공정성 점검</li>
+              </ul>
+            </div>
+            <input type="hidden" id="aiFunc">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="dataType-input">📊 필요한 데이터</label>
+            <div class="combo-wrap" id="combo-dataType">
+              <input class="form-input combo-input" id="dataType-input" type="text" placeholder="선택하거나 직접 입력하세요" autocomplete="off" oninput="onComboInput('dataType')" onfocus="openCombo('dataType')" onblur="closeCombo('dataType')">
+              <button class="combo-arrow" tabindex="-1" onmousedown="toggleCombo(event,'dataType')" aria-label="목록 열기">▾</button>
+              <ul class="combo-list" id="combo-dataType-list">
+                <li onmousedown="pickCombo(event,'dataType','사진 데이터')">사진 데이터</li>
+                <li onmousedown="pickCombo(event,'dataType','숫자 데이터')">숫자 데이터</li>
+                <li onmousedown="pickCombo(event,'dataType','글 의견 데이터')">글 의견 데이터</li>
+                <li onmousedown="pickCombo(event,'dataType','소리 데이터')">소리 데이터</li>
+                <li onmousedown="pickCombo(event,'dataType','얼굴 또는 위치 정보')">얼굴 또는 위치 정보</li>
+                <li onmousedown="pickCombo(event,'dataType','사용 기록 데이터')">사용 기록 데이터</li>
+              </ul>
+            </div>
+            <input type="hidden" id="dataType">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="aiOutput-input">💡 AI가 보여 줄 결과</label>
+            <div class="combo-wrap" id="combo-aiOutput">
+              <input class="form-input combo-input" id="aiOutput-input" type="text" placeholder="선택하거나 직접 입력하세요" autocomplete="off" oninput="onComboInput('aiOutput')" onfocus="openCombo('aiOutput')" onblur="closeCombo('aiOutput')">
+              <button class="combo-arrow" tabindex="-1" onmousedown="toggleCombo(event,'aiOutput')" aria-label="목록 열기">▾</button>
+              <ul class="combo-list" id="combo-aiOutput-list">
+                <li onmousedown="pickCombo(event,'aiOutput','종류를 구분해 줌')">종류를 구분해 줌</li>
+                <li onmousedown="pickCombo(event,'aiOutput','필요한 수를 예측해 줌')">필요한 수를 예측해 줌</li>
+                <li onmousedown="pickCombo(event,'aiOutput','비슷한 것끼리 묶어 줌')">비슷한 것끼리 묶어 줌</li>
+                <li onmousedown="pickCombo(event,'aiOutput','추천 결과를 보여 줌')">추천 결과를 보여 줌</li>
+                <li onmousedown="pickCombo(event,'aiOutput','알림이나 명령을 실행함')">알림이나 명령을 실행함</li>
+                <li onmousedown="pickCombo(event,'aiOutput','다시 확인이 필요한지 알려 줌')">다시 확인이 필요한지 알려 줌</li>
+              </ul>
+            </div>
+            <input type="hidden" id="aiOutput">
+          </div>
+
+          <!-- Safety shields -->
+          <div class="form-group">
+            <p class="form-label">🛡️ 안전 방패 (2개 이상 선택)</p>
+            <p class="form-hint" style="margin-bottom:12px;">내 AI 서비스에서 지킬 안전 약속을 골라요!</p>
+            <div class="shield-grid">
+              <label class="shield-item">
+                <input type="checkbox" value="개인정보 보호" onchange="updatePreview()">
+                <div>
+                  <div class="shield-name">🔒 개인정보 보호</div>
+                  <div class="shield-desc">이름, 얼굴, 위치 같은 정보를 조심해요.</div>
+                </div>
+              </label>
+              <label class="shield-item">
+                <input type="checkbox" value="편향 방지" onchange="updatePreview()">
+                <div>
+                  <div class="shield-name">⚖️ 편향 방지</div>
+                  <div class="shield-desc">특정 사람에게 불리하지 않은지 확인해요.</div>
+                </div>
+              </label>
+              <label class="shield-item">
+                <input type="checkbox" value="사람 확인" onchange="updatePreview()">
+                <div>
+                  <div class="shield-name">👀 사람 확인</div>
+                  <div class="shield-desc">AI 결과를 사람이 마지막에 확인해요.</div>
+                </div>
+              </label>
+              <label class="shield-item">
+                <input type="checkbox" value="사실 확인" onchange="updatePreview()">
+                <div>
+                  <div class="shield-name">✅ 사실 확인</div>
+                  <div class="shield-desc">AI가 말한 정보가 맞는지 확인해요.</div>
+                </div>
+              </label>
+              <label class="shield-item">
+                <input type="checkbox" value="저작권 확인" onchange="updatePreview()">
+                <div>
+                  <div class="shield-name">©️ 저작권 확인</div>
+                  <div class="shield-desc">이미지, 글, 음악의 출처를 확인해요.</div>
+                </div>
+              </label>
+              <label class="shield-item">
+                <input type="checkbox" value="대체 방법 제공" onchange="updatePreview()">
+                <div>
+                  <div class="shield-name">🔄 대체 방법 제공</div>
+                  <div class="shield-desc">AI가 안 될 때 다른 방법도 준비해요.</div>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Preview -->
+        <div>
+          <p style="font-size:13px; font-weight:700; color:var(--text-muted); margin-bottom:10px;">🎴 라이선스 미리보기</p>
+          <div class="preview-card" id="livePreview">
+            <div class="preview-title">🚀 AI 탐험가 라이선스</div>
+            <div class="preview-name" id="prev-name">닉네임을 입력하세요</div>
+            <hr style="border:none;border-top:1px solid rgba(255,255,255,0.2);margin:12px 0;">
+            <div class="preview-row">
+              <div class="preview-label">AI 서비스</div>
+              <div class="preview-value" id="prev-service">—</div>
+            </div>
+            <div class="preview-row">
+              <div class="preview-label">해결 문제</div>
+              <div class="preview-value" id="prev-problem">—</div>
+            </div>
+            <div class="preview-row">
+              <div class="preview-label">AI 기능</div>
+              <div class="preview-value" id="prev-func">—</div>
+            </div>
+            <div class="preview-row">
+              <div class="preview-label">데이터</div>
+              <div class="preview-value" id="prev-data">—</div>
+            </div>
+            <div class="preview-row">
+              <div class="preview-label">결과</div>
+              <div class="preview-value" id="prev-output">—</div>
+            </div>
+            <div class="preview-row">
+              <div class="preview-label">안전 방패</div>
+              <div class="preview-shields" id="prev-shields">
+                <span style="opacity:0.5;font-size:13px;">아직 선택 없음</span>
+              </div>
+            </div>
+            <div class="preview-row" style="margin-top:10px;">
+              <div class="preview-label">획득 배지</div>
+              <div class="preview-badges-row" id="prev-badges"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goToScreen(1)">← 뒤로</button>
+        <button class="btn btn-primary" onclick="submitLicenseInfo()">다음: 다짐 & 서명 →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SCREEN 3: PLEDGE & SIGNATURE -->
+<!-- ══════════════════════════════════════════ -->
+<div class="screen" id="screen3">
+  <div class="container">
+    <div class="card">
+      <h2 class="card-title">✍️ AI 탐험가 다짐 & 서명</h2>
+      <p class="card-sub">AI를 어떻게 사용할지 다짐하고 서명을 남겨요!</p>
+
+      <div class="section-title">📣 나의 다짐</div>
+      <p class="section-sub">빈칸을 채워 나만의 다짐 문장을 완성해요.</p>
+
+      <div class="pledge-sentence" id="pledgeDisplay">
+        앞으로 나는 AI를 <span class="pledge-blank" id="pledgeBlankDisplay">___________</span> 탐험가가 되겠습니다.
+      </div>
+
+      <p style="font-size:14px; font-weight:700; color:var(--text-muted); margin:14px 0 8px;">💡 예시 선택 (누르면 자동 입력)</p>
+      <div class="example-btns">
+        <button class="example-btn" onclick="setExample('무조건 믿지 않고 확인하는')">무조건 믿지 않고 확인하는</button>
+        <button class="example-btn" onclick="setExample('개인정보를 조심하는')">개인정보를 조심하는</button>
+        <button class="example-btn" onclick="setExample('공정하게 쓰는지 살펴보는')">공정하게 쓰는지 살펴보는</button>
+        <button class="example-btn" onclick="setExample('사실과 출처를 확인하는')">사실과 출처를 확인하는</button>
+        <button class="example-btn" onclick="setExample('사람에게 도움이 되게 사용하는')">사람에게 도움이 되게 사용하는</button>
+      </div>
+
+      <div class="form-group" style="margin-top:12px;">
+        <label class="form-label" for="pledgeInput">또는 직접 입력</label>
+        <input class="form-input" id="pledgeInput" type="text" placeholder="예: 책임감 있게 활용하는" maxlength="40" oninput="updatePledge()">
+      </div>
+
+      <hr style="border:none; border-top:2px solid var(--border); margin:24px 0;">
+
+      <div class="section-title">🖊️ 탐험가 서명</div>
+      <p class="section-sub">마우스 또는 손가락으로 서명을 해 주세요.</p>
+
+      <div class="sig-wrap">
+        <canvas id="sigCanvas" aria-label="서명 캔버스"></canvas>
+        <div class="sig-placeholder" id="sigPlaceholder">여기에 서명하세요 ✍️</div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-danger btn-sm" onclick="clearSig()">🗑️ 서명 지우기</button>
+      </div>
+
+      <div class="btn-row" style="margin-top:24px;">
+        <button class="btn btn-secondary" onclick="goToScreen(2)">← 뒤로</button>
+        <button class="btn btn-primary" onclick="issueLicense()" style="font-size:19px; padding:16px 36px;">
+          🎓 라이선스 발급받기!
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- SCREEN 4: LICENSE -->
+<!-- ══════════════════════════════════════════ -->
+<div class="screen" id="screen4">
+  <div class="container">
+    <div style="text-align:center; margin-bottom:24px;">
+      <div style="font-size:48px;">🎉</div>
+      <h2 style="font-size:26px; font-weight:900; margin:8px 0;">AI 탐험가 라이선스 발급 완료!</h2>
+      <p style="color:var(--text-muted);">축하해요! 당신은 이제 공식 AI 탐험가입니다.</p>
+    </div>
+
+    <div id="licenseCard">
+      <div class="license-header">
+        <div class="license-flag">🚀 REPUBLIC OF AI EXPLORERS</div>
+        <div class="license-main-title">AI 탐험가 라이선스</div>
+        <div class="license-sub">AI EXPLORER LICENSE · 중급 25차시 수료</div>
+      </div>
+      <div class="license-body">
+        <div class="license-grid">
+          <div>
+            <div class="lic-field">
+              <div class="lic-label">탐험가 이름</div>
+              <div class="lic-value" id="lic-name">—</div>
+            </div>
+            <div class="lic-field">
+              <div class="lic-label">AI 서비스명</div>
+              <div class="lic-value" id="lic-service">—</div>
+            </div>
+            <div class="lic-field">
+              <div class="lic-label">해결 문제</div>
+              <div class="lic-value" style="font-size:14px;" id="lic-problem">—</div>
+            </div>
+          </div>
+          <div>
+            <div class="lic-field">
+              <div class="lic-label">AI 기능</div>
+              <div class="lic-value" id="lic-func">—</div>
+            </div>
+            <div class="lic-field">
+              <div class="lic-label">데이터</div>
+              <div class="lic-value" id="lic-data">—</div>
+            </div>
+            <div class="lic-field">
+              <div class="lic-label">AI 결과</div>
+              <div class="lic-value" style="font-size:14px;" id="lic-output">—</div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="lic-divider">
+
+        <div class="lic-field">
+          <div class="lic-label">🏅 획득 배지</div>
+          <div class="lic-badges-row" id="lic-badges"></div>
+        </div>
+
+        <div class="lic-field" style="margin-top:14px;">
+          <div class="lic-label">🛡️ 안전 방패</div>
+          <div class="lic-shields" id="lic-shields"></div>
+        </div>
+
+        <div class="lic-field" style="margin-top:14px;">
+          <div class="lic-label">📣 AI 탐험가 다짐</div>
+          <div class="lic-pledge" id="lic-pledge"></div>
+        </div>
+
+        <div class="lic-sig-wrap">
+          <div class="lic-sig-section">
+            <div class="lic-sig-canvas-wrap">
+              <canvas id="licSigCanvas" style="width:100%;height:90px;"></canvas>
+            </div>
+            <div class="lic-sig-label">EXPLORER'S SIGNATURE</div>
+          </div>
+          <div class="stamp" id="stamp">
+            <div style="font-size:24px;">🔴</div>
+            <div class="stamp-inner" style="font-size:11px; font-weight:900; color:#EF4444; line-height:1.3;">인증<br>완료</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row" style="justify-content:center; margin-top:24px;">
+      <button class="btn btn-outline" onclick="resetAll()">🔄 다시 만들기</button>
+      <button class="btn btn-primary" onclick="addToGallery()">🖼️ 갤러리에 올리기</button>
+    </div>
+
+    <!-- GALLERY -->
+    <div style="margin-top:48px;">
+      <div style="font-size:20px; font-weight:800; margin-bottom:4px;">🖼️ AI 탐험가 갤러리</div>
+      <p style="color:var(--text-muted); font-size:14px; margin-bottom:4px;">다른 탐험가들의 라이선스를 구경해 보세요!</p>
+      <div class="gallery-grid" id="galleryGrid">
+        <!-- Sample cards -->
+        <div class="gallery-card">
+          <div class="gallery-card-name">🌟 별빛탐험가1</div>
+          <div class="gallery-card-service">🤖 급식 선호도 분석 AI</div>
+          <div class="gallery-card-badges">🍎📈🧩✍️🛡️👀</div>
+          <div class="gallery-card-pledge">"사실과 출처를 확인하는 탐험가가 되겠습니다"</div>
+        </div>
+        <div class="gallery-card" style="background:linear-gradient(135deg,#11998e 0%,#38ef7d 100%);">
+          <div class="gallery-card-name">🌊 파도3호</div>
+          <div class="gallery-card-service">🤖 날씨 기반 우산 예측 AI</div>
+          <div class="gallery-card-badges">🍎📈🧩✍️🛡️👀</div>
+          <div class="gallery-card-pledge">"개인정보를 조심하는 탐험가가 되겠습니다"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+const BADGES = [
+  { emoji:'🍎', name:'분류 배지' },
+  { emoji:'📈', name:'예측 배지' },
+  { emoji:'🧩', name:'군집화 배지' },
+  { emoji:'✍️', name:'생성형 AI 확인 배지' },
+  { emoji:'🛡️', name:'안전·윤리 배지' },
+  { emoji:'👀', name:'사람 확인 배지' },
+];
+
+const QUIZZES = [
+  {
+    "gate": "관문 1",
+    "tier": 1,
+    "type": "ox",
+    "question": "사과와 토마토처럼 정해진 이름표로 나누는 것을 분류라고 한다.",
+    "answer": "O",
+    "badge": null,
+    "correctFeedback": "✅ 분류는 미리 정해진 이름표(라벨)로 데이터를 나누는 일이에요.",
+    "wrongHint": "💡 이름표가 미리 정해져 있는지 다시 떠올려 보세요."
+  },
+  {
+    "gate": "관문 1",
+    "tier": 2,
+    "type": "choice",
+    "question": "급식 의견에서 '오이'라는 단어가 가장 많이 나왔다. 바르게 판단한 친구는?",
+    "answer": "단어 수만으로는 뜻을 알 수 없어 문장을 다시 봐야 한다",
+    "badge": null,
+    "correctFeedback": "✅ '오이 빼 주세요'처럼 같은 단어라도 뜻이 다를 수 있어요.",
+    "wrongHint": "💡 단어가 자주 나온 것과 그 단어를 좋아하는 것은 다를 수 있어요.",
+    "choices": [
+      "많이 나왔으니 모두 오이를 좋아하는 것이다",
+      "단어 수만으로는 뜻을 알 수 없어 문장을 다시 봐야 한다",
+      "단어가 많으면 항상 칭찬을 뜻한다",
+      "오이 의견이니 오이를 더 많이 주면 된다"
+    ]
+  },
+  {
+    "gate": "관문 1",
+    "tier": 3,
+    "type": "choice",
+    "question": "사과·토마토만 배운 AI에 '배' 사진을 넣었더니 '사과 92%'가 나왔다. 옳은 해석은?",
+    "answer": "배를 배운 적이 없어 아는 답 중 사과를 고른 것일 수 있다",
+    "badge": 0,
+    "correctFeedback": "✅ 배운 범위 밖에서는 높은 신뢰도도 그대로 믿기 어려워요.",
+    "wrongHint": "💡 이 AI가 '배'를 배운 적이 있는지 먼저 생각해 보세요.",
+    "choices": [
+      "92%니까 배는 거의 사과가 맞다",
+      "신뢰도가 높으면 언제나 정답이다",
+      "배를 배운 적이 없어 아는 답 중 사과를 고른 것일 수 있다",
+      "정확도가 높은 모델이라 배도 잘 맞힌다"
+    ]
+  },
+  {
+    "gate": "관문 2",
+    "tier": 1,
+    "type": "choice",
+    "question": "기온을 보고 슬러시가 몇 컵 팔릴지 숫자로 예상하는 AI가 하는 일은?",
+    "answer": "예측",
+    "badge": null,
+    "correctFeedback": "✅ 과거 숫자 흐름을 보고 새 숫자를 예상하는 것을 예측이라고 해요.",
+    "wrongHint": "💡 숫자를 미리 예상하는 일이 무엇인지 떠올려 보세요.",
+    "choices": [
+      "예측",
+      "군집화",
+      "이름표 붙이기",
+      "사진 분류"
+    ]
+  },
+  {
+    "gate": "관문 2",
+    "tier": 2,
+    "type": "ox",
+    "question": "선형회귀가 알려 준 예측값은 정답이 아니라 참고할 예상값이다.",
+    "answer": "O",
+    "badge": null,
+    "correctFeedback": "✅ 예측값은 과거 기록으로 만든 예상이라 다른 조건도 함께 봐야 해요.",
+    "wrongHint": "💡 예측은 정답을 딱 맞히는 마법이 아니라는 점을 떠올려 보세요."
+  },
+  {
+    "gate": "관문 2",
+    "tier": 3,
+    "type": "choice",
+    "question": "AI가 과거 장부는 잘 맞히는데 새 체육대회에선 자꾸 틀린다. 무슨 상태일까?",
+    "answer": "과적합, 학습 데이터에 지나치게 맞춰진 상태",
+    "badge": 1,
+    "correctFeedback": "✅ 과적합은 옛 자료만 외운 것처럼 새 상황에 약해요.",
+    "wrongHint": "💡 옛 자료는 잘 맞히는데 새 상황에서 틀리는 경우를 뭐라 했는지 떠올려 보세요.",
+    "choices": [
+      "과소적합, 너무 적게 배운 상태",
+      "과적합, 학습 데이터에 지나치게 맞춰진 상태",
+      "학습을 딱 알맞게 한 상태",
+      "데이터가 많으니 문제가 없는 상태"
+    ]
+  },
+  {
+    "gate": "관문 3",
+    "tier": 1,
+    "type": "ox",
+    "question": "군집화는 정답 이름표가 없어도 비슷한 특징끼리 묶을 수 있다.",
+    "answer": "O",
+    "badge": null,
+    "correctFeedback": "✅ 군집화는 이름표 없이 비슷한 점들끼리 모으는 방법이에요.",
+    "wrongHint": "💡 군집화에 정답 이름표가 꼭 필요한지 다시 생각해 보세요."
+  },
+  {
+    "gate": "관문 3",
+    "tier": 2,
+    "type": "choice",
+    "question": "매운맛·단맛 점수만 있고 그룹 이름이 없는 입맛 데이터를 나누려 한다. 알맞은 방법은?",
+    "answer": "비슷한 점수끼리 묶는 군집화를 쓸 수 있다",
+    "badge": null,
+    "correctFeedback": "✅ 이름표가 없을 때 비슷함으로 묶는 것이 군집화예요.",
+    "wrongHint": "💡 정답 이름표가 없을 때 쓰는 방법이 무엇이었는지 떠올려 보세요.",
+    "choices": [
+      "이름표가 없어 아무것도 할 수 없다",
+      "먼저 사람이 정답 이름표를 붙여야만 한다",
+      "비슷한 점수끼리 묶는 군집화를 쓸 수 있다",
+      "정확도를 계산하면 그룹이 정해진다"
+    ]
+  },
+  {
+    "gate": "관문 3",
+    "tier": 3,
+    "type": "choice",
+    "question": "같은 입맛 데이터를 군집화했다. 바르게 생각한 것은?",
+    "answer": "그룹 수에 따라 결과가 달라져 목적에 맞는지 봐야 한다",
+    "badge": 2,
+    "correctFeedback": "✅ 2개·3개·4개로 나누면 결과가 달라져 사람이 확인해야 해요.",
+    "wrongHint": "💡 그룹 수를 바꾸면 묶임이 어떻게 달라졌는지 떠올려 보세요.",
+    "choices": [
+      "그룹 수가 많을수록 항상 더 좋다",
+      "AI가 묶으면 사람이 확인할 필요가 없다",
+      "그룹 수에 따라 결과가 달라져 목적에 맞는지 봐야 한다",
+      "군집화 결과는 언제나 정답이다"
+    ]
+  },
+  {
+    "gate": "관문 4",
+    "tier": 1,
+    "type": "ox",
+    "question": "생성형 AI가 자연스럽게 쓴 글은 항상 사실이라 확인하지 않아도 된다.",
+    "answer": "X",
+    "badge": null,
+    "correctFeedback": "✅ AI 글은 초안이라 실제 기록과 비교해 확인해야 해요.",
+    "wrongHint": "💡 AI가 멋지게 쓴 글도 사실과 다를 수 있다는 점을 떠올려 보세요."
+  },
+  {
+    "gate": "관문 4",
+    "tier": 2,
+    "type": "choice",
+    "question": "AI가 만든 상식 퀴즈에 '화성 위성은 3개'라는 자신 있는 문장이 있다. 바른 행동은?",
+    "answer": "믿을 만한 자료와 비교해 사실인지 확인한다",
+    "badge": null,
+    "correctFeedback": "✅ 숫자·이름처럼 확인 가능한 정보는 근거 자료와 비교해야 해요.",
+    "wrongHint": "💡 자세하고 자신 있어 보이는 답일수록 더 확인해야 해요.",
+    "choices": [
+      "자신 있게 말했으니 그대로 쓴다",
+      "숫자가 있으니 무조건 정확하다",
+      "믿을 만한 자료와 비교해 사실인지 확인한다",
+      "길고 자세하니 사실이 분명하다"
+    ]
+  },
+  {
+    "gate": "관문 4",
+    "tier": 3,
+    "type": "choice",
+    "question": "정확한 설명이 필요한 안내문을 만들 때 생성형 AI의 창의성 설정은?",
+    "answer": "정확함이 필요하면 낮게, 새 아이디어가 필요하면 높게 고른다",
+    "badge": 3,
+    "correctFeedback": "✅ 창의성 설정은 높다고 좋은 게 아니라 목적에 맞게 골라야 해요.",
+    "wrongHint": "💡 안내문과 상상 동화 중 어느 쪽이 안정적인 답이 필요한지 생각해 보세요.",
+    "choices": [
+      "높을수록 무조건 좋다",
+      "정확함이 필요하면 낮게, 새 아이디어가 필요하면 높게 고른다",
+      "항상 가장 높게 두어야 한다",
+      "설정값은 결과에 영향을 주지 않는다"
+    ]
+  },
+  {
+    "gate": "관문 5",
+    "tier": 1,
+    "type": "ox",
+    "question": "얼굴 정보는 비밀번호처럼 쉽게 바꿀 수 있는 정보다.",
+    "answer": "X",
+    "badge": null,
+    "correctFeedback": "✅ 얼굴은 쉽게 바꾸기 어려운 민감한 개인정보예요.",
+    "wrongHint": "💡 얼굴과 비밀번호 중 무엇을 더 바꾸기 어려운지 생각해 보세요."
+  },
+  {
+    "gate": "관문 5",
+    "tier": 2,
+    "type": "choice",
+    "question": "AI가 농구공을 맞혔지만 공이 아니라 주황색 배경을 보고 판단했다. 옳은 생각은?",
+    "answer": "엉뚱한 근거라면 다른 상황에서 틀릴 수 있다",
+    "badge": null,
+    "correctFeedback": "✅ 무엇을 보고 맞혔는지도 확인해야 안전해요.",
+    "wrongHint": "💡 이번엔 맞았어도 배경만 봤다면 다음엔 어떻게 될지 생각해 보세요.",
+    "choices": [
+      "맞혔으니 근거는 볼 필요 없다",
+      "정답만 맞으면 어떤 근거든 괜찮다",
+      "엉뚱한 근거라면 다른 상황에서 틀릴 수 있다",
+      "신뢰도가 높으면 근거는 중요하지 않다"
+    ]
+  },
+  {
+    "gate": "관문 5",
+    "tier": 3,
+    "type": "choice",
+    "question": "AI 스피커 전체 정확도가 82%로 높다. 데이터 편향에 대해 바르게 판단한 것은?",
+    "answer": "전체 점수가 높아도 특정 말투에선 더 자주 틀릴 수 있다",
+    "badge": 4,
+    "correctFeedback": "✅ 전체 82%여도 지역 말투 50%처럼 상황별로 확인해야 해요.",
+    "wrongHint": "💡 전체 점수만으로 특정 상황의 오류까지 알 수 있을지 생각해 보세요.",
+    "choices": [
+      "전체 정확도가 높으면 편향은 없다",
+      "정확도가 높으면 모두에게 공정하다",
+      "전체 점수가 높아도 특정 말투에선 더 자주 틀릴 수 있다",
+      "틀린 사람이 발음을 잘못한 탓이다"
+    ]
+  },
+  {
+    "gate": "관문 6",
+    "tier": 1,
+    "type": "ox",
+    "question": "AI 결과가 중요한 판단에 쓰일 때는 사람이 마지막에 확인해야 한다.",
+    "answer": "O",
+    "badge": null,
+    "correctFeedback": "✅ AI는 도움을 주지만 최종 확인은 사람의 몫이에요.",
+    "wrongHint": "💡 중요한 일을 AI 혼자 결정해도 되는지 떠올려 보세요."
+  },
+  {
+    "gate": "관문 6",
+    "tier": 2,
+    "type": "choice",
+    "question": "AI가 '사과 52%, 토마토 48%'처럼 애매하게 판단했다. 알맞은 행동은?",
+    "answer": "신뢰도가 비슷하니 사람이 다시 확인한다",
+    "badge": null,
+    "correctFeedback": "✅ 신뢰도가 비슷하게 애매하면 사람이 다시 봐야 해요.",
+    "wrongHint": "💡 두 값이 거의 비슷할 때 그대로 믿어도 될지 생각해 보세요.",
+    "choices": [
+      "더 높은 쪽이니 그냥 믿는다",
+      "숫자가 나왔으니 확인하지 않는다",
+      "신뢰도가 비슷하니 사람이 다시 확인한다",
+      "AI 판단이니 무조건 맞다"
+    ]
+  },
+  {
+    "gate": "관문 6",
+    "tier": 3,
+    "type": "choice",
+    "question": "AI DJ가 '속상했지만 뿌듯했다'는 일기를 슬픈 음악으로 추천했다. 가장 알맞은 태도는?",
+    "answer": "여러 감정이 섞였는지 보고 내 기분에 맞는지 내가 확인한다",
+    "badge": 5,
+    "correctFeedback": "✅ 추천은 예상이라 내 상황에 맞는지 스스로 확인해야 해요.",
+    "wrongHint": "💡 한 문장에 감정이 두 가지 섞여 있지 않은지 살펴보세요.",
+    "choices": [
+      "AI 추천이니 무조건 따른다",
+      "한 감정만 골랐어도 AI는 틀리지 않는다",
+      "여러 감정이 섞였는지 보고 내 기분에 맞는지 내가 확인한다",
+      "추천은 정답이라 바꿀 수 없다"
+    ]
+  }
+];
+
+// ── STATE ──
+let state = {
+  currentScreen: 0,
+  earnedBadges: [],   // array of badge indices
+  quizIndex: 0,
+  quizAnswered: false,
+  quizRetrying: false,
+  pledge: '',
+  sigHasData: false,
+};
+
+// ── NAVIGATION ──
+function goToScreen(n) {
+  document.querySelectorAll('.screen').forEach((s, i) => {
+    s.classList.toggle('active', i === n);
+  });
+  state.currentScreen = n;
+  updateProgressBar();
+  window.scrollTo(0, 0);
+
+  if (n === 1) renderQuiz();
+  if (n === 2) { buildQuizBadgesInPreview(); updatePreview(); }
+  if (n === 4) buildLicenseCard();
+}
+
+function updateProgressBar() {
+  const steps = ['step0','step1','step2','step3','step4'];
+  steps.forEach((id, i) => {
+    const c = document.getElementById(id+'c');
+    const l = document.getElementById(id+'l');
+    c.className = 'step-circle' + (i === state.currentScreen ? ' active' : i < state.currentScreen ? ' done' : '');
+    l.className = 'step-label' + (i === state.currentScreen ? ' active' : i < state.currentScreen ? ' done' : '');
+  });
+}
+
+// ── QUIZ ──
+function buildQuizBadgesInPreview() {
+  const grid = document.getElementById('quizBadgeGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  BADGES.forEach((b, i) => {
+    const earned = state.earnedBadges.includes(i);
+    const div = document.createElement('div');
+    div.className = 'badge-item' + (earned ? ' earned' : ' locked');
+    div.id = 'qbadge' + i;
+    div.innerHTML = `<span class="badge-emoji">${b.emoji}</span><span class="badge-name">${b.name}</span><span class="badge-earned-label">✓ GET!</span>`;
+    grid.appendChild(div);
+  });
+}
+
+function renderQuiz() {
+  // Rebuild badge grid every time
+  buildQuizBadgesInPreview();
+
+  // Hide all-done if not done
+  document.getElementById('allDoneBanner').style.display = 'none';
+  document.getElementById('quizCard').style.display = 'block';
+
+  if (state.quizIndex >= QUIZZES.length) {
+    showAllDone();
+    return;
+  }
+
+  const q = QUIZZES[state.quizIndex];
+  document.getElementById('quizNum').textContent = q.gate;
+  document.getElementById('quizProgress').textContent = `${state.quizIndex + 1} / ${QUIZZES.length}`;
+  document.getElementById('quizQuestion').textContent = q.question;
+
+  const answersDiv = document.getElementById('quizAnswers');
+  answersDiv.innerHTML = '';
+  state.quizAnswered = false;
+  state.selectedAnswer = null;
+
+  const feedback = document.getElementById('quizFeedback');
+  feedback.className = 'feedback-box';
+  feedback.textContent = '';
+
+  const submitBtn = document.getElementById('quizSubmitBtn');
+  const nextBtn = document.getElementById('quizNextBtn');
+  submitBtn.style.display = 'inline-flex';
+  nextBtn.style.display = 'none';
+
+  if (q.type === 'ox') {
+    const row = document.createElement('div');
+    row.className = 'ox-buttons';
+    ['O','X'].forEach(v => {
+      const btn = document.createElement('button');
+      btn.className = 'ox-btn ' + v.toLowerCase();
+      btn.setAttribute('aria-label', v === 'O' ? '맞다 (O)' : '틀리다 (X)');
+      btn.innerHTML = `<span>${v}</span><span>${v === 'O' ? '맞다' : '틀리다'}</span>`;
+      btn.onclick = () => selectOX(v, btn, row);
+      row.appendChild(btn);
+    });
+    answersDiv.appendChild(row);
+  } else {
+    const grid = document.createElement('div');
+    grid.className = 'choice-grid';
+    q.choices.forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'choice-btn';
+      btn.textContent = c;
+      btn.onclick = () => selectChoice(c, btn, grid);
+      grid.appendChild(btn);
+    });
+    answersDiv.appendChild(grid);
+  }
+}
+
+function selectOX(val, btn, row) {
+  if (state.quizAnswered) return;
+  row.querySelectorAll('.ox-btn').forEach(b => b.className = 'ox-btn ' + (b === btn ? (val === 'O' ? 'o selected-o' : 'x selected-x') : (val === 'O' ? 'x' : 'o')));
+  state.selectedAnswer = val;
+}
+
+function selectChoice(val, btn, grid) {
+  if (state.quizAnswered) return;
+  grid.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.selectedAnswer = val;
+}
+
+function submitQuiz() {
+  if (!state.selectedAnswer) { showToast('답을 선택해 주세요!'); return; }
+  const q = QUIZZES[state.quizIndex];
+  const correct = state.selectedAnswer === q.answer;
+  const feedback = document.getElementById('quizFeedback');
+
+  if (correct) {
+    feedback.className = 'feedback-box correct show';
+    feedback.textContent = q.correctFeedback;
+    state.quizAnswered = true;
+    document.getElementById('quizSubmitBtn').style.display = 'none';
+    document.getElementById('quizNextBtn').style.display = 'inline-flex';
+    if (q.badge != null) awardBadge(q.badge);
+  } else {
+    feedback.className = 'feedback-box wrong show';
+    feedback.textContent = q.wrongHint + '\n다시 시도해 보세요!';
+    state.selectedAnswer = null;
+    // Reset selection visuals
+    document.querySelectorAll('.ox-btn').forEach(b => b.className = 'ox-btn ' + (b.textContent.includes('O') ? 'o' : 'x'));
+    document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+  }
+}
+
+function nextQuiz() {
+  state.quizIndex++;
+  renderQuiz();
+}
+
+function awardBadge(idx) {
+  if (state.earnedBadges.includes(idx)) return;
+  state.earnedBadges.push(idx);
+
+  // Update quiz badge grid
+  const qb = document.getElementById('qbadge' + idx);
+  if (qb) {
+    qb.classList.remove('locked');
+    qb.classList.add('earned');
+    setTimeout(() => qb.classList.add('pop'), 50);
+  }
+  // Update start screen badges
+  const pb = document.getElementById('previewBadge' + idx);
+  if (pb) {
+    pb.classList.remove('locked');
+    pb.classList.add('earned');
+  }
+
+  // Popup
+  const b = BADGES[idx];
+  document.getElementById('popupEmoji').textContent = b.emoji;
+  document.getElementById('popupTitle').textContent = '배지 획득! 🎉';
+  document.getElementById('popupSub').textContent = b.name + ' 을(를) 얻었어요!';
+  const popup = document.getElementById('badgePopup');
+  const overlay = document.getElementById('popupOverlay');
+  popup.classList.add('show');
+  overlay.classList.add('show');
+  setTimeout(() => {
+    popup.classList.remove('show');
+    overlay.classList.remove('show');
+  }, 1800);
+}
+
+function showAllDone() {
+  document.getElementById('quizCard').style.display = 'none';
+  document.getElementById('allDoneBanner').style.display = 'block';
+  confetti();
+}
+
+// ── SCREEN 2 PREVIEW ──
+function buildQuizBadgesInPreview() {
+  const grid = document.getElementById('quizBadgeGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  BADGES.forEach((b, i) => {
+    const earned = state.earnedBadges.includes(i);
+    const div = document.createElement('div');
+    div.className = 'badge-item' + (earned ? ' earned' : ' locked');
+    div.id = 'qbadge' + i;
+    div.innerHTML = `<span class="badge-emoji">${b.emoji}</span><span class="badge-name">${b.name}</span><span class="badge-earned-label">✓ GET!</span>`;
+    grid.appendChild(div);
+  });
+}
+
+function updatePreview() {
+  const name = document.getElementById('nickname').value || '닉네임을 입력하세요';
+  const service = document.getElementById('serviceName').value || '—';
+  const problem = document.getElementById('problem').value || '—';
+  const func = document.getElementById('aiFunc').value || '—';
+  const data = document.getElementById('dataType').value || '—';
+  const output = document.getElementById('aiOutput').value || '—';
+
+  document.getElementById('prev-name').textContent = name;
+  document.getElementById('prev-service').textContent = service;
+  document.getElementById('prev-problem').textContent = problem;
+  document.getElementById('prev-func').textContent = func;
+  document.getElementById('prev-data').textContent = data;
+  document.getElementById('prev-output').textContent = output;
+
+  // Shields
+  const checks = document.querySelectorAll('#screen2 input[type=checkbox]:checked');
+  const shieldsEl = document.getElementById('prev-shields');
+  if (checks.length === 0) {
+    shieldsEl.innerHTML = '<span style="opacity:0.5;font-size:13px;">아직 선택 없음</span>';
+  } else {
+    shieldsEl.innerHTML = '';
+    checks.forEach(c => {
+      const tag = document.createElement('span');
+      tag.className = 'preview-shield-tag';
+      tag.textContent = c.value;
+      shieldsEl.appendChild(tag);
+    });
+  }
+
+  // Badges
+  const badgesEl = document.getElementById('prev-badges');
+  badgesEl.innerHTML = state.earnedBadges.map(i => `<span style="font-size:20px;">${BADGES[i].emoji}</span>`).join('');
+}
+
+function submitLicenseInfo() {
+  const nickname = document.getElementById('nickname').value.trim();
+  const serviceName = document.getElementById('serviceName').value.trim();
+  const problem = document.getElementById('problem').value.trim();
+  const func = document.getElementById('aiFunc').value;
+  const data = document.getElementById('dataType').value;
+  const output = document.getElementById('aiOutput').value;
+  const checks = document.querySelectorAll('#screen2 input[type=checkbox]:checked');
+
+  if (!nickname) { showToast('닉네임 또는 번호를 입력해 주세요!'); return; }
+  if (!serviceName) { showToast('AI 서비스 이름을 입력해 주세요!'); return; }
+  if (!problem) { showToast('해결하고 싶은 문제를 입력해 주세요!'); return; }
+  if (!func) { showToast('사용할 AI 기능을 선택해 주세요!'); return; }
+  if (!data) { showToast('필요한 데이터를 선택해 주세요!'); return; }
+  if (!output) { showToast('AI가 보여 줄 결과를 선택해 주세요!'); return; }
+  if (checks.length < 2) { showToast('안전 방패를 2개 이상 선택해 주세요!'); return; }
+
+  goToScreen(3);
+}
+
+// ── PLEDGE & SIGNATURE ──
+function setExample(text) {
+  document.getElementById('pledgeInput').value = text;
+  updatePledge();
+}
+
+function updatePledge() {
+  const val = document.getElementById('pledgeInput').value;
+  state.pledge = val;
+  document.getElementById('pledgeBlankDisplay').textContent = val || '___________';
+}
+
+// Signature canvas
+let sigCanvas, sigCtx, sigDrawing = false;
+
+function initSig() {
+  sigCanvas = document.getElementById('sigCanvas');
+  if (!sigCanvas) return;
+  // Set internal resolution
+  const dpr = window.devicePixelRatio || 1;
+  const rect = sigCanvas.getBoundingClientRect();
+  const w = sigCanvas.offsetWidth || 500;
+  sigCanvas.width = w * dpr;
+  sigCanvas.height = 160 * dpr;
+  sigCanvas.style.height = '160px';
+  sigCtx = sigCanvas.getContext('2d');
+  sigCtx.scale(dpr, dpr);
+  sigCtx.strokeStyle = '#1E293B';
+  sigCtx.lineWidth = 2.5;
+  sigCtx.lineCap = 'round';
+  sigCtx.lineJoin = 'round';
+
+  const getPos = (e) => {
+    const r = sigCanvas.getBoundingClientRect();
+    if (e.touches) return { x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top };
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  };
+
+  sigCanvas.addEventListener('mousedown', e => { sigDrawing = true; const p = getPos(e); sigCtx.beginPath(); sigCtx.moveTo(p.x, p.y); });
+  sigCanvas.addEventListener('mousemove', e => { if (!sigDrawing) return; const p = getPos(e); sigCtx.lineTo(p.x, p.y); sigCtx.stroke(); state.sigHasData = true; document.getElementById('sigPlaceholder').style.display='none'; });
+  sigCanvas.addEventListener('mouseup', () => sigDrawing = false);
+  sigCanvas.addEventListener('mouseleave', () => sigDrawing = false);
+
+  sigCanvas.addEventListener('touchstart', e => { e.preventDefault(); sigDrawing = true; const p = getPos(e); sigCtx.beginPath(); sigCtx.moveTo(p.x, p.y); }, {passive:false});
+  sigCanvas.addEventListener('touchmove', e => { e.preventDefault(); if (!sigDrawing) return; const p = getPos(e); sigCtx.lineTo(p.x, p.y); sigCtx.stroke(); state.sigHasData = true; document.getElementById('sigPlaceholder').style.display='none'; }, {passive:false});
+  sigCanvas.addEventListener('touchend', () => sigDrawing = false);
+}
+
+function clearSig() {
+  if (!sigCtx) return;
+  const dpr = window.devicePixelRatio || 1;
+  sigCtx.clearRect(0, 0, sigCanvas.width / dpr, sigCanvas.height / dpr);
+  state.sigHasData = false;
+  document.getElementById('sigPlaceholder').style.display = 'block';
+}
+
+function issueLicense() {
+  const pledge = document.getElementById('pledgeInput').value.trim();
+  if (!pledge) { showToast('AI 탐험가 다짐을 작성해 주세요!'); return; }
+  if (!state.sigHasData) { showToast('AI 탐험가 서명을 해 주세요!'); return; }
+  state.pledge = pledge;
+  goToScreen(4);
+}
+
+// ── LICENSE CARD ──
+function buildLicenseCard() {
+  document.getElementById('lic-name').textContent = document.getElementById('nickname').value || '—';
+  document.getElementById('lic-service').textContent = document.getElementById('serviceName').value || '—';
+  document.getElementById('lic-problem').textContent = document.getElementById('problem').value || '—';
+  document.getElementById('lic-func').textContent = document.getElementById('aiFunc').value || '—';
+  document.getElementById('lic-data').textContent = document.getElementById('dataType').value || '—';
+  document.getElementById('lic-output').textContent = document.getElementById('aiOutput').value || '—';
+
+  // Badges
+  const badgesEl = document.getElementById('lic-badges');
+  badgesEl.innerHTML = BADGES.map((b,i) => state.earnedBadges.includes(i) ? `<span class="lic-badge" title="${b.name}">${b.emoji}</span>` : '').join('');
+
+  // Shields
+  const checks = document.querySelectorAll('#screen2 input[type=checkbox]:checked');
+  const shieldsEl = document.getElementById('lic-shields');
+  shieldsEl.innerHTML = '';
+  checks.forEach(c => {
+    const tag = document.createElement('span');
+    tag.className = 'lic-shield';
+    tag.textContent = c.value;
+    shieldsEl.appendChild(tag);
+  });
+
+  // Pledge
+  document.getElementById('lic-pledge').textContent = `앞으로 나는 AI를 ${state.pledge} 탐험가가 되겠습니다.`;
+
+  // Copy signature
+  const licSig = document.getElementById('licSigCanvas');
+  if (sigCanvas && licSig) {
+    const dpr = window.devicePixelRatio || 1;
+    licSig.width = licSig.offsetWidth * dpr || 300 * dpr;
+    licSig.height = 90 * dpr;
+    const ctx = licSig.getContext('2d');
+    ctx.scale(dpr, dpr);
+    // Fill white background so signature is visible on dark license card
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, licSig.width / dpr, licSig.height / dpr);
+    ctx.drawImage(sigCanvas, 0, 0, licSig.width / dpr, licSig.height / dpr);
+  }
+
+  // Stamp animation
+  const stamp = document.getElementById('stamp');
+  stamp.classList.remove('landed');
+  setTimeout(() => {
+    stamp.classList.add('landed');
+    showStampOverlay();
+    confetti();
+  }, 400);
+}
+
+function showStampOverlay() {
+  const overlay = document.getElementById('stampOverlay');
+  overlay.classList.remove('show');
+  void overlay.offsetWidth;
+  overlay.classList.add('show');
+  setTimeout(() => overlay.classList.remove('show'), 1500);
+}
+
+// ── GALLERY ──
+function addToGallery() {
+  const name = document.getElementById('nickname').value || '탐험가';
+  const service = document.getElementById('serviceName').value || '—';
+  const pledge = state.pledge;
+
+  const gradients = [
+    'linear-gradient(135deg, #667EEA 0%, #764BA2 100%)',
+    'linear-gradient(135deg, #F093FB 0%, #F5576C 100%)',
+    'linear-gradient(135deg, #4FACFE 0%, #00F2FE 100%)',
+    'linear-gradient(135deg, #43E97B 0%, #38F9D7 100%)',
+    'linear-gradient(135deg, #FA709A 0%, #FEE140 100%)',
+    'linear-gradient(135deg, #A18CD1 0%, #FBC2EB 100%)',
+  ];
+  const grad = gradients[Math.floor(Math.random() * gradients.length)];
+
+  const card = document.createElement('div');
+  card.className = 'gallery-card';
+  card.style.background = grad;
+  card.innerHTML = `
+    <div class="gallery-card-name">🌟 ${name}</div>
+    <div class="gallery-card-service">🤖 ${service}</div>
+    <div class="gallery-card-badges">${state.earnedBadges.map(i => BADGES[i].emoji).join('')}</div>
+    <div class="gallery-card-pledge">"${pledge ? `${pledge} 탐험가가 되겠습니다` : '—'}"</div>
+  `;
+  document.getElementById('galleryGrid').appendChild(card);
+  showToast('🖼️ 갤러리에 추가됐어요!');
+  card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ── RESET ──
+function resetAll() {
+  if (!confirm('처음부터 다시 시작할까요?')) return;
+  state = { currentScreen:0, earnedBadges:[], quizIndex:0, quizAnswered:false, pledge:'', sigHasData:false };
+  document.getElementById('nickname').value = '';
+  document.getElementById('serviceName').value = '';
+  document.getElementById('problem').value = '';
+  document.getElementById('aiFunc').value = '';
+  document.getElementById('dataType').value = '';
+  document.getElementById('aiOutput').value = '';
+  document.getElementById('pledgeInput').value = '';
+  document.querySelectorAll('#screen2 input[type=checkbox]').forEach(c => c.checked = false);
+  document.querySelectorAll('.badge-item').forEach((b, i) => {
+    b.classList.remove('earned');
+    b.classList.add('locked');
+  });
+  if (sigCtx) {
+    const dpr = window.devicePixelRatio || 1;
+    sigCtx.clearRect(0, 0, sigCanvas.width/dpr, sigCanvas.height/dpr);
+    state.sigHasData = false;
+    const ph = document.getElementById('sigPlaceholder');
+    if (ph) ph.style.display = 'block';
+  }
+  document.getElementById('stamp').classList.remove('landed');
+  goToScreen(0);
+}
+
+// ── TOAST ──
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ── CONFETTI ──
+function confetti() {
+  const colors = ['#5B9CF6','#34D399','#FBBF24','#F87171','#A78BFA','#FB923C'];
+  for (let i = 0; i < 30; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + 'vw';
+    piece.style.top = '-20px';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.animationDelay = Math.random() * 0.8 + 's';
+    piece.style.animationDuration = (0.8 + Math.random() * 0.8) + 's';
+    piece.style.transform = `rotate(${Math.random()*360}deg)`;
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), 2000);
+  }
+}
+
+// ── COMBOBOX ──
+function openCombo(id) {
+  document.getElementById('combo-' + id).classList.add('open');
+}
+
+function closeCombo(id) {
+  // Small delay so pickCombo's mousedown fires first
+  setTimeout(() => {
+    document.getElementById('combo-' + id).classList.remove('open');
+  }, 150);
+}
+
+function toggleCombo(event, id) {
+  event.preventDefault();
+  const wrap = document.getElementById('combo-' + id);
+  const isOpen = wrap.classList.contains('open');
+  // Close all combos first
+  document.querySelectorAll('.combo-wrap').forEach(w => w.classList.remove('open'));
+  if (!isOpen) {
+    wrap.classList.add('open');
+    document.getElementById(id + '-input').focus();
+  }
+}
+
+function onComboInput(id) {
+  const inputEl = document.getElementById(id + '-input');
+  const hiddenEl = document.getElementById(id);
+  const val = inputEl.value.trim();
+  hiddenEl.value = val;          // sync hidden field on every keystroke
+  updatePreview();
+
+  // Filter list items
+  const items = document.querySelectorAll('#combo-' + id + '-list li');
+  const lower = val.toLowerCase();
+  items.forEach(li => {
+    li.style.display = (!val || li.textContent.toLowerCase().includes(lower)) ? '' : 'none';
+  });
+
+  // Open list while typing
+  document.getElementById('combo-' + id).classList.add('open');
+}
+
+function pickCombo(event, id, value) {
+  event.preventDefault();
+  document.getElementById(id + '-input').value = value;
+  document.getElementById(id).value = value;
+  document.getElementById('combo-' + id).classList.remove('open');
+  updatePreview();
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+  // Init signature after screen 3 is visited
+  const observer = new MutationObserver(() => {
+    const sc3 = document.getElementById('screen3');
+    if (sc3.classList.contains('active') && !sigCtx) {
+      setTimeout(initSig, 100);
+    }
+  });
+  observer.observe(document.getElementById('screen3'), { attributes: true });
+});
+</script>
+
+
+<button id="sfxToggle" title="효과음 켜기/끄기" aria-label="효과음 켜기/끄기">🔊</button>
+<script>
+/* ── 효과음 엔진 (Web Audio 합성 — 파일 불필요) ── */
+const SFX = (() => {
+  let ctx = null, muted = localStorage.getItem('sfxMuted') === '1';
+  const ac = () => (ctx = ctx || new (window.AudioContext || window.webkitAudioContext)());
+  function tone(freq, dur, type, gain, when, slide) {
+    if (muted) return;
+    type = type || 'sine'; gain = gain == null ? 0.18 : gain; when = when || 0; slide = slide || 0;
+    const a = ac(), t0 = a.currentTime + when;
+    const o = a.createOscillator(), g = a.createGain();
+    o.type = type; o.frequency.setValueAtTime(freq, t0);
+    if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(40, freq + slide), t0 + dur);
+    g.gain.setValueAtTime(gain, t0);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+    o.connect(g); g.connect(a.destination);
+    o.start(t0); o.stop(t0 + dur + 0.05);
+  }
+  function noise(dur, gain, when) {
+    if (muted) return;
+    gain = gain == null ? 0.25 : gain; when = when || 0;
+    const a = ac(), t0 = a.currentTime + when;
+    const buf = a.createBuffer(1, a.sampleRate * dur, a.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) d[i] = (Math.random()*2-1) * (1 - i/d.length);
+    const s = a.createBufferSource(); s.buffer = buf;
+    const g = a.createGain(); g.gain.setValueAtTime(gain, t0);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+    s.connect(g); g.connect(a.destination); s.start(t0);
+  }
+  return {
+    click:   () => tone(660, .07, 'triangle', .12),
+    select:  () => tone(520, .09, 'triangle', .14),
+    whoosh:  () => noise(.22, .12),
+    correct: () => { tone(660,.12,'sine',.18); tone(880,.16,'sine',.18,.1); },
+    wrong:   () => { tone(220,.22,'sawtooth',.12); tone(180,.26,'sawtooth',.10,.08); },
+    badge:   () => { [523,659,784,1047].forEach((f,i)=>tone(f,.16,'triangle',.2,i*.09)); },
+    alldone: () => { [523,659,784,880,1047,1319].forEach((f,i)=>tone(f,.18,'triangle',.2,i*.11)); },
+    stamp:   () => { noise(.12,.5); tone(90,.18,'sine',.5,.01,-40); },
+    fanfare: () => { [392,523,659,784].forEach((f,i)=>tone(f,.22,'square',.09,i*.13));
+                     [784,1047].forEach((f,i)=>tone(f,.5,'triangle',.16,.55+i*.02)); },
+    toggle(btn) { muted = !muted; localStorage.setItem('sfxMuted', muted?'1':'0'); btn.textContent = muted?'🔇':'🔊'; if(!muted) this.click(); },
+    get muted() { return muted; }
+  };
+})();
+document.getElementById('sfxToggle').textContent = SFX.muted ? '🔇' : '🔊';
+document.getElementById('sfxToggle').onclick = function(){ SFX.toggle(this); };
+
+/* ── 에셋 시스템: assets/ 폴더에 이미지가 있으면 사용, 없으면 이모지 유지 ── */
+const ASSETS = {
+  badges: ['badge_classify.png','badge_predict.png','badge_cluster.png','badge_genai.png','badge_safety.png','badge_human.png'],
+  hero: 'maru_hero.png', cheer: 'maru_cheer.png', stamp: 'stamp_seal.png', logo: 'license_logo.png',
+};
+const _assetOK = {};
+function probeAsset(file, cb) {
+  if (!file) { cb(false); return; }
+  if (file in _assetOK) { cb(_assetOK[file]); return; }
+  const im = new Image();
+  im.onload = () => { _assetOK[file] = true; cb(true); };
+  im.onerror = () => { _assetOK[file] = false; cb(false); };
+  im.src = 'assets/' + file;
+}
+function swapBadgeEmojis(rootSel) {
+  document.querySelectorAll(rootSel + ' .badge-item').forEach((item, i) => {
+    const file = ASSETS.badges[i]; if (!file) return;
+    probeAsset(file, ok => {
+      if (!ok) return;
+      const em = item.querySelector('.badge-emoji');
+      if (em && !item.querySelector('.badge-img')) {
+        const img = document.createElement('img');
+        img.src = 'assets/' + file; img.className = 'badge-img'; img.alt = '';
+        em.replaceWith(img);
+      }
+    });
+  });
+}
+function applyAssets() {
+  swapBadgeEmojis('#screen0'); swapBadgeEmojis('#screen1');
+  probeAsset(ASSETS.hero, ok => {
+    if (!ok || document.getElementById('heroImg')) return;
+    const card = document.querySelector('#screen0 .card');
+    if (!card) return;
+    const img = document.createElement('img');
+    img.id = 'heroImg'; img.src = 'assets/' + ASSETS.hero; img.className = 'hero-img'; img.alt = '마루';
+    card.insertBefore(img, card.firstChild);
+  });
+  probeAsset(ASSETS.stamp, ok => {
+    if (!ok) return;
+    const stamp = document.getElementById('stamp');
+    if (stamp && !document.getElementById('stampImg'))
+      stamp.innerHTML = '<img id="stampImg" src="assets/' + ASSETS.stamp + '" alt="합격 도장">';
+  });
+}
+
+/* ── 게임 연출: XP바 · 무오답 리본 ── */
+let _wrongCount = 0;
+(function injectXP(){
+  const qc = document.getElementById('quizCard');
+  if (!qc) return;
+  const bar = document.createElement('div');
+  bar.className = 'xp-wrap';
+  bar.innerHTML = '<div class="xp-track"><div class="xp-fill" id="xpFill"></div></div><span class="xp-label" id="xpLabel">0/6</span>';
+  qc.parentNode.insertBefore(bar, qc);
+})();
+function updateXP() {
+  const n = state.earnedBadges.length;
+  const f = document.getElementById('xpFill'), l = document.getElementById('xpLabel');
+  if (f) f.style.width = (n/6*100) + '%';
+  if (l) l.textContent = n + '/6';
+}
+
+/* ── 기존 함수에 사운드·연출 연결 ── */
+const _goToScreen = goToScreen;
+goToScreen = function(n){ SFX.whoosh(); _goToScreen(n); updateXP(); applyAssets(); saveProgress(); };
+
+const _selectOX = selectOX;
+selectOX = function(v,b,r){ SFX.select(); _selectOX(v,b,r); };
+const _selectChoice = selectChoice;
+selectChoice = function(v,b,g){ SFX.select(); _selectChoice(v,b,g); };
+
+const _submitQuiz = submitQuiz;
+submitQuiz = function(){
+  const before = state.earnedBadges.length, had = !!state.selectedAnswer;
+  _submitQuiz();
+  if (had && state.earnedBadges.length === before && !state.quizAnswered) { SFX.wrong(); _wrongCount++; }
+};
+
+const _awardBadge = awardBadge;
+awardBadge = function(i){
+  SFX.correct(); setTimeout(SFX.badge, 250);
+  _awardBadge(i); updateXP(); saveProgress();
+  probeAsset(ASSETS.badges[i], ok => {
+    if (ok) document.getElementById('popupEmoji').innerHTML =
+      '<img class="badge-img" style="width:72px;height:72px;" src="assets/' + ASSETS.badges[i] + '" alt="">';
+  });
+};
+
+const _renderQuiz = renderQuiz;
+renderQuiz = function(){ _renderQuiz(); updateXP(); applyAssets(); };
+
+const _showAllDone = showAllDone;
+showAllDone = function(){
+  _showAllDone(); SFX.alldone();
+  if (_wrongCount === 0) {
+    const banner = document.getElementById('allDoneBanner');
+    if (banner && !document.getElementById('perfectRibbon')) {
+      const r = document.createElement('div');
+      r.id='perfectRibbon'; r.className='perfect-ribbon'; r.textContent='🏆 무오답 통과! 완벽한 탐험가!';
+      banner.appendChild(r);
+      confetti(); setTimeout(confetti, 400);
+    }
+  }
+};
+
+const _buildLicenseCard = buildLicenseCard;
+buildLicenseCard = function(){
+  _buildLicenseCard();
+  setTimeout(SFX.stamp, 400);
+  setTimeout(SFX.fanfare, 750);
+};
+
+const _addToGallery = addToGallery;
+addToGallery = function(){ SFX.badge(); _addToGallery(); };
+
+const _resetAll = resetAll;
+resetAll = function(){
+  _resetAll();
+  if (state.earnedBadges.length === 0) { _wrongCount = 0; localStorage.removeItem('aiLicenseSave'); updateXP(); }
+};
+
+/* ── 이어하기 (자동 저장) ── */
+function saveProgress() {
+  try {
+    const data = { earnedBadges: state.earnedBadges, quizIndex: state.quizIndex, screen: state.currentScreen, fields: {}, checks: [] };
+    ['nickname','serviceName','problem','aiFunc','dataType','aiOutput','pledgeInput'].forEach(id => {
+      const el = document.getElementById(id); if (el) data.fields[id] = el.value;
+    });
+    document.querySelectorAll('#screen2 input[type=checkbox]').forEach((c,i)=>{ if(c.checked) data.checks.push(i); });
+    localStorage.setItem('aiLicenseSave', JSON.stringify(data));
+  } catch(e) {}
+}
+document.addEventListener('input', () => saveProgress());
+
+(function offerResume(){
+  let data = null;
+  try { data = JSON.parse(localStorage.getItem('aiLicenseSave')); } catch(e) {}
+  if (!data || !data.earnedBadges || (!data.earnedBadges.length && !(data.fields && data.fields.nickname))) return;
+  if (!confirm('저번에 하던 미션 기록이 있어요. 이어서 할까요?')) { localStorage.removeItem('aiLicenseSave'); return; }
+  state.earnedBadges = data.earnedBadges || [];
+  state.quizIndex = data.quizIndex || 0;
+  Object.entries(data.fields || {}).forEach(([id,v]) => { const el=document.getElementById(id); if(el) el.value=v; });
+  document.querySelectorAll('#screen2 input[type=checkbox]').forEach((c,i)=>{ c.checked = (data.checks||[]).includes(i); });
+  state.earnedBadges.forEach(i => {
+    const el = document.getElementById('previewBadge'+i);
+    if (el) { el.classList.remove('locked'); el.classList.add('earned'); }
+  });
+  if (window.updatePledge) updatePledge();
+  let target = data.screen == null ? 0 : data.screen;
+  if (target >= 4) target = 3;   // 서명·발급 화면은 다시 진행
+  _goToScreen(target);
+  updateXP(); applyAssets();
+})();
+
+/* 첫 화면 에셋 적용 + 시작 버튼 사운드 */
+applyAssets();
+document.querySelectorAll('#screen0 button').forEach(b => b.addEventListener('click', () => SFX.click()));
+</script>
+
+
+
+
+<!-- ═══════════ 디자인 v3: GOLD QUEST — 수집형 게임 아카데미 ═══════════ -->
+<style id="designV3">
+  :root {
+    --ink:#2B2350; --ink-muted:#6B6690;
+    --bg-top:#F7F4FF; --bg-bottom:#FFF4E4;
+    --primary:#5B4DF0; --primary-deep:#3B2FB8;
+    --gold:#F5A623; --gold-light:#FFD65C; --gold-deep:#C97E10;
+    --seal-red:#E23D3D; --success:#18B87A; --warn:#FF9F43;
+    --grad-primary: linear-gradient(135deg,#6C5CFF,#4A3AE8);
+    --grad-gold: linear-gradient(120deg,#FFE29A,#F5A623 45%,#C97E10 80%,#FFD65C);
+    --grad-success: linear-gradient(135deg,#2BD98F,#0EA5E9);
+    --r-lg:28px; --r-md:18px; --r-sm:12px; --r-pill:999px;
+    --sh-card:0 18px 44px -16px rgba(59,47,184,.28), 0 3px 10px rgba(43,35,80,.06);
+    --sh-float:0 10px 24px -8px rgba(59,47,184,.45);
+    --sh-gold:0 12px 28px -8px rgba(245,166,35,.55);
+  }
+  body { font-family:'Pretendard Variable',Pretendard,-apple-system,'Segoe UI',sans-serif;
+    background:linear-gradient(180deg,var(--bg-top),var(--bg-bottom)) fixed; color:var(--ink); overflow-x:hidden; }
+  .mono-label { font-family:'Montserrat',sans-serif; font-weight:800; letter-spacing:2px; text-transform:uppercase; }
+
+  /* ── 배경: 블롭 2 + 별 6, 퀴즈·폼·서명 화면에선 숨김 ── */
+  .bg-blob { position:fixed; border-radius:50%; filter:blur(90px); z-index:-2; opacity:.35; pointer-events:none; transition:opacity .5s; }
+  .bg-blob.b1 { width:50vw; height:50vw; left:-14vw; top:-16vh; background:radial-gradient(circle,#A5B4FC,transparent 65%); animation:blob1 24s ease-in-out infinite alternate; }
+  .bg-blob.b2 { width:44vw; height:44vw; right:-12vw; bottom:-18vh; background:radial-gradient(circle,#FFD65C,transparent 65%); animation:blob2 28s ease-in-out infinite alternate; }
+  @keyframes blob1 { to { transform:translate(8vw,6vh) scale(1.12); } }
+  @keyframes blob2 { to { transform:translate(-6vw,-5vh) scale(.92); } }
+  .bg-spark { position:fixed; z-index:-1; color:#C9A227; opacity:.45; pointer-events:none; animation:sparkFloat linear infinite; transition:opacity .5s; }
+  @keyframes sparkFloat { 0%{transform:translateY(105vh) scale(.6);opacity:0;} 12%{opacity:.5;} 88%{opacity:.35;} 100%{transform:translateY(-8vh) scale(1.05) rotate(160deg);opacity:0;} }
+  body[data-screen="1"] .bg-blob, body[data-screen="2"] .bg-blob, body[data-screen="3"] .bg-blob,
+  body[data-screen="1"] .bg-spark, body[data-screen="2"] .bg-spark, body[data-screen="3"] .bg-spark { opacity:0; }
+
+  /* ── 카드 공통 ── */
+  .card { background:rgba(255,255,255,.8); backdrop-filter:blur(18px) saturate(1.2); -webkit-backdrop-filter:blur(18px) saturate(1.2);
+    border:1px solid rgba(255,255,255,.95); border-radius:var(--r-lg); box-shadow:var(--sh-card); position:relative; overflow:hidden; }
+  .card::before { content:''; position:absolute; top:0; left:8%; right:8%; height:3px; background:var(--grad-gold); border-radius:0 0 6px 6px; }
+  .card-title { font-family:'Jua',sans-serif; font-weight:400; letter-spacing:.5px; color:var(--ink); }
+  h2 { font-family:'Jua',sans-serif; font-weight:400; }
+  .screen.active { animation:screenIn .35s cubic-bezier(.22,1,.36,1); }
+  @keyframes screenIn { from { opacity:0; transform:translateY(16px); } }
+  button { transition:transform .08s ease; }
+  button:active { transform:scale(.94); }
+
+  /* ── 버튼 위계 ── */
+  .btn { border-radius:var(--r-pill); font-weight:800; }
+  .btn-primary { background:var(--grad-primary); border:none; box-shadow:var(--sh-float); position:relative; overflow:hidden; }
+  .btn-primary::after { content:''; position:absolute; inset:0;
+    background:linear-gradient(105deg,transparent 42%,rgba(255,255,255,.45) 50%,transparent 58%);
+    transform:translateX(-120%); animation:btnShine 3.4s 1.4s infinite; }
+  @keyframes btnShine { 0%{transform:translateX(-120%);} 40%{transform:translateX(120%);} 100%{transform:translateX(120%);} }
+  .btn-primary:hover { transform:translateY(-3px); box-shadow:0 16px 32px -8px rgba(59,47,184,.55); }
+  .btn-secondary, .btn-outline { background:#fff; border:2px solid #C9C2F2; color:var(--primary); }
+  .cta-pulse { animation:ctaPulse 2.4s ease-in-out infinite; }
+  @keyframes ctaPulse { 50% { transform:scale(1.03); box-shadow:0 14px 34px -6px rgba(91,77,240,.6); } }
+  .cta-chip { display:inline-block; margin-top:12px; padding:6px 16px; border-radius:var(--r-pill);
+    background:rgba(255,255,255,.75); color:var(--ink-muted); font-size:12px; font-weight:700; }
+
+  /* ── HUD(진행 바) ── */
+  .progress-bar { background:rgba(255,255,255,.72); backdrop-filter:blur(14px); border-bottom:1px solid rgba(255,255,255,.95);
+    box-shadow:0 8px 22px -14px rgba(59,47,184,.35); }
+  .hud-logo { display:flex; align-items:center; gap:8px; margin-right:12px; flex-shrink:0; }
+  .hud-logo img { width:28px; height:28px; }
+  .hud-logo span { font-family:'Jua',sans-serif; font-size:16px; color:var(--ink); }
+  .step-circle { border-radius:12px; }
+  .step-circle.active { background:var(--grad-primary); box-shadow:0 0 0 5px rgba(91,77,240,.16); animation:stepPulse 1.8s infinite; }
+  @keyframes stepPulse { 50% { box-shadow:0 0 0 8px rgba(91,77,240,.07); } }
+  .step-circle.done { background:var(--grad-gold); color:#4A3007; }
+  .step-label.done { color:var(--gold-deep); }
+
+  /* ── 시작 화면: 게임 타이틀 ── */
+  #screen0 .card { text-align:center; }
+  .hero-emblem { position:absolute; top:-24px; left:50%; transform:translateX(-50%); width:340px; opacity:.10;
+    filter:saturate(0) brightness(1.15); pointer-events:none; z-index:0; }
+  .hero-img { max-width:220px; position:relative; z-index:1; animation:heroFloat 3.4s ease-in-out infinite;
+    filter:drop-shadow(0 18px 26px rgba(59,47,184,.3)); }
+  @keyframes heroFloat { 50% { transform:translateY(-12px) rotate(1deg); } }
+  .hero-overline { display:block; font-size:12px; color:var(--gold-deep); margin-bottom:6px; }
+  #screen0 h1.card-title { font-size:36px !important; background:var(--grad-gold);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(0 2px 0 rgba(201,126,16,.35)); }
+  /* 미수집 도감 */
+  .badge-item { border-radius:var(--r-md); transition:all .3s cubic-bezier(.175,.885,.32,1.275); position:relative; }
+  .badge-item.locked { background:rgba(244,242,255,.7); border:2px dashed #CFC8EE; }
+  .badge-item.locked .badge-img, .badge-item.locked .badge-emoji { filter:grayscale(1) brightness(.55) opacity(.5); }
+  .badge-item.locked::after { content:'🔒'; position:absolute; top:6px; right:8px; font-size:14px; opacity:.65; }
+  .badge-item.earned { background:linear-gradient(160deg,#FFFBEB,#FFF); border:2px solid var(--gold-light); box-shadow:var(--sh-gold); }
+  .badge-item.earned .badge-img { filter:drop-shadow(0 6px 10px rgba(201,126,16,.35)); }
+  .badge-item:hover { transform:translateY(-4px); }
+  .badge-earned-label { background:var(--grad-gold); color:#4A3007; border-radius:var(--r-pill); padding:2px 10px; font-weight:900; }
+
+  /* ── 퀴즈: 관문 스테이지 ── */
+  #screen1 .badges-grid { display:flex; gap:6px; margin:8px 0 4px; align-items:center; justify-content:space-between; }
+  #screen1 .badge-item { flex:1; padding:6px 2px; border-radius:12px; min-width:0; }
+  #screen1 .badge-item .badge-name { display:none; }
+  #screen1 .badge-item .badge-img { width:30px; height:30px; margin:0 auto; }
+  #screen1 .badge-item .badge-emoji { font-size:22px; }
+  #screen1 .badge-item .badge-earned-label { display:none; }
+  .quiz-gate-chip { display:inline-flex; align-items:center; gap:8px; }
+  .quiz-gate-chip img { width:26px; height:26px; filter:grayscale(1) brightness(.7); }
+  .quiz-tier { color:var(--gold); letter-spacing:2px; font-size:14px; }
+  .choice-btn { border-radius:var(--r-md); border:2.5px solid #D9D4F5; background:#fff; font-weight:800; transition:all .18s; position:relative; }
+  .choice-btn:hover { transform:translateY(-2px); border-color:#B9AFF0; }
+  .choice-btn.selected { border:4px solid var(--primary); box-shadow:0 0 0 5px rgba(91,77,240,.18); }
+  .choice-btn.selected::after { content:'✓'; position:absolute; top:6px; right:10px; color:var(--primary); font-weight:900; }
+  .ox-btn { border-radius:26px; font-family:'Jua',sans-serif; transition:all .18s; border-width:4px;
+    padding:44px 24px; font-size:72px; gap:14px; line-height:1; }
+  .ox-btn span:last-child { font-size:26px; font-weight:900; }
+  .ox-btn:hover { transform:translateY(-4px); }
+  .ox-btn.selected-o { box-shadow:0 0 0 6px rgba(24,184,122,.22), 0 14px 28px -8px rgba(24,184,122,.45); }
+  .ox-btn.selected-x { box-shadow:0 0 0 6px rgba(255,159,67,.25), 0 14px 28px -8px rgba(255,159,67,.5); }
+  .feedback-box.correct.show { animation:popIn .4s cubic-bezier(.175,.885,.32,1.275); border-left:6px solid var(--success);
+    display:flex; align-items:center; gap:12px; }
+  .feedback-box.correct.show .cheer-mini { width:56px; height:56px; flex-shrink:0; }
+  .feedback-box.wrong.show { animation:shakeX .45s; border-left:6px solid var(--warn);
+    background:#FFF6EA; color:#8A5A16; border-color:var(--warn); }
+  @keyframes popIn { from { transform:scale(.86); opacity:0; } }
+  @keyframes shakeX { 20%{transform:translateX(-7px);} 40%{transform:translateX(6px);} 60%{transform:translateX(-4px);} 80%{transform:translateX(3px);} }
+  .xp-wrap { margin:0 0 12px; }
+  .xp-fill { background:var(--grad-gold) !important; }
+  .all-done-banner { background:var(--grad-gold) !important; border:none !important; border-radius:var(--r-lg);
+    box-shadow:var(--sh-gold); color:#4A3007 !important; }
+  .all-done-banner h2, .all-done-banner p { color:#4A3007 !important; }
+  .done-medals { display:flex; justify-content:center; gap:8px; margin:14px 0 4px; }
+  .done-medals img { width:52px; height:52px; animation:medalPop .5s backwards; }
+  .done-medals img:nth-child(1){ transform:translateY(14px); animation-delay:.00s; }
+  .done-medals img:nth-child(2){ transform:translateY(5px);  animation-delay:.08s; }
+  .done-medals img:nth-child(3){ animation-delay:.16s; }
+  .done-medals img:nth-child(4){ animation-delay:.24s; }
+  .done-medals img:nth-child(5){ transform:translateY(5px);  animation-delay:.32s; }
+  .done-medals img:nth-child(6){ transform:translateY(14px); animation-delay:.40s; }
+  @keyframes medalPop { from { opacity:0; scale:.3; } }
+  .medal-fly { position:fixed; z-index:400; width:64px; height:64px; pointer-events:none;
+    transition:all .55s cubic-bezier(.5,-0.1,.3,1.1); }
+
+  /* ── 설계 폼: 공방 ── */
+  .form-input:focus { border-color:var(--primary) !important; box-shadow:0 0 0 4px rgba(91,77,240,.14) !important; }
+  .form-input.filled { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2318B87A'%3E%3Cpath d='M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 12px center; background-size:18px; padding-right:38px; }
+  .gauge-pill { display:flex; align-items:center; gap:10px; padding:8px 14px; margin-bottom:12px;
+    background:rgba(255,255,255,.18); border-radius:var(--r-pill); }
+  .gauge-pill .g-track { flex:1; height:10px; border-radius:999px; background:rgba(255,255,255,.25); overflow:hidden; }
+  .gauge-pill .g-fill { height:100%; width:0%; background:var(--grad-gold); border-radius:999px; transition:width .5s cubic-bezier(.22,1,.36,1); }
+  .gauge-pill .g-label { font-size:12px; font-weight:800; color:#FFD65C; white-space:nowrap; }
+  .preview-card { background:linear-gradient(160deg,#191637,#2A2159) !important; border:2px solid rgba(255,214,92,.65) !important;
+    border-radius:22px !important; position:relative; overflow:hidden; box-shadow:0 20px 44px -16px rgba(25,22,55,.6); }
+  .preview-card::before { content:''; position:absolute; inset:0; opacity:.06; pointer-events:none;
+    background:repeating-radial-gradient(circle at 30% 20%, #FFD65C 0 2px, transparent 2px 14px),
+               repeating-radial-gradient(circle at 80% 90%, #A5B4FC 0 2px, transparent 2px 18px); }
+  .preview-card::after { content:''; position:absolute; right:-40px; bottom:-40px; width:180px; height:180px;
+    background:url('assets/license_logo.png') center/contain no-repeat; opacity:.08; pointer-events:none; }
+  .shield-item { border-radius:var(--r-md); min-height:64px; transition:all .2s; }
+  .shield-item:has(input:checked) { border:2.5px solid var(--gold) !important;
+    background:linear-gradient(160deg,#FFFDF4,#FFF6DF) !important; box-shadow:0 6px 16px -6px rgba(245,166,35,.4);
+    animation:shieldPop .25s; }
+  @keyframes shieldPop { 50% { transform:scale(1.05); } }
+  .shield-counter { display:inline-block; margin-bottom:8px; padding:4px 14px; border-radius:var(--r-pill);
+    font-size:13px; font-weight:900; background:#F1EEFF; color:var(--primary); }
+  .shield-counter.ok { background:var(--grad-gold); color:#4A3007; }
+
+  /* ── 다짐·서명: 증서 ── */
+  .pledge-sentence { background:#FFFDF5 !important; border:3px double var(--gold-deep) !important; border-radius:var(--r-md); position:relative; }
+  .pledge-sentence::before, .pledge-sentence::after { content:''; position:absolute; top:8px; width:24px; height:24px;
+    background:url('assets/license_logo.png') center/contain no-repeat; opacity:.5; }
+  .pledge-sentence::before { left:8px; } .pledge-sentence::after { right:8px; }
+  .example-btn[aria-pressed="true"] { background:var(--grad-primary) !important; color:#fff !important; border-color:transparent !important; }
+  .btn-issue-gold { background:var(--grad-gold) !important; color:#4A3007 !important; border:none !important; box-shadow:var(--sh-gold); }
+  .btn-issue-gold.sig-wait { filter:saturate(.25) opacity(.6); pointer-events:auto; }
+  .btn-issue-gold.sig-ready { animation:issueReady .5s cubic-bezier(.175,.885,.32,1.275); }
+  @keyframes issueReady { 40% { transform:scale(1.08); } }
+
+  /* ── 라이선스 카드 ── */
+  #licenseCard { position:relative; border-radius:26px !important; overflow:hidden;
+    border:2px solid rgba(253,230,138,.85) !important;
+    box-shadow:0 30px 70px -22px rgba(25,22,55,.7); transform-style:preserve-3d; transition:transform .25s ease; }
+  #licenseCard.grade-silver { border-color:#C7CEDB !important; }
+  #licenseCard.grade-green { border-color:#7BD8B0 !important; }
+  #licenseCard::before { content:''; position:absolute; inset:-40%; pointer-events:none; z-index:1; opacity:.13;
+    background:conic-gradient(from 0deg,#FF6B6B,#FDE68A,#6EE7B7,#60A5FA,#C084FC,#FF6B6B);
+    animation:holoSpin 11s linear infinite; mix-blend-mode:screen; }
+  @keyframes holoSpin { to { transform:rotate(360deg); } }
+  #licenseCard::after { content:''; position:absolute; bottom:20px; right:120px; width:44px; height:44px; z-index:2;
+    border-radius:50%; background:conic-gradient(#FDE68A,#F9A8D4,#A5F3FC,#FDE68A); opacity:.85;
+    box-shadow:0 2px 8px rgba(0,0,0,.35), inset 0 0 6px rgba(255,255,255,.8); pointer-events:none; }
+  .license-header { display:flex; align-items:center; gap:14px; }
+  .license-header .lic-emblem { width:44px; height:44px; flex-shrink:0; }
+  .license-main-title { font-family:'Jua',sans-serif; letter-spacing:2px;
+    background:linear-gradient(90deg,#FDE68A,#FEF3C7,#F5A623,#FDE68A); -webkit-background-clip:text; background-clip:text;
+    color:transparent; background-size:220% auto; animation:foil 4.5s linear infinite; }
+  #licenseCard.grade-silver .license-main-title { background-image:linear-gradient(90deg,#E5E9F0,#FFFFFF,#AAB4C4,#E5E9F0); }
+  #licenseCard.grade-green .license-main-title { background-image:linear-gradient(90deg,#A7F3D0,#ECFDF5,#34D399,#A7F3D0); }
+  @keyframes foil { to { background-position:220% center; } }
+  .license-body { position:relative; }
+  .license-body::before { content:''; position:absolute; inset:0; opacity:.05; pointer-events:none;
+    background:repeating-radial-gradient(circle at 30% 20%, #FFD65C 0 2px, transparent 2px 14px),
+               repeating-radial-gradient(circle at 80% 90%, #A5B4FC 0 2px, transparent 2px 18px); }
+  .lic-serial { font-family:'Montserrat',sans-serif; font-weight:800; letter-spacing:2px;
+    font-size:12px; color:var(--gold-light); margin-left:auto; text-align:right; line-height:1.5; }
+  .lic-title-line { font-size:13px; font-weight:800; color:var(--gold-light); margin-bottom:2px; }
+  .lic-grade-chip { display:inline-block; padding:3px 12px; border-radius:var(--r-pill); font-size:11px;
+    font-family:'Montserrat',sans-serif; font-weight:800; letter-spacing:1.5px;
+    background:var(--grad-gold); color:#4A3007; margin-left:8px; vertical-align:middle; }
+  #licenseCard.grade-silver .lic-grade-chip { background:linear-gradient(120deg,#E5E9F0,#AAB4C4); color:#2B3444; }
+  #licenseCard.grade-green .lic-grade-chip { background:linear-gradient(120deg,#A7F3D0,#34D399); color:#0B4A33; }
+  .lic-badge-img { width:36px; height:36px; filter:drop-shadow(0 3px 6px rgba(0,0,0,.35)); }
+  #screen4 { animation:none; }
+  .card-entrance { animation:cardUp .55s cubic-bezier(.34,1.4,.5,1) backwards; }
+  @keyframes cardUp { from { opacity:0; transform:translateY(60px) scale(.94); } }
+  .screen-shake { animation:scrShake .3s; }
+  @keyframes scrShake { 25%{transform:translate(3px,-3px);} 50%{transform:translate(-4px,2px);} 75%{transform:translate(2px,3px);} }
+  .stamp.landed { animation:stampSlam .5s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes stampSlam { 0%{transform:scale(2.4) rotate(-18deg); opacity:0;} 60%{transform:scale(.92) rotate(-10deg); opacity:1;} 100%{transform:scale(1) rotate(-12deg);} }
+  .save-hint { text-align:center; color:var(--ink-muted); font-size:13px; margin-top:12px; }
+
+  /* ── 갤러리 ── */
+  .gallery-card { background:linear-gradient(160deg,#191637,#2A2159) !important; border-radius:20px;
+    position:relative; overflow:hidden; padding-top:18px !important; transition:transform .25s; }
+  .gallery-card::before { content:''; position:absolute; top:0; left:0; right:0; height:6px; background:var(--accent,var(--grad-gold)); }
+  .gallery-card::after { content:''; position:absolute; right:8px; bottom:8px; width:28px; height:28px;
+    background:url('assets/stamp_seal.png') center/contain no-repeat; opacity:.7; }
+  .gallery-card:hover { transform:translateY(-5px) rotate(-.6deg); }
+  .gallery-card .g-medal { width:18px; height:18px; vertical-align:middle; margin-right:2px; }
+  .gallery-new { animation:galleryIn 1.2s; }
+  @keyframes galleryIn { 0% { opacity:0; transform:translateY(20px); box-shadow:0 0 0 0 rgba(245,166,35,.0); }
+    30% { opacity:1; box-shadow:0 0 0 6px rgba(245,166,35,.45); } 100% { box-shadow:0 0 0 0 rgba(245,166,35,0); } }
+
+  /* ── 팝업·토스트·토글 ── */
+  .badge-popup { border-radius:30px; overflow:hidden; }
+  .badge-popup::before { content:''; position:absolute; inset:-60%; z-index:-1;
+    background:repeating-conic-gradient(rgba(245,166,35,.2) 0 9deg, transparent 9deg 18deg); animation:holoSpin 9s linear infinite; }
+  .badge-popup-emoji { animation:badgeBounce .6s cubic-bezier(.175,.885,.32,1.275); }
+  @keyframes badgeBounce { 0%{transform:scale(0) rotate(-30deg);} 70%{transform:scale(1.18) rotate(6deg);} 100%{transform:scale(1);} }
+  #toast { border-radius:var(--r-pill); backdrop-filter:blur(10px); font-weight:800; }
+  #sfxToggle { width:52px; height:52px; background:rgba(255,255,255,.85); backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,.95); box-shadow:0 8px 22px -6px rgba(59,47,184,.4); }
+  .hero-halo { display:none; }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration:.001s !important; animation-iteration-count:1 !important; transition-duration:.001s !important; }
+  }
+</style>
+<script id="v3js">
+(function(){
+  /* 배경: 블롭 2 + 별 6 */
+  ['b1','b2'].forEach(c => { const d=document.createElement('div'); d.className='bg-blob '+c; document.body.appendChild(d); });
+  for (let i=0;i<6;i++){
+    const s=document.createElement('span'); s.className='bg-spark'; s.textContent='✦';
+    s.style.left=(6+Math.random()*88)+'vw'; s.style.fontSize=(9+Math.random()*11)+'px';
+    s.style.animationDuration=(12+Math.random()*14)+'s'; s.style.animationDelay=(-Math.random()*20)+'s';
+    document.body.appendChild(s);
+  }
+  document.body.dataset.screen = 0;
+  const _go3 = goToScreen;
+  goToScreen = function(n){ _go3(n); document.body.dataset.screen = n; };
+
+  /* HUD 로고 */
+  const pb=document.querySelector('.progress-bar');
+  if (pb){ const lg=document.createElement('div'); lg.className='hud-logo';
+    lg.innerHTML='<img src="assets/license_logo.png" alt="" onerror="this.style.display=\'none\'"><span>AI 탐험가</span>';
+    pb.insertBefore(lg, pb.firstChild); }
+
+  /* 시작 화면: 엠블럼 워터마크 + 오버라인 + CTA */
+  const c0=document.querySelector('#screen0 .card');
+  if (c0){
+    const em=document.createElement('img'); em.src='assets/license_logo.png'; em.className='hero-emblem'; em.alt='';
+    em.onerror=()=>em.remove(); c0.insertBefore(em, c0.firstChild);
+    const h1=c0.querySelector('h1');
+    if (h1){ const ov=document.createElement('span'); ov.className='mono-label hero-overline';
+      ov.textContent='AI EXPLORER LICENSE MISSION'; h1.parentNode.insertBefore(ov, h1); }
+    const cta=c0.querySelector('.btn-primary');
+    if (cta){ cta.classList.add('cta-pulse');
+      const chip=document.createElement('div'); chip.className='cta-chip'; chip.textContent='🏅 배지 6개 · 약 15분';
+      cta.parentNode.appendChild(chip); }
+  }
+
+  /* 퀴즈: 관문 칩(메달 미니) + 진행 표기 + XP=문항 기준 */
+  const totalQ = QUIZZES.length;
+  updateXP = function(){
+    const f=document.getElementById('xpFill'), l=document.getElementById('xpLabel');
+    if (f) f.style.width = (Math.min(state.quizIndex,totalQ)/totalQ*100)+'%';
+    if (l) l.textContent = '🏅 ' + state.earnedBadges.length + '/6';
+  };
+  const _render3 = renderQuiz;
+  renderQuiz = function(){
+    _render3();
+    if (state.quizIndex >= totalQ) return;
+    const q = QUIZZES[state.quizIndex];
+    const numEl=document.getElementById('quizNum');
+    const gateIdx = parseInt(q.gate.replace(/[^0-9]/g,''),10)-1;
+    numEl.innerHTML = '<span class="quiz-gate-chip"><img src="assets/'+ASSETS.badges[gateIdx]+'" alt="" onerror="this.remove()">'
+      + q.gate + ' <span class="quiz-tier">' + '★'.repeat(q.tier) + '☆'.repeat(3-q.tier) + '</span></span>';
+    document.getElementById('quizProgress').textContent = (state.quizIndex+1) + ' / ' + totalQ;
+  };
+  /* 정답 피드백에 응원 캐릭터 */
+  const _submit3 = submitQuiz;
+  submitQuiz = function(){
+    _submit3();
+    if (state.quizAnswered){
+      const fb=document.getElementById('quizFeedback');
+      probeAsset(ASSETS.cheer, ok => {
+        if (ok && !fb.querySelector('.cheer-mini')){
+          const im=document.createElement('img'); im.src='assets/'+ASSETS.cheer; im.className='cheer-mini'; im.alt='';
+          fb.insertBefore(im, fb.firstChild);
+        }
+      });
+    }
+    updateXP();
+  };
+  /* 배지 획득: 메달 비행 */
+  const _award3 = awardBadge;
+  awardBadge = function(i){
+    _award3(i);
+    setTimeout(() => {
+      const slot=document.getElementById('qbadge'+i);
+      const pop=document.getElementById('popupEmoji');
+      if (!slot || !pop) return;
+      const r0=pop.getBoundingClientRect(), r1=slot.getBoundingClientRect();
+      const fly=document.createElement('img'); fly.src='assets/'+ASSETS.badges[i]; fly.className='medal-fly';
+      fly.onerror=()=>fly.remove();
+      fly.style.left=r0.left+'px'; fly.style.top=r0.top+'px';
+      document.body.appendChild(fly);
+      requestAnimationFrame(()=>{ fly.style.left=(r1.left+r1.width/2-16)+'px'; fly.style.top=(r1.top+r1.height/2-16)+'px';
+        fly.style.width='32px'; fly.style.height='32px'; fly.style.opacity='.9'; });
+      setTimeout(()=>fly.remove(), 650);
+    }, 1500);
+  };
+  /* 완료 배너: 메달 아치 */
+  const _done3 = showAllDone;
+  showAllDone = function(){
+    _done3();
+    const b=document.getElementById('allDoneBanner');
+    if (b && !b.querySelector('.done-medals')){
+      const row=document.createElement('div'); row.className='done-medals';
+      row.innerHTML = ASSETS.badges.map(f=>'<img src="assets/'+f+'" alt="" onerror="this.remove()">').join('');
+      b.insertBefore(row, b.firstChild);
+    }
+  };
+
+  /* 설계 폼: 완성도 게이지 + 방패 카운터 + 인풋 체크 */
+  const pv=document.getElementById('livePreview');
+  if (pv){ const g=document.createElement('div'); g.className='gauge-pill';
+    g.innerHTML='<div class="g-track"><div class="g-fill" id="gFill"></div></div><span class="g-label" id="gLabel">카드 완성도 0/7</span>';
+    pv.insertBefore(g, pv.firstChild); }
+  const sg=document.querySelector('.shield-grid');
+  if (sg){ const sc=document.createElement('div'); sc.className='shield-counter'; sc.id='shieldCounter';
+    sc.textContent='🛡️ 방패 0/2'; sg.parentNode.insertBefore(sc, sg); }
+  const FIELD_IDS=['nickname','serviceName','problem','aiFunc','dataType','aiOutput'];
+  const _preview3 = updatePreview;
+  updatePreview = function(){
+    _preview3();
+    let n=0; FIELD_IDS.forEach(id => { const el=document.getElementById(id);
+      const has = el && el.value.trim(); if (has) n++;
+      if (el) el.classList.toggle('filled', !!has);
+      const combo=document.getElementById(id+'-input'); if (combo) combo.classList.toggle('filled', !!has);
+    });
+    const checks=document.querySelectorAll('#screen2 input[type=checkbox]:checked').length;
+    if (checks>=2) n++;
+    const gf=document.getElementById('gFill'), gl=document.getElementById('gLabel');
+    if (gf) gf.style.width=(n/7*100)+'%';
+    if (gl) gl.textContent='카드 완성도 '+n+'/7';
+    const sc=document.getElementById('shieldCounter');
+    if (sc){ sc.textContent='🛡️ 방패 '+Math.min(checks,9)+'/2'; sc.classList.toggle('ok', checks>=2); }
+    /* 미리보기 배지 → 메달 PNG */
+    const pbg=document.getElementById('prev-badges');
+    if (pbg) pbg.innerHTML = state.earnedBadges.map(i =>
+      '<img src="assets/'+ASSETS.badges[i]+'" style="width:20px;height:20px;" onerror="this.outerHTML=\''+BADGES[i].emoji+'\'">').join('');
+  };
+
+  /* 다짐·서명: 예시 칩 상태 + 펜 굵기 + 발급 버튼 게이팅 */
+  document.querySelectorAll('.example-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.example-btn').forEach(x=>x.setAttribute('aria-pressed','false'));
+      b.setAttribute('aria-pressed','true');
+    });
+  });
+  const _initSig3 = initSig;
+  initSig = function(){ _initSig3(); if (sigCtx) sigCtx.lineWidth = 3.5; };
+  const issueBtn = document.querySelector('#screen3 .btn-primary');
+  if (issueBtn){
+    issueBtn.classList.add('btn-issue-gold','sig-wait');
+    setInterval(() => {
+      if (state.sigHasData && issueBtn.classList.contains('sig-wait')){
+        issueBtn.classList.remove('sig-wait'); issueBtn.classList.add('sig-ready');
+      }
+      if (!state.sigHasData && !issueBtn.classList.contains('sig-wait')){
+        issueBtn.classList.add('sig-wait'); issueBtn.classList.remove('sig-ready');
+      }
+    }, 400);
+  }
+
+  /* 라이선스: 엠블럼·일련번호·등급·칭호·발급 시퀀스·틸트 5° */
+  const TITLE_MAP = { '분류':'가려내는', '예측':'내다보는', '군집화':'모아 보는', '음성 인식':'귀 기울이는', '생성형 AI':'만들어 내는' };
+  function gradeInfo(){
+    const w = (typeof _wrongCount!=='undefined') ? _wrongCount : 0;
+    if (w===0) return ['GOLD',''];
+    if (w<=2) return ['SILVER','grade-silver'];
+    return ['GREEN','grade-green'];
+  }
+  const _license3 = buildLicenseCard;
+  buildLicenseCard = function(){
+    _license3();
+    const card=document.getElementById('licenseCard');
+    const header=card.querySelector('.license-header');
+    /* 엠블럼 + 일련번호(1회) */
+    if (header && !header.querySelector('.lic-emblem')){
+      const im=document.createElement('img'); im.src='assets/license_logo.png'; im.className='lic-emblem'; im.alt='';
+      im.onerror=()=>im.remove(); header.insertBefore(im, header.firstChild);
+      const flag=header.querySelector('.license-flag');
+      if (flag){ flag.classList.add('mono-label'); flag.textContent='REPUBLIC OF AI EXPLORERS'; }
+      const sn=document.createElement('div'); sn.className='lic-serial'; sn.id='licSerial';
+      header.appendChild(sn);
+    }
+    const now=new Date();
+    const serial='AIX-'+String(now.getFullYear()).slice(2)+String(now.getMonth()+1).padStart(2,'0')+'-'+String(1000+Math.floor(Math.random()*9000));
+    const sn=document.getElementById('licSerial');
+    if (sn) sn.innerHTML='NO. '+serial+'<br>ISSUED '+now.getFullYear()+'.'+String(now.getMonth()+1).padStart(2,'0')+'.'+String(now.getDate()).padStart(2,'0');
+    /* 등급 */
+    const [grade, cls]=gradeInfo();
+    card.classList.remove('grade-silver','grade-green'); if (cls) card.classList.add(cls);
+    const title=card.querySelector('.license-main-title');
+    if (title){
+      let chip=title.querySelector('.lic-grade-chip');
+      if (!chip){ chip=document.createElement('span'); chip.className='lic-grade-chip mono-label'; title.appendChild(chip); }
+      chip.textContent=grade;
+    }
+    /* 칭호 */
+    const func=document.getElementById('aiFunc').value||'';
+    const shield=document.querySelector('#screen2 input[type=checkbox]:checked');
+    const verb=TITLE_MAP[func]||'탐험하는';
+    const shieldName=shield? shield.value.replace(' 보호','').replace(' 확인','') : 'AI';
+    const nameEl=document.getElementById('lic-name');
+    if (nameEl && !document.getElementById('licTitleLine')){
+      const t=document.createElement('div'); t.className='lic-title-line'; t.id='licTitleLine';
+      nameEl.parentNode.insertBefore(t, nameEl);
+    }
+    const tl=document.getElementById('licTitleLine');
+    if (tl) tl.textContent='「'+shieldName+'를 지키며 '+verb+' 탐험가」';
+    /* 배지 → 메달 PNG */
+    const lb=document.getElementById('lic-badges');
+    if (lb) lb.innerHTML = state.earnedBadges.map(i =>
+      '<img class="lic-badge-img" src="assets/'+ASSETS.badges[i]+'" title="'+BADGES[i].name+'" onerror="this.outerHTML=\''+BADGES[i].emoji+'\'">').join('');
+    /* 발급 시퀀스: 카드 등장 → 인장+흔들림 (색종이·팡파레는 기존 타이밍) */
+    card.classList.remove('card-entrance'); void card.offsetWidth; card.classList.add('card-entrance');
+    setTimeout(() => { document.body.classList.add('screen-shake');
+      setTimeout(()=>document.body.classList.remove('screen-shake'), 320); }, 480);
+    /* 저장 안내(1회) */
+    const btnRow=document.querySelector('#screen4 .btn-row');
+    if (btnRow && !document.getElementById('saveHint')){
+      const p=document.createElement('p'); p.className='save-hint'; p.id='saveHint';
+      p.textContent='📸 스크린샷으로 저장해 선생님께 보여 주세요!';
+      btnRow.parentNode.insertBefore(p, btnRow);
+    }
+  };
+  const lic=document.getElementById('licenseCard');
+  if (lic){
+    lic.addEventListener('mousemove', e => {
+      const r=lic.getBoundingClientRect();
+      const rx=((e.clientY-r.top)/r.height-0.5)*-5, ry=((e.clientX-r.left)/r.width-0.5)*5;
+      lic.style.transform='perspective(900px) rotateX('+rx+'deg) rotateY('+ry+'deg)';
+    });
+    lic.addEventListener('mouseleave', () => lic.style.transform='');
+  }
+
+  /* 갤러리: 미니 라이선스 통일 */
+  const ACCENTS=['linear-gradient(90deg,#FFD65C,#F5A623)','linear-gradient(90deg,#6C5CFF,#4A3AE8)',
+    'linear-gradient(90deg,#2BD98F,#0EA5E9)','linear-gradient(90deg,#F9A8D4,#EC4899)',
+    'linear-gradient(90deg,#A5F3FC,#38BDF8)','linear-gradient(90deg,#FDBA74,#FB923C)'];
+  function skinGalleryCard(card){
+    card.style.background='';
+    card.style.setProperty('--accent', ACCENTS[Math.floor(Math.random()*ACCENTS.length)]);
+    const b=card.querySelector('.gallery-card-badges');
+    if (b && !b.querySelector('img')){
+      b.innerHTML = state.earnedBadges.length
+        ? state.earnedBadges.map(i=>'<img class="g-medal" src="assets/'+ASSETS.badges[i]+'" onerror="this.outerHTML=\''+BADGES[i].emoji+'\'">').join('')
+        : b.innerHTML;
+    }
+  }
+  document.querySelectorAll('.gallery-card').forEach(c => {
+    c.style.background=''; c.style.setProperty('--accent', ACCENTS[Math.floor(Math.random()*ACCENTS.length)]);
+  });
+  const _gallery3 = addToGallery;
+  addToGallery = function(){
+    _gallery3();
+    const cards=document.querySelectorAll('.gallery-card');
+    const last=cards[cards.length-1];
+    if (last){ skinGalleryCard(last); last.classList.add('gallery-new'); }
+  };
+})();
+</script>
+
+
+<!-- ═══════════ 반응형 레이어 ═══════════ -->
+<style id="v3resp">
+  /* ── 태블릿 ≤900px ── */
+  @media (max-width: 900px) {
+    .container { padding: 24px 16px 48px; }
+    .card { padding: 24px 20px; }
+  }
+  /* ── 모바일 ≤640px ── */
+  @media (max-width: 640px) {
+    body { font-size: 16px; }
+    /* HUD: 활성 스텝 라벨만, 로고는 엠블럼만 */
+    .progress-bar { padding: 10px 12px; gap: 6px; }
+    .hud-logo span { display: none; }
+    .step-label { display: none; }
+    .step-label.active { display: inline; font-size: 12px; }
+    .step-circle { width: 30px; height: 30px; font-size: 12px; }
+    .step-arrow { font-size: 12px; }
+    /* 타이틀 화면 */
+    #screen0 h1.card-title { font-size: 27px !important; }
+    .hero-img { max-width: 165px; }
+    .hero-emblem { width: 250px; }
+    .hero-overline { font-size: 10px; letter-spacing: 1.5px; }
+    /* 퀴즈 */
+    .ox-buttons { gap: 10px; }
+    .ox-btn { padding: 26px 14px; font-size: 46px; border-radius: 20px; gap: 8px; }
+    .ox-btn span:last-child { font-size: 19px; }
+    .choice-btn { min-height: 56px; font-size: 15px; }
+    #screen1 .badge-item .badge-img { width: 24px; height: 24px; }
+    #screen1 .badge-item { padding: 5px 1px; }
+    .quiz-tier { font-size: 12px; }
+    .quiz-gate-chip img { width: 22px; height: 22px; }
+    .done-medals img { width: 38px; height: 38px; }
+    .badge-popup { width: min(88vw, 340px); }
+    .feedback-box.correct.show .cheer-mini { width: 44px; height: 44px; }
+    /* 버튼 */
+    .btn-row { flex-wrap: wrap; }
+    .btn-row .btn { flex: 1 1 100%; min-height: 52px; }
+    /* 설계 폼: 미리보기 = 하단 고정 독 */
+    #livePreview { position: fixed; left: 8px; right: 8px; bottom: 8px; z-index: 250;
+      max-height: 68px; overflow: hidden; transition: max-height .35s cubic-bezier(.22,1,.36,1);
+      box-shadow: 0 -8px 30px -8px rgba(25,22,55,.5); cursor: pointer; }
+    #livePreview.open { max-height: 72vh; overflow-y: auto; }
+    body:not([data-screen="2"]) #livePreview { display: none; }
+    body[data-screen="2"] .container { padding-bottom: 110px; }
+    body[data-screen="2"] #sfxToggle { bottom: 88px; }
+    .gauge-pill { margin-bottom: 8px; position: relative; }
+    .gauge-pill .g-chevron { font-size: 14px; color: #FFD65C; transition: transform .3s; }
+    #livePreview.open .g-chevron { transform: rotate(180deg); }
+    /* 서명·라이선스 */
+    .license-header { flex-wrap: wrap; gap: 10px; }
+    .lic-serial { margin-left: 0; text-align: left; width: 100%; font-size: 11px; }
+    .license-main-title { font-size: 21px; }
+    .license-flag { font-size: 10px; }
+    #licenseCard::after { right: 18px; bottom: 64px; width: 36px; height: 36px; }
+    .lic-badge-img { width: 30px; height: 30px; }
+    .stamp { transform-origin: bottom right; }
+    /* 갤러리·기타 */
+    .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+    #sfxToggle { width: 46px; height: 46px; right: 12px; bottom: 12px; font-size: 19px; }
+    #toast { max-width: 90vw; font-size: 14px; }
+    .example-btn { min-height: 44px; }
+    .combo-list li { min-height: 44px; }
+    .cta-chip { font-size: 11px; }
+  }
+  /* ── 소형 ≤380px ── */
+  @media (max-width: 380px) {
+    .badges-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .badge-name { font-size: 10px; }
+    .ox-btn { font-size: 38px; padding: 20px 10px; }
+    #screen0 h1.card-title { font-size: 23px !important; }
+    .card { padding: 20px 14px; }
+  }
+  /* 터치 기기: 호버 의존 제거, 틸트 대신 진입 연출만 */
+  @media (hover: none) {
+    .btn-primary:hover, .choice-btn:hover, .ox-btn:hover, .badge-item:hover, .gallery-card:hover { transform: none; }
+  }
+
+  /* 시작 화면 배지 도감 축소 */
+  #screen0 .badges-grid { gap: 10px; margin: 16px 0; }
+  #screen0 .badge-item { padding: 10px 6px; }
+  #screen0 .badge-item .badge-img { width: 34px; height: 34px; margin-bottom: 4px; }
+  #screen0 .badge-item .badge-emoji { font-size: 26px; }
+  #screen0 .badge-item .badge-name { font-size: 11px; }
+  #screen0 .badge-item.locked::after { font-size: 11px; top: 4px; right: 6px; }
+
+  /* 도장 이미지 크기 고정(서명 가림 수정) */
+  .stamp { width: 92px; height: 92px; flex-shrink: 0; }
+  .stamp img, #stampImg { width: 86px; height: 86px; object-fit: contain; display: block; }
+  @media (max-width: 640px) {
+    .stamp { width: 68px; height: 68px; }
+    .stamp img, #stampImg { width: 64px; height: 64px; }
+  }
+
+  /* 라이선스 헤더 정리: 남색 연속 + 금 헤어라인, 제목 줄바꿈 방지 */
+  .license-header { background: linear-gradient(160deg,#191637,#241D4E) !important;
+    border-bottom: 2px solid var(--gold); }
+  .license-main-title { white-space: nowrap; }
+  @media (max-width: 640px) { .license-main-title { white-space: normal; font-size: 19px; } }
+  /* 메달 흰 배경 → 동전 스티커화 */
+  .lic-badge-img, .g-medal, #prev-badges img { border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,.35); }
+  .stamp img, #stampImg { border-radius: 14px; box-shadow: 0 4px 10px rgba(0,0,0,.3); }
+</style>
+<script id="v3respjs">
+(function(){
+  var pv = document.getElementById('livePreview');
+  if (!pv) return;
+  /* 게이지에 펼침 표시 추가 */
+  var g = pv.querySelector('.gauge-pill');
+  if (g && !g.querySelector('.g-chevron')) {
+    var ch = document.createElement('span'); ch.className = 'g-chevron'; ch.textContent = '▲';
+    g.appendChild(ch);
+  }
+  var mq = window.matchMedia('(max-width: 640px)');
+  pv.addEventListener('click', function(e){
+    if (!mq.matches) return;
+    if (e.target.closest('input,select,textarea,button')) return;
+    pv.classList.toggle('open');
+  });
+  /* 화면 이동 시 독 접기 */
+  var _go = goToScreen;
+  goToScreen = function(n){ _go(n); if (pv) pv.classList.remove('open'); };
+})();
+</script>
+
+</body>
+</html>

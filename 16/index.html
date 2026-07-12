@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>얼굴 따라 척척! 고양이 귀 AR — AI 탐험대 16</title>
+<style>
+  :root {
+    --sky: #5B9CF6; --sky-light: #EBF3FF;
+    --mint: #34D399; --mint-light: #D1FAE5;
+    --amber: #FBBF24; --amber-light: #FEF3C7;
+    --coral: #F87171; --coral-light: #FEE2E2;
+    --purple: #A78BFA; --purple-light: #EDE9FE;
+    --bg: #F0F7FF; --card: #FFFFFF;
+    --text: #1E293B; --text-muted: #64748B; --border: #E2E8F0;
+    --radius: 20px; --radius-sm: 12px;
+    --shadow: 0 4px 20px rgba(91,156,246,0.12);
+    --shadow-lg: 0 8px 40px rgba(91,156,246,0.2);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.6; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 24px 16px 50px; }
+  header { text-align: center; margin-bottom: 18px; }
+  .chip { display: inline-block; background: var(--purple); color: white; font-size: 13px; font-weight: 700; padding: 4px 14px; border-radius: 999px; margin-bottom: 8px; }
+  h1 { font-size: 24px; line-height: 1.3; }
+  .sub { color: var(--text-muted); font-size: 15px; margin-top: 4px; }
+  .safe { background: var(--amber-light); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 13.5px; text-align: center; margin: 12px 0; }
+
+  .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; }
+
+  /* 모드 토글 */
+  .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background: var(--purple-light); border-radius: 999px; padding: 5px; margin-bottom: 14px; }
+  .seg button { border: 0; background: transparent; font-family: inherit; font-size: 15px; font-weight: 700; color: var(--text-muted); padding: 10px 6px; min-height: 44px; border-radius: 999px; cursor: pointer; }
+  .seg button.on { background: var(--purple); color: white; box-shadow: var(--shadow); }
+
+  /* 무대 */
+  .stage { position: relative; width: 100%; aspect-ratio: 4/3; background: #10182B; border-radius: var(--radius-sm); overflow: hidden; touch-action: none; }
+  .stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; transform: scaleX(-1); }
+  .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .stage .idle { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; color: #CBD5E1; font-size: 15px; text-align: center; padding: 12px; }
+  .stage .idle .big { font-size: 54px; }
+  .lock { position: absolute; top: 8px; left: 8px; background: rgba(16,24,43,.72); color: #E2E8F0; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; z-index: 3; }
+
+  /* 좌표 패널 */
+  .coords { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 4px; transition: opacity .2s; }
+  .coords.dim { opacity: .35; }
+  .coords div { background: var(--purple-light); border-radius: var(--radius-sm); text-align: center; padding: 8px 4px 10px; }
+  .coords .lab { font-size: 12.5px; font-weight: 700; color: var(--text-muted); }
+  .coords .val { font-size: 30px; font-weight: 800; color: #7C3AED; font-variant-numeric: tabular-nums; line-height: 1.15; }
+
+  .stateline { text-align: center; font-size: 14px; min-height: 24px; color: var(--text-muted); font-weight: 600; margin-bottom: 10px; }
+  .stateline b { color: var(--text); }
+
+  .btnrow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .btn { border: 0; cursor: pointer; font-family: inherit; font-size: 15.5px; font-weight: 700; color: white; background: var(--purple); padding: 12px 10px; border-radius: var(--radius-sm); min-height: 48px; }
+  .btn:active { transform: scale(.97); }
+  .btn.coral { background: var(--coral); }
+  .btn.ghost { background: white; color: var(--text-muted); border: 1.5px solid var(--border); }
+  .btn:disabled { opacity: .55; cursor: wait; }
+
+  /* 식별 모드 안내 패널 */
+  .idpanel { display: none; background: var(--sky-light); border-radius: var(--radius-sm); padding: 12px 14px; margin-top: 12px; font-size: 14px; }
+  .idpanel.show { display: block; }
+  .idpanel .flow { display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; margin: 8px 0; font-size: 13.5px; font-weight: 700; }
+  .idpanel .flow span { background: white; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 6px 10px; }
+  .idpanel .flow em { font-style: normal; color: var(--text-muted); }
+  .idpanel .warn { background: white; border-left: 4px solid var(--purple); border-radius: 8px; padding: 8px 10px; margin-top: 8px; font-weight: 600; }
+
+  .obs { background: white; border-radius: var(--radius-sm); box-shadow: var(--shadow); padding: 12px 16px; font-size: 14.5px; margin-top: 14px; }
+
+  table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14.5px; background: white; border-radius: var(--radius-sm); overflow: hidden; box-shadow: var(--shadow); }
+  th, td { padding: 10px 12px; border: 1px solid var(--border); text-align: center; }
+  thead th { background: var(--purple); color: white; font-size: 14px; }
+  tbody th { background: var(--purple-light); font-size: 13.5px; width: 26%; }
+  td.hl-a { background: var(--mint-light); }
+  td.hl-b { background: var(--amber-light); }
+  h3.mid { text-align: center; margin: 22px 0 2px; font-size: 18px; }
+
+  footer { text-align: center; margin-top: 26px; font-size: 14px; }
+  footer a { color: var(--purple); text-decoration: none; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="chip">AI 탐험대 · 16 얼굴 인식 AI</span>
+  <h1>🐱 얼굴 따라 척척! 고양이 귀 AR</h1>
+  <p class="sub">AI가 얼굴의 <b>위치</b>를 찾아 X·Y 좌표 숫자로 바꾸면, 고양이 귀가 그 숫자를 따라 움직여요.</p>
+</header>
+<p class="safe">🛡️ 내 얼굴은 화면에만 보이고 저장되지 않아요. 친구 얼굴을 함부로 비추지 않아요.</p>
+
+<div class="card">
+  <div class="seg">
+    <button id="mDetect" class="on">🔍 탐지 모드</button>
+    <button id="mIdent">🪪 식별 모드</button>
+  </div>
+
+  <div class="stage" id="stage">
+    <span class="lock">🔒 화면에만 보여요 · 저장 안 해요</span>
+    <video id="video" playsinline muted></video>
+    <canvas id="canvas"></canvas>
+    <div class="idle" id="idle"><span class="big">🐱</span>아래 [카메라 시작] 버튼을 눌러요.<br>카메라가 없으면 연습 모드로 체험해요.</div>
+  </div>
+
+  <div class="coords" id="coords">
+    <div><span class="lab">얼굴 중심 X (가로)</span><br><span class="val" id="vx">—</span></div>
+    <div><span class="lab">얼굴 중심 Y (세로)</span><br><span class="val" id="vy">—</span></div>
+  </div>
+  <p class="stateline" id="state">버튼을 누르면 카메라가 켜져요</p>
+
+  <div class="btnrow">
+    <button class="btn" id="btnStart">📷 카메라 시작</button>
+    <button class="btn ghost" id="btnSim">🖱️ 연습 모드로 하기</button>
+  </div>
+
+  <div class="idpanel" id="idpanel">
+    <b>🪪 식별은 이렇게 해요</b> — 위치를 찾은 다음, <b>등록 명부</b>와 대조해서 누구인지 알아내요.
+    <div class="flow">
+      <span>📷 지금 보이는 얼굴</span><em>↔ 대조 ↔</em><span>🗂 등록 명부: 마루 🐻 · 소진 🐰</span><em>→</em><span>"마루예요!"</span>
+    </div>
+    <div class="warn">누구인지 알아내는 건 '식별' — 이 체험은 위치만 찾는 <b>'탐지'</b>예요. 진짜 식별(이름 알아내기)은 하지 않아요.</div>
+  </div>
+</div>
+
+<div class="obs">
+  🔍 <b>관찰해 봐요</b> — 고개를 왼쪽·오른쪽으로 움직이면 <b>X</b>가, 위·아래로 움직이면 <b>Y</b>가 바뀌어요. 화면에서는 아래로 갈수록 Y가 커져요. 얼굴을 손으로 반쯤 가리면? AI가 얼굴을 놓쳐서 귀도 사라져요!
+</div>
+
+<h3 class="mid">📋 한눈에 비교</h3>
+<table>
+  <thead><tr><th>구분</th><th>🔍 얼굴 탐지</th><th>🪪 얼굴 식별</th></tr></thead>
+  <tbody>
+    <tr><th>무엇을 하나요?</th><td class="hl-a">얼굴이 <b>어디에</b> 있는지 위치 찾기</td><td class="hl-b">얼굴이 <b>누구인지</b> 판단하기</td></tr>
+    <tr><th>필요한 것</th><td class="hl-a">카메라 화면만 있으면 돼요</td><td class="hl-b">미리 등록해 둔 얼굴 명부가 필요해요</td></tr>
+    <tr><th>쓰이는 곳</th><td class="hl-a">고양이 귀 AR, 사진 자동 초점</td><td class="hl-b">스마트폰 얼굴 잠금 해제, 출입문</td></tr>
+  </tbody>
+</table>
+
+<footer><a href="../">← AI 탐험대 체험 전체 목록</a></footer>
+</div>
+
+<script type="module">
+const $ = id => document.getElementById(id);
+const stage = $('stage'), video = $('video'), canvas = $('canvas'), ctx = canvas.getContext('2d');
+const CDN = '../assets/mediapipe';
+const MODEL = '../assets/mediapipe/face_landmarker.task';
+
+let mode = 'detect';          // 'detect' | 'ident'
+let running = false, simMode = false;
+let stream = null, landmarker = null;
+let lastVT = -1, lastFace = null, frame = 0, raf = 0;
+let simPos = null;
+
+// ── 모드 토글 ──
+$('mDetect').onclick = () => setMode('detect');
+$('mIdent').onclick = () => setMode('ident');
+function setMode(m){
+  mode = m;
+  $('mDetect').classList.toggle('on', m === 'detect');
+  $('mIdent').classList.toggle('on', m === 'ident');
+  $('idpanel').classList.toggle('show', m === 'ident');
+  $('coords').classList.toggle('dim', m === 'ident');
+  if(running) $('state').innerHTML = m === 'detect'
+    ? '탐지 모드: 네모 박스와 좌표만 찾아요 (누구인지는 몰라요)'
+    : '식별 모드(시뮬레이션): 아래 설명을 읽어 봐요';
+}
+
+// ── 시작/멈춤 ──
+$('btnStart').onclick = async function(){
+  if(running && !simMode){ stopAll(); return; }
+  if(simMode) leaveSim();
+  this.disabled = true;
+  try{
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('nocam');
+    await loadModel(this);
+    stream = await navigator.mediaDevices.getUserMedia({ video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'user' }, audio: false });
+    video.srcObject = stream;
+    await video.play();
+    canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+    stage.style.aspectRatio = video.videoWidth + '/' + video.videoHeight;
+    $('idle').style.display = 'none'; video.style.display = 'block';
+    running = true; lastVT = -1; lastFace = null;
+    this.textContent = '⏹ 카메라 끄기'; this.classList.add('coral');
+    $('state').textContent = '카메라에 얼굴이 보이게 해 봐요';
+    loop();
+  }catch(e){
+    const msg = (e && e.name === 'NotAllowedError') ? '카메라 사용이 허용되지 않았어요.'
+              : (e && e.message === 'nocam') ? '이 기기에서 카메라를 쓸 수 없어요.'
+              : 'AI 모델이나 카메라를 불러오지 못했어요.';
+    $('state').innerHTML = msg + ' → <b>연습 모드</b>로 바꿔요!';
+    enterSim(false);
+  }
+  this.disabled = false;
+};
+$('btnSim').onclick = () => { if(running && !simMode) stopAll(true); enterSim(true); };
+
+async function loadModel(btn){
+  if(landmarker) return;
+  btn.textContent = '⏳ AI 준비 중…';
+  $('state').textContent = 'AI가 얼굴 찾는 법을 준비하고 있어요…';
+  const mp = await import(CDN + '/vision_bundle.mjs');
+  const vision = await mp.FilesetResolver.forVisionTasks(CDN + '/wasm');
+  landmarker = await mp.FaceLandmarker.createFromOptions(vision, {
+    baseOptions: { modelAssetPath: MODEL, delegate: 'GPU' },
+    runningMode: 'VIDEO', numFaces: 1
+  });
+}
+
+function stopAll(silent){
+  running = false; cancelAnimationFrame(raf);
+  if(stream){ stream.getTracks().forEach(t => t.stop()); stream = null; }
+  video.srcObject = null; video.style.display = 'none';
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  $('idle').style.display = 'flex';
+  $('btnStart').textContent = '📷 카메라 시작'; $('btnStart').classList.remove('coral');
+  $('vx').textContent = '—'; $('vy').textContent = '—';
+  if(!silent) $('state').innerHTML = '<b>카메라를 껐어요.</b> 얼굴 영상은 저장되지 않았어요.';
+}
+
+// ── 연습 모드 (폴백) ──
+function enterSim(byUser){
+  if(simMode && running) return;
+  cancelAnimationFrame(raf);
+  simMode = true; running = true;
+  stage.style.aspectRatio = '4/3';
+  canvas.width = 640; canvas.height = 480;
+  $('idle').style.display = 'none'; video.style.display = 'none';
+  simPos = { x: 320, y: 240 };
+  $('btnSim').textContent = '연습 모드 하는 중';
+  if(byUser) $('state').innerHTML = '<b>연습 모드</b>: 마루 얼굴 🙂 을 마우스나 손가락으로 움직여 봐요';
+  loop();
+}
+function leaveSim(){
+  simMode = false; running = false; cancelAnimationFrame(raf);
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  $('btnSim').textContent = '🖱️ 연습 모드로 하기';
+}
+stage.addEventListener('pointerdown', movSim);
+stage.addEventListener('pointermove', movSim);
+function movSim(e){
+  if(!simMode) return;
+  const r = stage.getBoundingClientRect();
+  simPos = { x: (e.clientX - r.left) / r.width * canvas.width,
+             y: (e.clientY - r.top) / r.height * canvas.height };
+  e.preventDefault();
+}
+
+// ── 렌더 루프 ──
+function loop(){
+  if(!running) return;
+  frame++;
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  let face = null; // {cx, cy, fx, fy, tlx, tly, trx, try_, fw, box}
+  if(simMode){
+    // 배경 + 마루 얼굴 이모지
+    ctx.fillStyle = '#1E2A44'; ctx.fillRect(0, 0, W, H);
+    const fw = W * 0.28, cx = simPos.x, cy = simPos.y;
+    ctx.font = fw * 1.15 + 'px serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('🙂', cx, cy);
+    face = { cx, cy, fx: cx, fy: cy - fw * 0.42, tlx: cx - fw * 0.4, tly: cy - fw * 0.36, trx: cx + fw * 0.4, try_: cy - fw * 0.36, fw,
+             box: [cx - fw * 0.58, cy - fw * 0.58, fw * 1.16, fw * 1.16] };
+  } else {
+    if(video.currentTime !== lastVT){
+      lastVT = video.currentTime;
+      try{
+        const res = landmarker.detectForVideo(video, performance.now());
+        lastFace = (res.faceLandmarks && res.faceLandmarks.length) ? res.faceLandmarks[0] : null;
+      }catch(e){ lastFace = null; }
+    }
+    if(lastFace){
+      const P = i => ({ x: W - lastFace[i].x * W, y: lastFace[i].y * H }); // 거울 반전 좌표
+      const nose = P(1), brow = P(10), tl = P(332), tr = P(103);           // 반전이라 좌우 교체
+      const a = P(234), b = P(454);
+      const fw = Math.hypot(a.x - b.x, a.y - b.y);
+      let minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
+      for(const lm of lastFace){
+        const x = W - lm.x * W, y = lm.y * H;
+        if(x < minX) minX = x; if(x > maxX) maxX = x;
+        if(y < minY) minY = y; if(y > maxY) maxY = y;
+      }
+      face = { cx: nose.x, cy: nose.y, fx: brow.x, fy: brow.y, tlx: tl.x, tly: tl.y, trx: tr.x, try_: tr.y, fw,
+               box: [minX, minY, maxX - minX, maxY - minY] };
+    }
+  }
+
+  if(face){
+    if(mode === 'detect'){
+      drawBox(face.box, '#22C55E', false);
+      drawLabel(face.box, 'X:' + Math.round(face.cx) + '  Y:' + Math.round(face.cy), '#22C55E');
+      drawEars(face);
+      if(frame % 5 === 0 || simMode){ $('vx').textContent = Math.round(face.cx); $('vy').textContent = Math.round(face.cy); }
+      if(!simMode) $('state').innerHTML = '얼굴 <b>탐지</b> 중! 고개를 움직여 좌표를 관찰해요';
+    } else {
+      drawBox(face.box, '#94A3B8', true);
+      drawLabel(face.box, '❓ 누구인지는 몰라요 (식별 안 함)', '#94A3B8');
+      if(frame % 5 === 0 || simMode){ $('vx').textContent = Math.round(face.cx); $('vy').textContent = Math.round(face.cy); }
+    }
+  } else if(!simMode){
+    $('state').textContent = '얼굴을 찾는 중… 카메라에 얼굴이 보이게 해 봐요';
+    if(frame % 5 === 0){ $('vx').textContent = '—'; $('vy').textContent = '—'; }
+  }
+  raf = requestAnimationFrame(loop);
+}
+
+function drawBox(b, color, dashed){
+  ctx.save();
+  ctx.strokeStyle = color; ctx.lineWidth = Math.max(3, canvas.width / 220);
+  if(dashed) ctx.setLineDash([10, 7]);
+  ctx.strokeRect(b[0], b[1], b[2], b[3]);
+  ctx.restore();
+}
+function drawLabel(b, text, color){
+  ctx.save();
+  const fs = Math.max(15, canvas.width / 34);
+  ctx.font = '700 ' + fs + 'px sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+  const w = ctx.measureText(text).width + 14;
+  const x = Math.max(4, Math.min(b[0], canvas.width - w - 4));
+  const y = Math.max(fs + 8, b[1] - 6);
+  ctx.fillStyle = color; roundRect(x, y - fs - 8, w, fs + 10, 6); ctx.fill();
+  ctx.fillStyle = 'white'; ctx.fillText(text, x + 7, y - 2);
+  ctx.restore();
+}
+function roundRect(x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+}
+// 고양이 귀: 관자놀이(103·332) 위 + 보정값(이마 기준 위로 faceW*0.5)
+function drawEars(f){
+  const s = f.fw * 0.42, lift = f.fw * 0.5;
+  ear(f.tlx, Math.min(f.tly, f.fy) - lift, s, -0.18);
+  ear(f.trx, Math.min(f.try_, f.fy) - lift, s, 0.18);
+}
+function ear(x, y, s, tilt){
+  ctx.save();
+  ctx.translate(x, y); ctx.rotate(tilt);
+  ctx.fillStyle = '#8B5CF6';
+  ctx.beginPath(); ctx.moveTo(0, -s); ctx.lineTo(-s * 0.62, s * 0.42); ctx.lineTo(s * 0.62, s * 0.42); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#F9A8D4';
+  ctx.beginPath(); ctx.moveTo(0, -s * 0.5); ctx.lineTo(-s * 0.32, s * 0.28); ctx.lineTo(s * 0.32, s * 0.28); ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+</script>
+</body>
+</html>

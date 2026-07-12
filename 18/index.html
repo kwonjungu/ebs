@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI DJ! 내 기분을 읽고 노래를 골라요 — AI 탐험대 18</title>
+<style>
+  :root {
+    --sky: #5B9CF6; --sky-light: #EBF3FF;
+    --mint: #34D399; --mint-light: #D1FAE5;
+    --amber: #FBBF24; --amber-light: #FEF3C7;
+    --coral: #F87171; --coral-light: #FEE2E2;
+    --purple: #A78BFA; --purple-light: #EDE9FE;
+    --bg: #F0F7FF; --card: #FFFFFF;
+    --text: #1E293B; --text-muted: #64748B; --border: #E2E8F0;
+    --radius: 20px; --radius-sm: 12px;
+    --shadow: 0 4px 20px rgba(91,156,246,0.12);
+    --shadow-lg: 0 8px 40px rgba(91,156,246,0.2);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.6; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 50px; }
+  header { text-align: center; margin-bottom: 14px; }
+  .chip { display: inline-block; background: var(--coral); color: white; font-size: 13px; font-weight: 700; padding: 4px 14px; border-radius: 999px; margin-bottom: 8px; }
+  h1 { font-size: 24px; line-height: 1.3; }
+  .sub { color: var(--text-muted); font-size: 15px; margin-top: 4px; }
+  .safe { background: var(--amber-light); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 13.5px; text-align: center; margin: 12px 0; }
+
+  .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; margin-bottom: 14px; }
+  .card h2 { font-size: 16.5px; margin-bottom: 8px; }
+  .samples { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+  @media (max-width: 480px) { .samples { grid-template-columns: 1fr; } }
+  .sample { border: 1.5px solid var(--border); background: white; border-radius: var(--radius-sm); padding: 8px 10px; font-size: 13.5px; text-align: left; cursor: pointer; font-family: inherit; min-height: 44px; line-height: 1.45; }
+  .sample:active { transform: scale(.97); }
+  .sample b { font-size: 14px; }
+  textarea { width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-family: inherit; font-size: 15px; resize: vertical; min-height: 64px; margin-bottom: 10px; }
+  textarea:focus { outline: 2px solid var(--coral); border-color: transparent; }
+  .btn { display: block; width: 100%; border: 0; cursor: pointer; font-family: inherit; font-size: 16px; font-weight: 700; color: white; background: var(--coral); padding: 12px 10px; border-radius: var(--radius-sm); min-height: 46px; }
+  .btn:active { transform: scale(.97); }
+
+  #result { display: none; }
+  .diarybox { background: #F8FAFC; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 15.5px; margin-bottom: 12px; }
+  mark { border-radius: 5px; padding: 0 3px; font-weight: 700; }
+  .m-joy { background: var(--amber-light); } .m-sad { background: var(--sky-light); color: #1D4ED8; }
+  .m-angry { background: var(--coral-light); color: #B91C1C; } .m-anx { background: var(--purple-light); color: #6D28D9; }
+
+  .bars { margin-bottom: 4px; }
+  .brow { display: flex; align-items: center; gap: 8px; margin: 5px 0; font-size: 14px; }
+  .brow .bl { width: 78px; flex-shrink: 0; }
+  .btrack { flex: 1; background: #F1F5F9; border-radius: 999px; height: 16px; overflow: hidden; }
+  .bfill { height: 100%; width: 0%; border-radius: 999px; transition: width .6s ease-out; }
+  .bnum { width: 40px; font-size: 13px; color: var(--text-muted); }
+  .f-joy { background: var(--amber); } .f-sad { background: var(--sky); }
+  .f-angry { background: var(--coral); } .f-anx { background: var(--purple); }
+
+  .nohit { display: none; background: var(--sky-light); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 14.5px; text-align: center; margin-bottom: 10px; }
+
+  .reco { display: none; background: linear-gradient(135deg, var(--coral-light), #FFF5F5); border: 2px solid var(--coral); border-radius: var(--radius-sm); padding: 14px; text-align: center; margin-top: 12px; }
+  .reco .big { font-size: 34px; }
+  .reco .mood { font-size: 17px; font-weight: 800; }
+  .reco .why { font-size: 13.5px; color: var(--text-muted); margin: 4px 0 10px; }
+  .playbtn { border: 0; cursor: pointer; font-family: inherit; font-size: 15px; font-weight: 700; color: white; background: var(--coral); padding: 10px 20px; border-radius: 999px; min-height: 44px; }
+  .playbtn:active { transform: scale(.97); }
+  .playbtn.on { background: var(--text); }
+  .dislike { display: inline-block; border: 1.5px solid var(--border); background: white; cursor: pointer; font-family: inherit; font-size: 13.5px; color: var(--text-muted); padding: 8px 14px; border-radius: 999px; margin-top: 10px; min-height: 40px; }
+  .fbnote { display: none; background: white; border-radius: var(--radius-sm); padding: 10px 12px; font-size: 14px; margin-top: 10px; text-align: center; }
+  .moodpick { display: none; gap: 6px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
+  .moodpick button { border: 1.5px solid var(--border); background: white; border-radius: 999px; padding: 8px 12px; font-family: inherit; font-size: 13.5px; cursor: pointer; min-height: 40px; }
+  .moodpick button:active { transform: scale(.95); }
+
+  .obs { background: white; border-radius: var(--radius-sm); box-shadow: var(--shadow); padding: 12px 16px; font-size: 14.5px; margin-top: 2px; }
+  footer { text-align: center; margin-top: 24px; font-size: 14px; }
+  footer a { color: var(--coral); text-decoration: none; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="chip">AI 탐험대 · 18 감정 분석</span>
+  <h1>🎧 AI DJ! 내 기분을 읽고 노래를 골라요</h1>
+  <p class="sub">일기 속 단어를 단서로 감정을 추정하고, 어울리는 음악을 추천해요.</p>
+</header>
+<p class="safe">🛡️ 일기는 화면에만 쓰이고 저장되지 않아요. 개인정보는 쓰지 않아요.</p>
+
+<div class="card">
+  <h2>① 기분 일기를 고르거나 직접 써 봐요</h2>
+  <div class="samples" id="samples"></div>
+  <textarea id="diary" maxlength="200" placeholder="오늘 기분을 한두 문장으로 적어 봐요. 이름은 빼고요!"></textarea>
+  <button class="btn" id="go">🔍 감정 분석</button>
+</div>
+
+<div class="card" id="result">
+  <h2>② AI DJ의 분석 결과</h2>
+  <div class="diarybox" id="hl"></div>
+  <div class="nohit" id="nohit">🤔 감정 단서를 찾지 못했어요 — AI는 표현이 없으면 알기 어려워요. "뿌듯했다", "속상했다" 같은 단어를 넣어 볼까요?</div>
+  <div class="bars" id="bars"></div>
+  <div class="reco" id="reco">
+    <div class="big" id="recoEmo"></div>
+    <div class="mood" id="recoMood"></div>
+    <p class="why" id="recoWhy"></p>
+    <button class="playbtn" id="play">▶ 분위기 들어보기</button><br>
+    <button class="dislike" id="dislike">이 추천이 내 마음과 달라요 👎</button>
+    <div class="fbnote" id="fbnote">💬 AI 추천은 정답이 아니라 예상이에요. 사람마다 듣고 싶은 음악이 달라요.<br>지금 듣고 싶은 분위기를 직접 골라 봐요!</div>
+    <div class="moodpick" id="moodpick"></div>
+  </div>
+</div>
+
+<div class="obs">🔍 <b>관찰 포인트</b> — AI는 속마음이 아니라 <b>단어</b>를 봐요. "오늘 급식은 카레였다"처럼 감정 단어가 없는 일기도 넣어 봐요.</div>
+
+<footer><a href="../">← AI 탐험대 체험 전체 목록</a></footer>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const LEX = {
+  joy:  { label: '기쁨',  emo: '😊', mark: 'm-joy',  fill: 'f-joy',
+          words: ['뿌듯', '기뻐', '기뻤', '기쁘', '신나', '신났', '신났어', '좋았', '행복', '즐거', '웃었', '설레', '최고', '칭찬', '박수'] },
+  sad:  { label: '슬픔',  emo: '😢', mark: 'm-sad',  fill: 'f-sad',
+          words: ['속상', '슬퍼', '슬펐', '슬프', '우울', '눈물', '아쉬', '서운', '외로', '울었', '시무룩'] },
+  anx:  { label: '불안',  emo: '😰', mark: 'm-anx',  fill: 'f-anx',
+          words: ['떨려', '떨리', '떨렸', '긴장', '걱정', '불안', '무서', '두려', '조마조마', '초조'] },
+  angry:{ label: '화남',  emo: '😠', mark: 'm-angry', fill: 'f-angry',
+          words: ['화나', '화가', '화났', '짜증', '억울', '분했', '분해', '열받', '싫었', '약올'] },
+};
+const MOODS = {
+  joy:   { emo: '🌞', name: '밝고 신나는 음악' },
+  sad:   { emo: '🌙', name: '잔잔하고 위로가 되는 음악' },
+  anx:   { emo: '🍃', name: '느리고 편안한 음악' },
+  angry: { emo: '🌊', name: '차분하게 가라앉히는 음악' },
+};
+const MELODY = {
+  joy:   { notes: [523, 587, 659, 784, 659, 784, 880, 1047], dur: 0.22, type: 'triangle' },
+  sad:   { notes: [440, 392, 349, 330, 294, 330, 349, 330],  dur: 0.45, type: 'sine' },
+  anx:   { notes: [330, 294, 262, 196, 262, 294, 262, 247],  dur: 0.48, type: 'sine' },
+  angry: { notes: [262, 247, 220, 196, 220, 247, 220, 196],  dur: 0.5,  type: 'sine' },
+};
+const SAMPLES = [
+  { t: '😢 속상한 날', d: '비가 와서 축구를 못 하게 되어 속상했다. 눈물이 날 뻔했다.' },
+  { t: '😊 신나는 날', d: '시험을 잘 봐서 뿌듯했다. 친구들이 박수를 쳐 줘서 정말 신났다. 최고의 하루!' },
+  { t: '😰 긴장되는 날', d: '내일 발표가 있어서 너무 떨려. 실수할까 봐 걱정되고 마음이 불안하다.' },
+  { t: '😠 화나는 날', d: '급식 줄에서 새치기를 당해서 화가 났다. 생각할수록 짜증이 난다.' },
+];
+
+// 예시 일기 버튼
+SAMPLES.forEach(s => {
+  const b = document.createElement('button');
+  b.className = 'sample';
+  b.innerHTML = '<b>' + s.t + '</b><br>' + s.d;
+  b.onclick = () => { $('diary').value = s.d; analyze(); };
+  $('samples').appendChild(b);
+});
+
+const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function analyze() {
+  const text = $('diary').value.trim();
+  if (!text) { $('diary').focus(); return; }
+  // 단서 찾기
+  const hits = [];
+  for (const cat in LEX) for (const w of LEX[cat].words) {
+    let i = -1;
+    while ((i = text.indexOf(w, i + 1)) !== -1) hits.push({ cat, start: i, end: i + w.length });
+  }
+  hits.sort((a, b) => a.start - b.start || b.end - a.end);
+  // 겹침 제거 + 하이라이트 HTML
+  let html = '', pos = 0;
+  const kept = [];
+  for (const h of hits) {
+    if (h.start < pos) continue;
+    html += esc(text.slice(pos, h.start)) + '<mark class="' + LEX[h.cat].mark + '">' + esc(text.slice(h.start, h.end)) + '</mark>';
+    pos = h.end; kept.push(h);
+  }
+  html += esc(text.slice(pos));
+  $('hl').innerHTML = html;
+  // 점수 막대
+  const scores = {}; kept.forEach(h => scores[h.cat] = (scores[h.cat] || 0) + 1);
+  const max = Math.max(1, ...Object.values(scores));
+  let top = null;
+  $('bars').innerHTML = '';
+  for (const cat in LEX) {
+    const n = scores[cat] || 0;
+    if (top === null || n > (scores[top] || 0)) top = n > 0 ? cat : top;
+    $('bars').innerHTML += '<div class="brow"><span class="bl">' + LEX[cat].emo + ' ' + LEX[cat].label +
+      '</span><div class="btrack"><div class="bfill ' + LEX[cat].fill + '" data-w="' + Math.round(n / max * 100) +
+      '"></div></div><span class="bnum">' + n + '개</span></div>';
+  }
+  $('result').style.display = 'block';
+  requestAnimationFrame(() => requestAnimationFrame(() =>
+    document.querySelectorAll('.bfill').forEach(el => el.style.width = el.dataset.w + '%')));
+  // 추천 or 단서 없음
+  stopMelody();
+  $('fbnote').style.display = 'none'; $('moodpick').style.display = 'none';
+  if (!top) {
+    $('nohit').style.display = 'block'; $('reco').style.display = 'none';
+  } else {
+    $('nohit').style.display = 'none';
+    const word = text.slice(kept[0].start, kept[0].end);
+    showReco(top, "'" + word + "' 같은 단어가 보여서 이 분위기를 골랐어요.");
+  }
+  $('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+$('go').onclick = analyze;
+
+let curMood = null;
+function showReco(mood, why) {
+  curMood = mood;
+  $('reco').style.display = 'block';
+  $('recoEmo').textContent = MOODS[mood].emo;
+  $('recoMood').textContent = MOODS[mood].name;
+  $('recoWhy').textContent = why;
+  stopMelody();
+}
+
+// 👎 피드백 → 다른 분위기 직접 고르기
+$('dislike').onclick = () => {
+  $('fbnote').style.display = 'block';
+  const mp = $('moodpick');
+  mp.style.display = 'flex'; mp.innerHTML = '';
+  for (const m in MOODS) {
+    if (m === curMood) continue;
+    const b = document.createElement('button');
+    b.textContent = MOODS[m].emo + ' ' + MOODS[m].name;
+    b.onclick = () => {
+      showReco(m, '내가 직접 고른 분위기예요. 피드백 고마워요! 🎵');
+      $('fbnote').style.display = 'none'; mp.style.display = 'none';
+    };
+    mp.appendChild(b);
+  }
+};
+
+// ── Web Audio 멜로디 ──
+let audioCtx = null, playing = false, noteTimers = [];
+$('play').onclick = async function () {
+  if (playing) { stopMelody(); return; }
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') await audioCtx.resume();
+  } catch (e) { this.textContent = '🔇 소리 없이 카드로 즐겨요'; return; }
+  playing = true; this.textContent = '⏹ 멈추기'; this.classList.add('on');
+  const m = MELODY[curMood] || MELODY.joy;
+  let t = 0;
+  for (let rep = 0; rep < 2; rep++) m.notes.forEach(f => {
+    noteTimers.push(setTimeout(() => beep(f, m.dur, m.type), t * 1000));
+    t += m.dur;
+  });
+  noteTimers.push(setTimeout(stopMelody, t * 1000 + 200));
+};
+function beep(freq, dur, type) {
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.type = type; o.frequency.value = freq;
+  g.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.25, audioCtx.currentTime + 0.03);
+  g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur * 0.95);
+  o.connect(g).connect(audioCtx.destination);
+  o.start(); o.stop(audioCtx.currentTime + dur);
+}
+function stopMelody() {
+  noteTimers.forEach(clearTimeout); noteTimers = [];
+  playing = false;
+  $('play').textContent = '▶ 분위기 들어보기'; $('play').classList.remove('on');
+}
+</script>
+</body>
+</html>

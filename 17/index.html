@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>내 얼굴이 열쇠! 얼굴 인식 문지기 — AI 탐험대 17</title>
+<style>
+  :root {
+    --sky: #5B9CF6; --sky-light: #EBF3FF;
+    --mint: #34D399; --mint-light: #D1FAE5;
+    --amber: #FBBF24; --amber-light: #FEF3C7;
+    --coral: #F87171; --coral-light: #FEE2E2;
+    --bg: #F0F7FF; --card: #FFFFFF;
+    --text: #1E293B; --text-muted: #64748B; --border: #E2E8F0;
+    --radius: 20px; --radius-sm: 12px;
+    --shadow: 0 4px 20px rgba(91,156,246,0.12);
+    --shadow-lg: 0 8px 40px rgba(91,156,246,0.2);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.6; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 24px 16px 50px; }
+  header { text-align: center; margin-bottom: 14px; }
+  .chip { display: inline-block; background: var(--mint); color: white; font-size: 13px; font-weight: 700; padding: 4px 14px; border-radius: 999px; margin-bottom: 8px; }
+  h1 { font-size: 24px; line-height: 1.3; }
+  .sub { color: var(--text-muted); font-size: 15px; margin-top: 4px; }
+  .safe { background: var(--amber-light); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 13.5px; text-align: center; margin: 12px 0; }
+
+  .duo { display: grid; grid-template-columns: 1fr 1.15fr; gap: 14px; align-items: start; }
+  @media (max-width: 680px) { .duo { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; }
+  .card h2 { font-size: 16.5px; margin-bottom: 8px; }
+
+  .reg { background: var(--mint-light); border: 2px solid var(--mint); border-radius: var(--radius-sm); padding: 8px 12px; font-size: 13.5px; display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .reg .emo { font-size: 30px; }
+  .reg b { font-size: 14px; }
+  .feat { color: var(--text-muted); font-size: 12.5px; }
+
+  .faces { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .face { border: 2px solid var(--border); background: white; border-radius: var(--radius-sm); padding: 10px 6px; text-align: center; cursor: pointer; font-family: inherit; min-height: 44px; transition: border-color .15s, transform .15s; }
+  .face:active { transform: scale(.96); }
+  .face.sel { border-color: var(--mint); box-shadow: 0 0 0 3px var(--mint-light); }
+  .face .emo { font-size: 40px; line-height: 1.2; }
+  .face .nm { font-weight: 700; font-size: 14px; }
+  .face .feat { display: block; }
+
+  .cmp { font-size: 13.5px; margin-bottom: 10px; }
+  .cmp-row { display: flex; align-items: center; gap: 8px; padding: 3px 0; opacity: 0; transition: opacity .3s; }
+  .cmp-row.show { opacity: 1; }
+  .cmp-row .lab { width: 92px; color: var(--text-muted); flex-shrink: 0; }
+  .cmp-row .vals { flex: 1; }
+  .diffb { display: inline-block; font-size: 12px; font-weight: 700; padding: 1px 8px; border-radius: 999px; background: var(--mint-light); color: #067A57; }
+  .diffb.big { background: var(--coral-light); color: #B91C1C; }
+
+  .score { text-align: center; font-size: 15px; margin: 6px 0 2px; }
+  .score b { font-size: 26px; color: var(--mint); }
+  .gauge { position: relative; background: #F1F5F9; border-radius: 999px; height: 22px; margin: 6px 0 2px; }
+  .gauge-fill { height: 100%; width: 0%; border-radius: 999px; background: var(--mint); transition: width .5s ease-out, background .3s; }
+  .gauge-check { position: absolute; top: 0; bottom: 0; background: rgba(251,191,36,.35); }
+  .gauge-mark { position: absolute; top: -4px; bottom: -4px; width: 3px; background: var(--coral); border-radius: 2px; transition: left .15s; }
+  .gauge-cap { font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; margin-bottom: 10px; }
+
+  .door { text-align: center; font-size: 58px; line-height: 1.2; transition: transform .3s; }
+  .door.open { transform: scale(1.12); }
+  .verdict { text-align: center; font-weight: 700; font-size: 15.5px; min-height: 52px; border-radius: var(--radius-sm); padding: 8px 10px; margin: 6px 0 12px; background: var(--sky-light); color: var(--text-muted); }
+  .verdict.pass { background: var(--mint-light); color: #067A57; }
+  .verdict.check { background: var(--amber-light); color: #92600A; }
+  .verdict.reject { background: var(--coral-light); color: #B91C1C; }
+
+  .thr { background: #F8FAFC; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; }
+  .thr .tv { text-align: center; font-size: 14px; margin-bottom: 2px; }
+  .thr .tv b { font-size: 22px; color: var(--mint); }
+  input[type=range] { width: 100%; accent-color: var(--mint); height: 32px; cursor: pointer; }
+
+  .obs { background: white; border-radius: var(--radius-sm); box-shadow: var(--shadow); padding: 12px 16px; font-size: 14.5px; margin-top: 14px; }
+  footer { text-align: center; margin-top: 26px; font-size: 14px; }
+  footer a { color: var(--mint); text-decoration: none; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="chip">AI 탐험대 · 17 얼굴 인식</span>
+  <h1>🚪 내 얼굴이 열쇠! 얼굴 인식 문지기</h1>
+  <p class="sub">가상 얼굴 카드로 유사도와 기준값을 실험해요. 카메라는 쓰지 않아요.</p>
+</header>
+<p class="safe">🛡️ 얼굴 정보는 민감한 개인정보예요. 여기서는 가상 카드로만 실험해요.</p>
+
+<div class="duo">
+  <!-- 왼쪽: 등록 얼굴 + 카드 4장 -->
+  <div class="card">
+    <h2>① 얼굴 카드를 골라 문 앞에 세워요</h2>
+    <div class="reg">
+      <span class="emo">🐻</span>
+      <span><b>등록된 마루</b><br><span class="feat">눈 사이 42 · 코 위치 58 · 얼굴 너비 80</span></span>
+    </div>
+    <div class="faces" id="faces"></div>
+  </div>
+
+  <!-- 오른쪽: 비교 → 유사도 → 판정 -->
+  <div class="card">
+    <h2>② 특징값 비교 → 유사도 → 문지기 판정</h2>
+    <div class="cmp" id="cmp">
+      <div class="cmp-row" id="r0"><span class="lab">눈 사이 거리</span><span class="vals" id="v0">—</span></div>
+      <div class="cmp-row" id="r1"><span class="lab">코 위치</span><span class="vals" id="v1">—</span></div>
+      <div class="cmp-row" id="r2"><span class="lab">얼굴 너비</span><span class="vals" id="v2">—</span></div>
+    </div>
+    <p class="score">유사도 <b id="scoreNum">?</b><span style="color:var(--text-muted)"> / 100</span></p>
+    <div class="gauge">
+      <div class="gauge-check" id="gCheck"></div>
+      <div class="gauge-fill" id="gFill"></div>
+      <div class="gauge-mark" id="gMark"></div>
+    </div>
+    <p class="gauge-cap"><span>0</span><span>빨간 선 = 기준값 · 노란 띠 = 확인 필요 구간</span><span>100</span></p>
+    <div class="door" id="door">🚪</div>
+    <p class="verdict" id="verdict">얼굴 카드를 눌러 문 앞에 세워 봐요</p>
+    <div class="thr">
+      <p class="tv">문지기의 기준값: <b id="thrNum">75</b></p>
+      <input type="range" id="thr" min="60" max="95" step="1" value="75" aria-label="기준값">
+    </div>
+  </div>
+</div>
+
+<div class="obs">🔍 <b>관찰 포인트</b> — 기준값을 높이면 마루도 거부되고, 낮추면 지훈이도 통과해요 — 직접 확인해 봐요.</div>
+
+<footer><a href="../">← AI 탐험대 체험 전체 목록</a></footer>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const REG = { eye: 42, nose: 58, width: 80 };
+const FEATS = ['eye', 'nose', 'width'];
+const CARDS = [
+  { name: '마루 정면',   emo: '😊', eye: 43, nose: 57, width: 81 }, // 94
+  { name: '모자 쓴 마루', emo: '🧢', eye: 46, nose: 62, width: 84 }, // 76
+  { name: '어두운 마루', emo: '🌙', eye: 38, nose: 65, width: 85 }, // 68
+  { name: '지훈',        emo: '🙂', eye: 55, nose: 48, width: 91 }, // 32
+];
+const sim = c => Math.max(0, 100 - 2 * FEATS.reduce((s, f) => s + Math.abs(c[f] - REG[f]), 0));
+
+let current = null, animTimers = [], runToken = 0;
+
+// 카드 렌더
+CARDS.forEach((c, i) => {
+  const b = document.createElement('button');
+  b.className = 'face';
+  b.innerHTML = '<span class="emo">' + c.emo + '</span><br><span class="nm">' + c.name + '</span>' +
+    '<span class="feat">눈 ' + c.eye + ' · 코 ' + c.nose + ' · 너비 ' + c.width + '</span>' +
+    '<span class="feat">유사도 ' + sim(c) + '</span>';
+  b.onclick = () => pick(i, b);
+  $('faces').appendChild(b);
+});
+
+function pick(i, btn) {
+  current = CARDS[i];
+  document.querySelectorAll('.face').forEach(f => f.classList.remove('sel'));
+  btn.classList.add('sel');
+  animTimers.forEach(clearTimeout); animTimers = [];
+  // 비교 3줄 순차 표시
+  FEATS.forEach((f, k) => {
+    const row = $('r' + k); row.classList.remove('show');
+    const d = Math.abs(current[f] - REG[f]);
+    $('v' + k).innerHTML = '등록 <b>' + REG[f] + '</b> ↔ 카드 <b>' + current[f] + '</b> ' +
+      '<span class="diffb' + (d >= 5 ? ' big' : '') + '">차이 ' + d + '</span>';
+    animTimers.push(setTimeout(() => row.classList.add('show'), 150 + k * 250));
+  });
+  // 점수 카운트업 → 판정
+  const target = sim(current), token = ++runToken;
+  animTimers.push(setTimeout(() => {
+    const t0 = performance.now();
+    (function step(now) {
+      if (token !== runToken) return; // 새 카드 선택 시 이전 루프 중단
+      const p = Math.min(1, (now - t0) / 500);
+      const v = Math.round(target * p);
+      $('scoreNum').textContent = v;
+      $('gFill').style.width = v + '%';
+      if (p < 1) requestAnimationFrame(step); else judge();
+    })(t0);
+  }, 900));
+}
+
+function judge() {
+  if (!current) return;
+  const s = sim(current), t = +$('thr').value;
+  const door = $('door'), v = $('verdict');
+  door.classList.remove('open');
+  v.className = 'verdict';
+  if (s >= t) {
+    door.textContent = '🎉'; door.classList.add('open');
+    v.classList.add('pass');
+    v.innerHTML = '🟢 통과! ' + s + ' ≥ 기준값 ' + t + ' → 문이 열려요';
+    $('gFill').style.background = 'var(--mint)';
+  } else if (s >= t - 10) {
+    door.textContent = '🚪';
+    v.classList.add('check');
+    v.innerHTML = '⚠️ 확인 필요 — ' + s + '점은 기준값 ' + t + '에 조금 모자라요. 사람이 한 번 더 확인해요';
+    $('gFill').style.background = 'var(--amber)';
+  } else {
+    door.textContent = '❌';
+    v.classList.add('reject');
+    v.innerHTML = '🔴 거부 — ' + s + ' < 기준값 ' + t + ' → 문이 열리지 않아요';
+    $('gFill').style.background = 'var(--coral)';
+  }
+}
+
+function drawThr() {
+  const t = +$('thr').value;
+  $('thrNum').textContent = t;
+  $('gMark').style.left = t + '%';
+  $('gCheck').style.left = (t - 10) + '%';
+  $('gCheck').style.width = '10%';
+  judge(); // 슬라이더만 움직여도 마지막 카드를 즉시 재판정
+}
+$('thr').addEventListener('input', drawThr);
+drawThr();
+</script>
+</body>
+</html>

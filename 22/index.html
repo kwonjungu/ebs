@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>팩트체크 탐정 — AI 탐험대 22</title>
+<style>
+  :root {
+    --sky: #5B9CF6; --sky-light: #EBF3FF;
+    --mint: #34D399; --mint-light: #D1FAE5;
+    --amber: #FBBF24; --amber-light: #FEF3C7;
+    --coral: #F87171; --coral-light: #FEE2E2;
+    --bg: #F0F7FF; --card: #FFFFFF;
+    --text: #1E293B; --text-muted: #64748B; --border: #E2E8F0;
+    --radius: 20px; --radius-sm: 12px;
+    --shadow: 0 4px 20px rgba(91,156,246,0.12);
+    --shadow-lg: 0 8px 40px rgba(91,156,246,0.2);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.6; }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 24px 16px 50px; }
+  header { text-align: center; margin-bottom: 14px; }
+  .chip { display: inline-block; background: var(--coral); color: white; font-size: 13px; font-weight: 700; padding: 4px 14px; border-radius: 999px; margin-bottom: 8px; }
+  h1 { font-size: 24px; line-height: 1.3; }
+  .sub { color: var(--text-muted); font-size: 15px; margin-top: 4px; }
+  .safe { background: var(--amber-light); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 13.5px; text-align: center; margin: 12px 0; }
+
+  .dots { display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 14px; color: var(--text-muted); font-weight: 700; }
+  .dot { width: 11px; height: 11px; border-radius: 50%; background: var(--border); }
+  .dot.now { background: var(--coral); transform: scale(1.25); }
+  .dot.hit { background: var(--mint); }
+  .dot.miss { background: var(--amber); }
+
+  .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow-lg); padding: 20px; }
+  .ai { display: flex; gap: 10px; align-items: flex-start; }
+  .ai .face { font-size: 34px; line-height: 1; }
+  .bubble { background: var(--coral-light); border-radius: var(--radius-sm); padding: 12px 14px; font-size: 16px; font-weight: 600; flex: 1; }
+  .bubble small { display: block; font-size: 12.5px; color: var(--text-muted); font-weight: 700; margin-bottom: 3px; }
+
+  .stepq { font-size: 14.5px; font-weight: 800; margin: 14px 0 8px; }
+  .guess { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .gbtn { border: 2px solid var(--border); background: white; cursor: pointer; font-family: inherit; font-size: 15.5px; font-weight: 700; padding: 12px 8px; border-radius: var(--radius-sm); min-height: 48px; color: var(--text); }
+  .gbtn:active { transform: scale(.97); }
+  .gbtn.sel { border-color: var(--coral); background: var(--coral-light); }
+  .gbtn:disabled { opacity: .55; cursor: default; }
+  .gbtn.sel:disabled { opacity: 1; }
+
+  .btn { display: block; width: 100%; border: 0; cursor: pointer; font-family: inherit; font-size: 15.5px; font-weight: 700; color: white; background: var(--coral); padding: 12px 10px; border-radius: var(--radius-sm); min-height: 48px; margin-top: 12px; }
+  .btn:active { transform: scale(.97); }
+  .btn.mint { background: var(--mint); }
+
+  .evi { display: none; background: var(--sky-light); border-radius: var(--radius-sm); padding: 12px 14px; margin-top: 12px; animation: openup .35s ease; }
+  @keyframes openup { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .src { display: inline-block; background: var(--sky); color: white; font-size: 12.5px; font-weight: 700; padding: 2px 10px; border-radius: 999px; margin-bottom: 6px; }
+  .evi p { font-size: 14.5px; }
+
+  .verdict { display: none; margin-top: 12px; animation: openup .35s ease; }
+  .vbadge { display: inline-block; font-size: 15px; font-weight: 800; padding: 5px 14px; border-radius: 999px; }
+  .v-ok { background: var(--mint-light); color: #067857; }
+  .v-no { background: var(--coral-light); color: #B91C1C; }
+  .v-half { background: var(--amber-light); color: #92600A; }
+  .why { font-size: 14.5px; margin-top: 6px; }
+  .fixline { background: var(--mint-light); border-radius: var(--radius-sm); padding: 7px 12px; font-size: 14px; font-weight: 700; margin-top: 8px; }
+  .gcheck { font-size: 14px; margin-top: 8px; color: var(--text-muted); font-weight: 700; }
+  .gcheck b { color: var(--text); }
+
+  #report { display: none; text-align: center; }
+  #report .big { font-size: 21px; font-weight: 800; margin: 8px 0 4px; }
+  #report .big b { color: var(--coral); }
+  #report p.msg { font-size: 15px; }
+
+  .obs { background: white; border-radius: var(--radius-sm); box-shadow: var(--shadow); padding: 12px 16px; font-size: 14.5px; margin-top: 14px; }
+  footer { text-align: center; margin-top: 26px; font-size: 14px; }
+  footer a { color: var(--coral); text-decoration: none; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="chip">AI 탐험대 · 22 팩트체크 탐정</span>
+  <h1>🕵️ 팩트체크 탐정 체험</h1>
+  <p class="sub">AI가 자신 있게 말한 상식 5가지 — 먼저 예상하고, 근거 자료를 열어 확인해요.</p>
+</header>
+<p class="safe">🛡️ 이 체험의 AI 답변은 학습용으로 만든 예시예요. 입력하거나 저장되는 정보는 없어요.</p>
+
+<div class="dots" id="dots"></div>
+
+<div class="card" id="stage">
+  <div class="ai"><div class="face">🤖</div>
+    <div class="bubble"><small>AI가 자신 있게 말해요</small><span id="aitxt"></span></div>
+  </div>
+  <div id="step1">
+    <p class="stepq">① 내 예상은?</p>
+    <div class="guess">
+      <button class="gbtn" id="gT" onclick="guess(true)">⭕ 참일 것 같아요</button>
+      <button class="gbtn" id="gF" onclick="guess(false)">❌ 거짓일 것 같아요</button>
+    </div>
+  </div>
+  <button class="btn" id="openEvi" style="display:none" onclick="openEvi()">② 🔍 근거 자료 열기</button>
+  <div class="evi" id="evi">
+    <span class="src" id="src"></span>
+    <p id="evitxt"></p>
+  </div>
+  <div class="verdict" id="verdict">
+    <p class="stepq" style="margin-top:0">③ 판정 결과</p>
+    <span class="vbadge" id="vbadge"></span>
+    <p class="why" id="why"></p>
+    <p class="fixline" id="fixline"></p>
+    <p class="gcheck" id="gcheck"></p>
+    <button class="btn mint" id="next" onclick="next()">다음 카드 →</button>
+  </div>
+</div>
+
+<div class="card" id="report">
+  <div style="font-size:44px">🕵️</div>
+  <p class="big">내 직감 적중 <b id="score"></b>/5</p>
+  <p class="msg">자신 있는 말투라고 다 사실은 아니에요!<br>AI는 거짓말쟁이가 아니라, 근거가 부족한 곳을 그럴듯한 말로 채운 거예요. 그래서 마지막 확인은 사람이 해요.</p>
+  <button class="btn" onclick="location.reload()">처음부터 다시</button>
+</div>
+
+<div class="obs">🔍 <b>관찰 포인트</b> — AI 답은 <b>근거 자료와 비교(팩트 체크)</b>한 뒤에 사용해요. 숫자·이름·과학 사실이 나오면 꼭 확인해요.</div>
+
+<footer><a href="../">← AI 탐험대 체험 전체 목록</a></footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+// verdict: ok(확인됨) | no(사실과 다름) | half(일부 다름)
+const CARDS=[
+ { ai:'확실해요! 아폴로 11호에서 달 표면을 가장 먼저 밟은 사람은 버즈 올드린이에요.',
+   src:'NASA 공식 자료 요약',
+   evi:'1969년 7월 20일, 아폴로 11호의 닐 암스트롱이 달 표면에 첫발을 내디뎠어요. 버즈 올드린은 약 19분 뒤 두 번째로 내렸어요.',
+   verdict:'no',
+   why:'달을 처음 밟은 사람은 닐 암스트롱이에요. 올드린은 두 번째예요.',
+   fixed:'아폴로 11호에서 달을 가장 먼저 밟은 사람은 닐 암스트롱이에요.' },
+ { ai:'화성에는 포보스, 데이모스, 아레스까지 자연 위성이 세 개 있어요. 제 기억은 정확해요!',
+   src:'NASA 태양계 자료 요약',
+   evi:'화성의 자연 위성은 포보스와 데이모스, 두 개예요. "아레스"라는 이름의 화성 위성은 없어요.',
+   verdict:'half',
+   why:'포보스·데이모스는 맞아요! 하지만 위성은 두 개뿐 — "아레스"는 AI가 지어낸 이름이에요.',
+   fixed:'화성에는 포보스와 데이모스, 자연 위성이 두 개 있어요.' },
+ { ai:'마리 퀴리는 노벨 물리학상과 화학상을 모두 받았어요. 믿으셔도 돼요!',
+   src:'노벨상 공식 누리집 요약',
+   evi:'마리 퀴리는 1903년 노벨 물리학상, 1911년 노벨 화학상을 받았어요. 서로 다른 두 분야에서 노벨상을 받은 최초의 인물이에요.',
+   verdict:'ok',
+   why:'근거 자료와 똑같아요. AI 답이 항상 틀린 건 아니에요 — 그래서 더 확인이 필요해요!',
+   fixed:null },
+ { ai:'만리장성은 달에서 맨눈으로 볼 수 있는 유일한 인공 구조물이에요. 유명한 사실이죠!',
+   src:'NASA 공식 자료 요약',
+   evi:'NASA에 따르면 만리장성은 달에서 맨눈으로 보이지 않아요. 지구 가까운 궤도에서도 특별한 조건이 아니면 알아보기 어려워요.',
+   verdict:'no',
+   why:'유명하다고 사실은 아니에요. NASA 자료와 비교하면 바로 걸러낼 수 있어요.',
+   fixed:'만리장성은 달에서 맨눈으로 보이지 않아요.' },
+ { ai:'달에도 바람과 비가 있어서 크레이터가 빠르게 사라져요. 과학적으로 검증된 내용이에요!',
+   src:'NASA 달 탐사 자료 요약',
+   evi:'달에는 대기가 거의 없어서 바람과 비가 없어요. 그래서 크레이터가 수십억 년 동안 거의 그대로 남아 있어요.',
+   verdict:'no',
+   why:'"과학적으로 검증된"이라는 말까지 붙였지만 사실이 아니에요. 자신 있는 말투를 조심해요.',
+   fixed:'달에는 바람과 비가 없어서 크레이터가 아주 오래 남아요.' }
+];
+const VLABEL={ok:['확인됨 ✅','v-ok'], no:['사실과 다름 ❌','v-no'], half:['일부 다름 ⚠️','v-half']};
+let idx=0, myGuess=null, hits=0;
+const results=[];
+
+function renderDots(){
+  let h='';
+  for(let i=0;i<5;i++){
+    let cls='dot';
+    if(i<results.length) cls+=results[i]?' hit':' miss';
+    else if(i===idx && idx<5) cls+=' now';
+    h+='<span class="'+cls+'"></span>';
+  }
+  $('dots').innerHTML=h+'<span>카드 '+Math.min(idx+1,5)+'/5</span>';
+}
+
+function show(){
+  const c=CARDS[idx];
+  $('aitxt').textContent=c.ai;
+  $('gT').disabled=false; $('gF').disabled=false;
+  $('gT').classList.remove('sel'); $('gF').classList.remove('sel');
+  $('openEvi').style.display='none';
+  $('evi').style.display='none';
+  $('verdict').style.display='none';
+  renderDots();
+}
+
+function guess(isTrue){
+  if(myGuess!==null) return;
+  myGuess=isTrue;
+  $(isTrue?'gT':'gF').classList.add('sel');
+  $('gT').disabled=true; $('gF').disabled=true;
+  $('openEvi').style.display='block';
+}
+
+function openEvi(){
+  const c=CARDS[idx];
+  $('openEvi').style.display='none';
+  $('src').textContent=c.src;
+  $('evitxt').textContent=c.evi;
+  $('evi').style.display='block';
+  const [label,cls]=VLABEL[c.verdict];
+  $('vbadge').textContent=label; $('vbadge').className='vbadge '+cls;
+  $('why').textContent=c.why;
+  $('fixline').style.display=c.fixed?'block':'none';
+  if(c.fixed) $('fixline').textContent='✏️ 바르게 고치면: '+c.fixed;
+  const hit=(myGuess===true)===(c.verdict==='ok');
+  if(hit) hits++;
+  results.push(hit);
+  $('gcheck').innerHTML='내 직감: <b>'+(myGuess?'참':'거짓')+'</b> → 실제: <b>'+label+'</b> '+(hit?'— 적중! 🎯':'— 빗나감 😲');
+  $('next').textContent = idx<4 ? '다음 카드 →' : '수사 결과 보기 →';
+  $('verdict').style.display='block';
+  renderDots();
+}
+
+function next(){
+  idx++; myGuess=null;
+  if(idx<5){ show(); }
+  else{
+    $('stage').style.display='none';
+    $('score').textContent=hits;
+    $('report').style.display='block';
+    renderDots();
+  }
+}
+show();
+</script>
+</body>
+</html>
