@@ -21,7 +21,7 @@
   .wrap { max-width: 760px; margin: 0 auto; padding: 24px 16px 50px; }
   header { text-align: center; margin-bottom: 14px; }
   .chip { display: inline-block; background: var(--sky); color: white; font-size: 13px; font-weight: 700; padding: 4px 14px; border-radius: 999px; margin-bottom: 8px; }
-  h1 { font-size: 24px; line-height: 1.3; }
+  h1 { font-size: 28px; font-weight: 900; line-height: 1.2; letter-spacing: -0.02em; }
   .sub { color: var(--text-muted); font-size: 15px; margin-top: 4px; }
   .safe { background: var(--amber-light); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 13.5px; text-align: center; margin: 12px 0; }
 
@@ -35,18 +35,40 @@
   .reccard li.hl { outline: 2.5px solid var(--mint); }
   .rechint { font-size: 13px; color: var(--text-muted); margin-top: 8px; }
 
+  /* 신문 지면 감성 */
+  .card.newspaper {
+    background: #FFFEF9;
+    border: 1.5px solid #D4C9A8;
+    font-family: 'Batang', 'KoPubBatang', 'NanumMyeongjo', Georgia, serif;
+  }
+  .card.newspaper h2 {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    letter-spacing: 0;
+  }
+
   /* 기사 초안 */
-  .headline { font-size: 18px; font-weight: 800; text-align: center; background: var(--sky-light); border-radius: var(--radius-sm); padding: 8px 10px; margin-bottom: 10px; }
+  .headline {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 19px;
+    font-weight: 900;
+    text-align: center;
+    background: var(--sky-light);
+    border-radius: var(--radius-sm);
+    padding: 9px 10px;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+    border-bottom: 3px solid var(--sky);
+  }
   .counter { font-size: 13.5px; color: var(--text-muted); text-align: right; margin-bottom: 6px; }
   .counter b { color: var(--sky); }
-  .sent { border: 1.5px solid var(--border); border-radius: var(--radius-sm); margin-top: 8px; overflow: hidden; }
+  .sent { border: 1.5px solid #D4C9A8; border-radius: var(--radius-sm); margin-top: 8px; overflow: hidden; }
   .sent-btn { display: block; width: 100%; border: 0; background: white; font-family: inherit; font-size: 15.5px; line-height: 1.55; text-align: left; padding: 11px 14px; cursor: pointer; min-height: 44px; color: var(--text); }
   .sent-btn:active { background: var(--sky-light); }
   .sent.open { border-color: var(--sky); box-shadow: var(--shadow); }
   .sent.done { border-color: var(--mint); }
   .sent.done .sent-btn { cursor: default; }
-  .old { text-decoration: line-through; color: var(--text-muted); }
-  .newtxt { display: block; background: var(--mint-light); border-radius: 8px; padding: 4px 8px; margin-top: 5px; font-weight: 700; }
+  .old { text-decoration: line-through; text-decoration-color: var(--coral); text-decoration-thickness: 2.5px; color: var(--text-muted); }
+  .newtxt { display: block; background: var(--mint-light); border-left: 3px solid var(--mint); border-radius: 0 8px 8px 0; padding: 5px 10px 5px 10px; margin-top: 6px; font-weight: 700; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
   .oktag { display: block; font-size: 13px; color: var(--mint); font-weight: 700; margin-top: 3px; }
 
   /* 판정 패널 */
@@ -79,6 +101,11 @@
   .obs { background: white; border-radius: var(--radius-sm); box-shadow: var(--shadow); padding: 12px 16px; font-size: 14.5px; margin-top: 4px; }
   footer { text-align: center; margin-top: 26px; font-size: 14px; }
   footer a { color: var(--sky); text-decoration: none; font-weight: 700; }
+  .jbtn:focus-visible, .btn:focus-visible, .sent-btn:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+  .hero-art { display: block; margin: 6px auto 0; height: 88px; max-width: 92%; object-fit: contain; border-radius: 14px; }
+  @media (max-width: 640px) { .hero-art { height: auto; max-height: 70px; } }
 </style>
 </head>
 <body>
@@ -87,6 +114,7 @@
   <span class="chip">AI 탐험대 · 21 AI 글 편집장</span>
   <h1>📰 AI 기사 편집장 체험</h1>
   <p class="sub">AI가 쓴 체육대회 기사 초안이에요. 실제 기록과 비교해 문장을 판정하고 고쳐 봐요.</p>
+  <img class="hero-art" src="../assets/art/21_press.png" alt="">
 </header>
 <p class="safe">🛡️ 이 기사와 이름(마루)은 모두 가상의 이야기예요. AI 글의 최종 판단은 사람(편집장)이 해요.</p>
 
@@ -96,7 +124,7 @@
   <p class="rechint">아래 초안 문장을 누르면, 비교할 기록에 초록 테두리가 켜져요.</p>
 </div>
 
-<div class="card">
+<div class="card newspaper">
   <h2>🤖 AI가 쓴 기사 초안</h2>
   <p class="headline">6학년 2반, 가을 체육대회 우승!</p>
   <p class="counter">고친 문제 문장 <b id="cnt">0</b> / 5</p>

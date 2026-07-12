@@ -20,9 +20,9 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.6; }
   .wrap { max-width: 860px; margin: 0 auto; padding: 24px 16px 50px; }
-  header { text-align: center; margin-bottom: 14px; }
+  header { text-align: center; margin-bottom: 8px; }
   .chip { display: inline-block; background: var(--amber); color: white; font-size: 13px; font-weight: 700; padding: 4px 14px; border-radius: 999px; margin-bottom: 8px; }
-  h1 { font-size: 24px; line-height: 1.3; }
+  h1 { font-size: 28px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.3; }
   .sub { color: var(--text-muted); font-size: 15px; margin-top: 4px; }
   .safe { background: var(--amber-light); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 13.5px; text-align: center; margin: 12px 0; }
 
@@ -32,23 +32,58 @@
 
   /* 캔버스 */
   .canvasWrap { position: relative; }
-  .canvas { width: 100%; aspect-ratio: 1; border-radius: var(--radius-sm); border: 3px solid var(--amber); background: white; display: block; }
+  .canvas { width: 100%; aspect-ratio: 1; border-radius: var(--radius); border: 4px solid var(--amber); background: white; display: block; box-shadow: 0 0 0 6px var(--amber-light), 0 8px 32px rgba(251,191,36,0.18); }
   .canvas.pixel { shape-rendering: crispEdges; }
   .aiTag { display: none; margin-top: 8px; background: var(--amber-light); border: 2px dashed var(--amber); border-radius: var(--radius-sm); padding: 7px 10px; font-size: 13.5px; font-weight: 700; text-align: center; }
-  .promptBand { margin-top: 8px; background: var(--sky-light); border-radius: var(--radius-sm); padding: 9px 12px; font-size: 14.5px; min-height: 46px; text-align: center; }
-  .promptBand .q { color: var(--coral); font-weight: 800; }
-  .promptBand .part { font-weight: 800; }
-  .promptBand .flash { background: var(--amber-light); border-radius: 6px; padding: 0 3px; animation: fl .6s; }
-  @keyframes fl { from { background: var(--amber); } }
+  .promptBand {
+    margin-top: 10px;
+    background: var(--amber-light);
+    border: 2px solid var(--amber);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 15px;
+    font-weight: 800;
+    min-height: 52px;
+    text-align: center;
+    letter-spacing: -0.01em;
+    line-height: 1.8;
+  }
+  .promptBand .q {
+    display: inline-block;
+    border: 2px dashed var(--coral);
+    border-radius: 8px;
+    padding: 1px 8px;
+    color: var(--coral);
+    font-weight: 800;
+    background: white;
+  }
+  .promptBand .part {
+    display: inline-block;
+    background: var(--amber);
+    color: white;
+    border-radius: 8px;
+    padding: 1px 9px;
+    font-weight: 800;
+  }
+  .promptBand .flash {
+    background: var(--amber);
+    color: white;
+    border-radius: 8px;
+    padding: 1px 9px;
+    animation: fl .6s;
+  }
+  @keyframes fl { from { background: #D97706; } to { background: var(--amber); } }
 
   /* 빌더 */
   .catLabel { font-size: 13.5px; font-weight: 800; color: var(--text-muted); margin: 10px 0 4px; }
   .catLabel:first-child { margin-top: 0; }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; }
   .opt { border: 2px solid var(--border); background: white; border-radius: 999px; padding: 8px 14px; font-family: inherit; font-size: 14.5px; font-weight: 700; cursor: pointer; min-height: 44px; color: var(--text); }
+  .opt:hover:not(.on) { border-color: var(--amber); background: var(--amber-light); }
   .opt:active { transform: scale(.96); }
   .opt.on { border-color: var(--amber); background: var(--amber-light); }
 
+  .opt:focus-visible, .btnVague:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
   .btnVague { display: block; width: 100%; border: 0; cursor: pointer; font-family: inherit; font-size: 15.5px; font-weight: 800; color: white; background: var(--coral); padding: 13px; border-radius: var(--radius-sm); min-height: 48px; margin-top: 16px; }
   .btnVague:active { transform: scale(.97); }
   .hint { font-size: 12.5px; color: var(--text-muted); text-align: center; margin-top: 5px; }
@@ -56,6 +91,9 @@
   .obs { background: white; border-radius: var(--radius-sm); box-shadow: var(--shadow); padding: 12px 16px; font-size: 14.5px; margin-top: 14px; }
   footer { text-align: center; margin-top: 26px; font-size: 14px; }
   footer a { color: #D97706; text-decoration: none; font-weight: 700; }
+  @media (prefers-reduced-motion: reduce) {
+    .promptBand .flash, .opt { animation: none !important; transition: none !important; }
+  }
 </style>
 </head>
 <body>

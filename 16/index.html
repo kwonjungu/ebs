@@ -22,7 +22,7 @@
   .wrap { max-width: 860px; margin: 0 auto; padding: 24px 16px 50px; }
   header { text-align: center; margin-bottom: 18px; }
   .chip { display: inline-block; background: var(--purple); color: white; font-size: 13px; font-weight: 700; padding: 4px 14px; border-radius: 999px; margin-bottom: 8px; }
-  h1 { font-size: 24px; line-height: 1.3; }
+  h1 { font-size: 28px; font-weight: 900; line-height: 1.25; letter-spacing: -0.02em; }
   .sub { color: var(--text-muted); font-size: 15px; margin-top: 4px; }
   .safe { background: var(--amber-light); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 13.5px; text-align: center; margin: 12px 0; }
 
@@ -40,13 +40,24 @@
   .stage .idle { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; color: #CBD5E1; font-size: 15px; text-align: center; padding: 12px; }
   .stage .idle .big { font-size: 54px; }
   .lock { position: absolute; top: 8px; left: 8px; background: rgba(16,24,43,.72); color: #E2E8F0; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; z-index: 3; }
+  /* HUD 격자 오버레이 */
+  .grid-overlay { position: absolute; inset: 0; pointer-events: none; z-index: 2;
+    background-image:
+      linear-gradient(rgba(167,139,250,0.13) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(167,139,250,0.13) 1px, transparent 1px);
+    background-size: 20% 25%; }
+  .hud-corner { position: absolute; width: 18px; height: 18px; border-color: rgba(167,139,250,0.7); border-style: solid; z-index: 3; }
+  .hud-tl { top: 6px; left: 6px; border-width: 2px 0 0 2px; }
+  .hud-tr { top: 6px; right: 6px; border-width: 2px 2px 0 0; }
+  .hud-bl { bottom: 6px; left: 6px; border-width: 0 0 2px 2px; }
+  .hud-br { bottom: 6px; right: 6px; border-width: 0 2px 2px 0; }
 
   /* 좌표 패널 */
   .coords { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 4px; transition: opacity .2s; }
   .coords.dim { opacity: .35; }
-  .coords div { background: var(--purple-light); border-radius: var(--radius-sm); text-align: center; padding: 8px 4px 10px; }
+  .coords div { background: var(--purple-light); border-radius: var(--radius-sm); text-align: center; padding: 8px 4px 10px; border: 1.5px solid rgba(167,139,250,0.4); }
   .coords .lab { font-size: 12.5px; font-weight: 700; color: var(--text-muted); }
-  .coords .val { font-size: 30px; font-weight: 800; color: #7C3AED; font-variant-numeric: tabular-nums; line-height: 1.15; }
+  .coords .val { font-size: 32px; font-weight: 900; color: #7C3AED; font-family: 'Courier New', 'Consolas', monospace; letter-spacing: 0.04em; line-height: 1.15; }
 
   .stateline { text-align: center; font-size: 14px; min-height: 24px; color: var(--text-muted); font-weight: 600; margin-bottom: 10px; }
   .stateline b { color: var(--text); }
@@ -78,6 +89,11 @@
 
   footer { text-align: center; margin-top: 26px; font-size: 14px; }
   footer a { color: var(--purple); text-decoration: none; font-weight: 700; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; } }
+  :focus-visible { outline: 3px solid var(--purple); outline-offset: 3px; border-radius: 4px; }
+
+  .hero-art { display: block; margin: 6px auto 0; height: 80px; max-width: 92%; object-fit: contain; border-radius: 14px; }
+  @media (max-width: 640px) { .hero-art { height: auto; max-height: 80px; } }
 </style>
 </head>
 <body>
@@ -86,6 +102,7 @@
   <span class="chip">AI 탐험대 · 16 얼굴 인식 AI</span>
   <h1>🐱 얼굴 따라 척척! 고양이 귀 AR</h1>
   <p class="sub">AI가 얼굴의 <b>위치</b>를 찾아 X·Y 좌표 숫자로 바꾸면, 고양이 귀가 그 숫자를 따라 움직여요.</p>
+  <img class="hero-art" src="../assets/art/16_catears.png" alt="">
 </header>
 <p class="safe">🛡️ 내 얼굴은 화면에만 보이고 저장되지 않아요. 친구 얼굴을 함부로 비추지 않아요.</p>
 
@@ -99,6 +116,11 @@
     <span class="lock">🔒 화면에만 보여요 · 저장 안 해요</span>
     <video id="video" playsinline muted></video>
     <canvas id="canvas"></canvas>
+    <div class="grid-overlay"></div>
+    <div class="hud-corner hud-tl"></div>
+    <div class="hud-corner hud-tr"></div>
+    <div class="hud-corner hud-bl"></div>
+    <div class="hud-corner hud-br"></div>
     <div class="idle" id="idle"><span class="big">🐱</span>아래 [카메라 시작] 버튼을 눌러요.<br>카메라가 없으면 연습 모드로 체험해요.</div>
   </div>
 
@@ -314,7 +336,7 @@ function drawBox(b, color, dashed){
 function drawLabel(b, text, color){
   ctx.save();
   const fs = Math.max(15, canvas.width / 34);
-  ctx.font = '700 ' + fs + 'px sans-serif'; ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+  ctx.font = '700 ' + fs + 'px "Courier New", monospace'; ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
   const w = ctx.measureText(text).width + 14;
   const x = Math.max(4, Math.min(b[0], canvas.width - w - 4));
   const y = Math.max(fs + 8, b[1] - 6);

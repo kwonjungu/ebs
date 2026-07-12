@@ -22,7 +22,7 @@
   .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 50px; }
   header { text-align: center; margin-bottom: 14px; }
   .chip { display: inline-block; background: var(--coral); color: white; font-size: 13px; font-weight: 700; padding: 4px 14px; border-radius: 999px; margin-bottom: 8px; }
-  h1 { font-size: 24px; line-height: 1.3; }
+  h1 { font-size: 28px; font-weight: 900; line-height: 1.25; letter-spacing: -0.02em; }
   .sub { color: var(--text-muted); font-size: 15px; margin-top: 4px; }
   .safe { background: var(--amber-light); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 13.5px; text-align: center; margin: 12px 0; }
 
@@ -30,7 +30,8 @@
   .card h2 { font-size: 16.5px; margin-bottom: 8px; }
   .samples { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
   @media (max-width: 480px) { .samples { grid-template-columns: 1fr; } }
-  .sample { border: 1.5px solid var(--border); background: white; border-radius: var(--radius-sm); padding: 8px 10px; font-size: 13.5px; text-align: left; cursor: pointer; font-family: inherit; min-height: 44px; line-height: 1.45; }
+  .sample { border: 1.5px solid var(--border); background: white; border-radius: var(--radius-sm); padding: 8px 10px; font-size: 13.5px; text-align: left; cursor: pointer; font-family: inherit; min-height: 44px; line-height: 1.45; transition: border-color .15s, box-shadow .15s; }
+  .sample:hover { border-color: var(--coral); box-shadow: 0 0 0 2px var(--coral-light); }
   .sample:active { transform: scale(.97); }
   .sample b { font-size: 14px; }
   textarea { width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-family: inherit; font-size: 15px; resize: vertical; min-height: 64px; margin-bottom: 10px; }
@@ -40,24 +41,29 @@
 
   #result { display: none; }
   .diarybox { background: #F8FAFC; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 15.5px; margin-bottom: 12px; }
-  mark { border-radius: 5px; padding: 0 3px; font-weight: 700; }
-  .m-joy { background: var(--amber-light); } .m-sad { background: var(--sky-light); color: #1D4ED8; }
-  .m-angry { background: var(--coral-light); color: #B91C1C; } .m-anx { background: var(--purple-light); color: #6D28D9; }
+  mark { border-radius: 3px; padding: 1px 4px; font-weight: 800;
+    -webkit-box-decoration-break: clone; box-decoration-break: clone;
+    transform: rotate(-1.2deg); display: inline-block;
+    background-clip: padding-box; box-shadow: inset 0 -2px 0 rgba(0,0,0,0.08); }
+  .m-joy { background: #FDE68A; color: #78350F; }
+  .m-sad { background: #BAE6FD; color: #1E3A5F; }
+  .m-angry { background: #FECACA; color: #B91C1C; }
+  .m-anx { background: #DDD6FE; color: #4C1D95; }
 
   .bars { margin-bottom: 4px; }
-  .brow { display: flex; align-items: center; gap: 8px; margin: 5px 0; font-size: 14px; }
-  .brow .bl { width: 78px; flex-shrink: 0; }
-  .btrack { flex: 1; background: #F1F5F9; border-radius: 999px; height: 16px; overflow: hidden; }
+  .brow { display: flex; align-items: center; gap: 8px; margin: 6px 0; font-size: 15px; }
+  .brow .bl { width: 86px; flex-shrink: 0; font-weight: 700; }
+  .btrack { flex: 1; background: #F1F5F9; border-radius: 999px; height: 22px; overflow: hidden; }
   .bfill { height: 100%; width: 0%; border-radius: 999px; transition: width .6s ease-out; }
-  .bnum { width: 40px; font-size: 13px; color: var(--text-muted); }
+  .bnum { width: 44px; font-size: 13px; font-weight: 700; color: var(--text-muted); }
   .f-joy { background: var(--amber); } .f-sad { background: var(--sky); }
   .f-angry { background: var(--coral); } .f-anx { background: var(--purple); }
 
   .nohit { display: none; background: var(--sky-light); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 14.5px; text-align: center; margin-bottom: 10px; }
 
   .reco { display: none; background: linear-gradient(135deg, var(--coral-light), #FFF5F5); border: 2px solid var(--coral); border-radius: var(--radius-sm); padding: 14px; text-align: center; margin-top: 12px; }
-  .reco .big { font-size: 34px; }
-  .reco .mood { font-size: 17px; font-weight: 800; }
+  .reco .big { font-size: 48px; line-height: 1.1; }
+  .reco .mood { font-size: 19px; font-weight: 900; letter-spacing: -0.01em; }
   .reco .why { font-size: 13.5px; color: var(--text-muted); margin: 4px 0 10px; }
   .playbtn { border: 0; cursor: pointer; font-family: inherit; font-size: 15px; font-weight: 700; color: white; background: var(--coral); padding: 10px 20px; border-radius: 999px; min-height: 44px; }
   .playbtn:active { transform: scale(.97); }
@@ -71,6 +77,11 @@
   .obs { background: white; border-radius: var(--radius-sm); box-shadow: var(--shadow); padding: 12px 16px; font-size: 14.5px; margin-top: 2px; }
   footer { text-align: center; margin-top: 24px; font-size: 14px; }
   footer a { color: var(--coral); text-decoration: none; font-weight: 700; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; } }
+  :focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; border-radius: 4px; }
+
+  .hero-art { display: block; margin: 6px auto 0; height: 96px; max-width: 92%; object-fit: contain; border-radius: 14px; }
+  @media (max-width: 640px) { .hero-art { height: auto; max-height: 80px; } }
 </style>
 </head>
 <body>
@@ -79,6 +90,7 @@
   <span class="chip">AI 탐험대 · 18 감정 분석</span>
   <h1>🎧 AI DJ! 내 기분을 읽고 노래를 골라요</h1>
   <p class="sub">일기 속 단어를 단서로 감정을 추정하고, 어울리는 음악을 추천해요.</p>
+  <img class="hero-art" src="../assets/art/18_dj.png" alt="">
 </header>
 <p class="safe">🛡️ 일기는 화면에만 쓰이고 저장되지 않아요. 개인정보는 쓰지 않아요.</p>
 

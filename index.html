@@ -20,27 +20,48 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.6; }
   .wrap { max-width: 860px; margin: 0 auto; padding: 30px 16px 60px; }
-  header { text-align: center; margin-bottom: 24px; }
-  .chip { display: inline-block; background: var(--sky); color: white; font-size: 13px; font-weight: 700; padding: 4px 14px; border-radius: 999px; margin-bottom: 10px; }
-  h1 { font-size: 26px; }
-  .sub { color: var(--text-muted); font-size: 15px; margin-top: 4px; }
+
+  /* ── 허브 헤더: 점선 나침반 경로 배경 ── */
+  header {
+    text-align: center; margin-bottom: 24px; position: relative;
+    padding: 28px 16px 20px;
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='80'%3E%3Cpath d='M10 40 Q50 10 100 40 Q150 70 190 40' fill='none' stroke='%235B9CF6' stroke-width='2' stroke-dasharray='6 5' opacity='0.18'/%3E%3Ccircle cx='10' cy='40' r='3.5' fill='%235B9CF6' opacity='0.22'/%3E%3Ccircle cx='190' cy='40' r='3.5' fill='%235B9CF6' opacity='0.22'/%3E%3C/svg%3E");
+    background-repeat: repeat-x;
+    background-position: center;
+    pointer-events: none;
+    border-radius: var(--radius);
+  }
+  .chip { display: inline-block; background: var(--sky); color: white; font-size: 13px; font-weight: 800; padding: 5px 16px; border-radius: 999px; margin-bottom: 10px; letter-spacing: .03em; }
+  h1 { font-size: 30px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.25; }
+  .sub { color: var(--text-muted); font-size: 15px; margin-top: 6px; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; margin-top: 20px; }
-  a.card { display: block; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; text-decoration: none; color: var(--text); border-top: 6px solid var(--accent, var(--sky)); transition: transform .15s, box-shadow .15s; }
-  a.card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
-  .num { font-size: 12.5px; font-weight: 800; color: var(--accent, var(--sky)); letter-spacing: .5px; }
-  .card h2 { font-size: 17.5px; margin: 4px 0 6px; line-height: 1.35; }
+  a.card { display: block; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; text-decoration: none; color: var(--text); border-top: 5px solid var(--accent, var(--sky)); transition: transform .18s ease, box-shadow .18s ease; }
+  a.card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+  a.card:hover .emoji { transform: rotate(12deg); }
+  a.card:focus-visible { outline: 3px solid var(--accent, var(--sky)); outline-offset: 3px; }
+  .num { font-size: 12px; font-weight: 800; color: var(--accent, var(--sky)); letter-spacing: .06em; text-transform: uppercase; }
+  .card h2 { font-size: 17px; font-weight: 800; margin: 4px 0 6px; line-height: 1.35; letter-spacing: -0.01em; }
   .card p { font-size: 13.5px; color: var(--text-muted); }
-  .emoji { font-size: 30px; float: right; margin-left: 8px; }
+  .emoji { font-size: 30px; float: right; margin-left: 8px; display: inline-block; transition: transform .18s ease; }
   .note { background: var(--amber-light); border-radius: var(--radius-sm); padding: 10px 16px; font-size: 13.5px; text-align: center; margin-top: 22px; }
   footer { text-align: center; margin-top: 26px; font-size: 13px; color: var(--text-muted); }
+  @media (prefers-reduced-motion: reduce) { a.card, a.card:hover .emoji { transition: none; } }
+
+  .hero-art { display: block; margin: 6px auto 0; height: 120px; max-width: 92%; object-fit: contain; border-radius: 14px; }
+  @media (max-width: 640px) { .hero-art { height: auto; max-height: 90px; } }
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
   <span class="chip">EBS AI 탐험대 · 중급</span>
-  <h1>🧭 AI 기능 체험 목록</h1>
+  <h1 style="font-weight:900">🧭 AI 기능 체험 목록</h1>
   <p class="sub">교재의 QR로 연결되는 강별 체험이에요. 배우는 AI 기능을 직접 만져 봐요.</p>
+  <img class="hero-art" src="assets/art/hub_map.png" alt="">
 </header>
 
 <div class="grid">

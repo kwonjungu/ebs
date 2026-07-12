@@ -10,6 +10,7 @@
     --mint: #34D399; --mint-light: #D1FAE5;
     --amber: #FBBF24; --amber-light: #FEF3C7;
     --coral: #F87171; --coral-light: #FEE2E2;
+    --purple: #A78BFA; --purple-light: #EDE9FE;
     --bg: #F0F7FF; --card: #FFFFFF;
     --text: #1E293B; --text-muted: #64748B; --border: #E2E8F0;
     --radius: 20px; --radius-sm: 12px;
@@ -21,7 +22,7 @@
   .wrap { max-width: 860px; margin: 0 auto; padding: 24px 16px 50px; }
   header { text-align: center; margin-bottom: 14px; }
   .chip { display: inline-block; background: var(--mint); color: white; font-size: 13px; font-weight: 700; padding: 4px 14px; border-radius: 999px; margin-bottom: 8px; }
-  h1 { font-size: 24px; line-height: 1.3; }
+  h1 { font-size: 28px; font-weight: 900; line-height: 1.25; letter-spacing: -0.02em; }
   .sub { color: var(--text-muted); font-size: 15px; margin-top: 4px; }
   .safe { background: var(--amber-light); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 13.5px; text-align: center; margin: 12px 0; }
 
@@ -40,6 +41,7 @@
   .face:active { transform: scale(.96); }
   .face.sel { border-color: var(--mint); box-shadow: 0 0 0 3px var(--mint-light); }
   .face .emo { font-size: 40px; line-height: 1.2; }
+  .face .emo-img { width: 72px; height: 72px; border-radius: 12px; object-fit: cover; display: block; margin: 0 auto 4px; border: 2px solid var(--border); }
   .face .nm { font-weight: 700; font-size: 14px; }
   .face .feat { display: block; }
 
@@ -55,12 +57,16 @@
   .score b { font-size: 26px; color: var(--mint); }
   .gauge { position: relative; background: #F1F5F9; border-radius: 999px; height: 22px; margin: 6px 0 2px; }
   .gauge-fill { height: 100%; width: 0%; border-radius: 999px; background: var(--mint); transition: width .5s ease-out, background .3s; }
-  .gauge-check { position: absolute; top: 0; bottom: 0; background: rgba(251,191,36,.35); }
-  .gauge-mark { position: absolute; top: -4px; bottom: -4px; width: 3px; background: var(--coral); border-radius: 2px; transition: left .15s; }
+  .gauge-check { position: absolute; top: 0; bottom: 0; background: rgba(251,191,36,.4); border-left: 2px dashed rgba(251,191,36,.8); }
+  .gauge-mark { position: absolute; top: -6px; bottom: -6px; width: 4px; background: var(--coral); border-radius: 2px; transition: left .15s; box-shadow: 0 0 6px rgba(248,113,113,0.6); }
+  .gauge-mark::after { content: '기준'; position: absolute; top: -18px; left: 50%; transform: translateX(-50%); font-size: 10px; font-weight: 700; color: var(--coral); white-space: nowrap; }
   .gauge-cap { font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; margin-bottom: 10px; }
 
-  .door { text-align: center; font-size: 58px; line-height: 1.2; transition: transform .3s; }
-  .door.open { transform: scale(1.12); }
+  .door-frame { position: relative; text-align: center; margin: 6px 0; }
+  .door-glow { position: absolute; inset: 0; border-radius: 8px; background: radial-gradient(ellipse at 50% 50%, rgba(52,211,153,0), rgba(52,211,153,0)); transition: background 0.4s ease-out; pointer-events: none; }
+  .door-frame.open .door-glow { background: radial-gradient(ellipse at 50% 50%, rgba(52,211,153,0.45) 0%, rgba(52,211,153,0) 70%); }
+  .door { display: inline-block; font-size: 64px; line-height: 1.2; transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), filter 0.3s; filter: none; }
+  .door-frame.open .door { transform: scale(1.18) rotate(-8deg); transform-origin: left center; filter: drop-shadow(0 0 12px rgba(52,211,153,0.7)); }
   .verdict { text-align: center; font-weight: 700; font-size: 15.5px; min-height: 52px; border-radius: var(--radius-sm); padding: 8px 10px; margin: 6px 0 12px; background: var(--sky-light); color: var(--text-muted); }
   .verdict.pass { background: var(--mint-light); color: #067A57; }
   .verdict.check { background: var(--amber-light); color: #92600A; }
@@ -74,6 +80,8 @@
   .obs { background: white; border-radius: var(--radius-sm); box-shadow: var(--shadow); padding: 12px 16px; font-size: 14.5px; margin-top: 14px; }
   footer { text-align: center; margin-top: 26px; font-size: 14px; }
   footer a { color: var(--mint); text-decoration: none; font-weight: 700; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; } }
+  :focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; border-radius: 4px; }
 </style>
 </head>
 <body>
@@ -111,7 +119,10 @@
       <div class="gauge-mark" id="gMark"></div>
     </div>
     <p class="gauge-cap"><span>0</span><span>빨간 선 = 기준값 · 노란 띠 = 확인 필요 구간</span><span>100</span></p>
-    <div class="door" id="door">🚪</div>
+    <div class="door-frame" id="doorFrame">
+      <div class="door-glow"></div>
+      <div class="door" id="door">🚪</div>
+    </div>
     <p class="verdict" id="verdict">얼굴 카드를 눌러 문 앞에 세워 봐요</p>
     <div class="thr">
       <p class="tv">문지기의 기준값: <b id="thrNum">75</b></p>
@@ -130,10 +141,10 @@ const $ = id => document.getElementById(id);
 const REG = { eye: 42, nose: 58, width: 80 };
 const FEATS = ['eye', 'nose', 'width'];
 const CARDS = [
-  { name: '마루 정면',   emo: '😊', eye: 43, nose: 57, width: 81 }, // 94
-  { name: '모자 쓴 마루', emo: '🧢', eye: 46, nose: 62, width: 84 }, // 76
-  { name: '어두운 마루', emo: '🌙', eye: 38, nose: 65, width: 85 }, // 68
-  { name: '지훈',        emo: '🙂', eye: 55, nose: 48, width: 91 }, // 32
+  { name: '마루 정면',   img: '../assets/art/17_card_front.png', eye: 43, nose: 57, width: 81 }, // 94
+  { name: '모자 쓴 마루', img: '../assets/art/17_card_cap.png', eye: 46, nose: 62, width: 84 }, // 76
+  { name: '어두운 마루', img: '../assets/art/17_card_dark.png', eye: 38, nose: 65, width: 85 }, // 68
+  { name: '지훈',        img: '../assets/art/17_card_other.png', eye: 55, nose: 48, width: 91 }, // 32
 ];
 const sim = c => Math.max(0, 100 - 2 * FEATS.reduce((s, f) => s + Math.abs(c[f] - REG[f]), 0));
 
@@ -143,7 +154,7 @@ let current = null, animTimers = [], runToken = 0;
 CARDS.forEach((c, i) => {
   const b = document.createElement('button');
   b.className = 'face';
-  b.innerHTML = '<span class="emo">' + c.emo + '</span><br><span class="nm">' + c.name + '</span>' +
+  b.innerHTML = '<img class="emo-img" src="' + c.img + '" alt="' + c.name + '">' +<span class="nm">' + c.name + '</span>' +
     '<span class="feat">눈 ' + c.eye + ' · 코 ' + c.nose + ' · 너비 ' + c.width + '</span>' +
     '<span class="feat">유사도 ' + sim(c) + '</span>';
   b.onclick = () => pick(i, b);
@@ -182,10 +193,12 @@ function judge() {
   if (!current) return;
   const s = sim(current), t = +$('thr').value;
   const door = $('door'), v = $('verdict');
+  const doorFrame = $('doorFrame');
   door.classList.remove('open');
+  doorFrame.classList.remove('open');
   v.className = 'verdict';
   if (s >= t) {
-    door.textContent = '🎉'; door.classList.add('open');
+    door.textContent = '🎉'; door.classList.add('open'); doorFrame.classList.add('open');
     v.classList.add('pass');
     v.innerHTML = '🟢 통과! ' + s + ' ≥ 기준값 ' + t + ' → 문이 열려요';
     $('gFill').style.background = 'var(--mint)';
