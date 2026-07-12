@@ -3,144 +3,219 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>소리 크기 반응 VS 음성 인식 — AI 탐험대 15</title>
+<title>소리 크기 vs 음성 인식 · AI 탐험대 15</title>
 <style>
-  :root {
-    --sky: #5B9CF6; --sky-light: #EBF3FF;
-    --mint: #34D399; --mint-light: #D1FAE5;
-    --amber: #FBBF24; --amber-light: #FEF3C7;
-    --coral: #F87171; --coral-light: #FEE2E2;
-    --bg: #F0F7FF; --card: #FFFFFF;
-    --text: #1E293B; --text-muted: #64748B; --border: #E2E8F0;
-    --radius: 20px; --radius-sm: 12px;
-    --shadow: 0 4px 20px rgba(91,156,246,0.12);
-    --shadow-lg: 0 8px 40px rgba(91,156,246,0.2);
+  :root{
+    --ink:#141414; --paper:#FBF7EC; --surface:#FFFFFF;
+    --blue:#3D5AFE; --blue-soft:#E4E8FF;
+    --amber:#FFB800; --amber-soft:#FFF0C7;
+    --green:#12B76A; --red:#FF4D4D; --muted:#6B6B6B; --line:#141414;
+    --r:20px; --r-sm:13px;
+    --hard:5px 5px 0 var(--ink); --hard-sm:3px 3px 0 var(--ink);
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.6; }
-  .wrap { max-width: 860px; margin: 0 auto; padding: 20px 16px 50px; }
-  header { text-align: center; margin-bottom: 12px; }
-  .chip { display: inline-block; background: var(--sky); color: white; font-size: 13px; font-weight: 800; padding: 5px 16px; border-radius: 999px; margin-bottom: 8px; letter-spacing: .03em; }
-  h1 { font-size: 26px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.25; }
-  .sub { color: var(--text-muted); font-size: 14.5px; margin-top: 4px; }
-  .safe { background: var(--amber-light); border-radius: var(--radius-sm); padding: 7px 14px; font-size: 13px; text-align: center; margin: 8px 0 12px; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    background:var(--paper);color:var(--ink);
+    font-size:17px;line-height:1.55;
+    background-image:radial-gradient(var(--ink) .5px,transparent .5px);
+    background-size:22px 22px;background-position:-11px -11px;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:18px 18px 64px}
 
-  .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  @media (max-width: 640px) { .duo { grid-template-columns: 1fr; } }
-  .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; overflow: hidden; position: relative; }
-  .card h2 { font-size: 17px; font-weight: 800; margin-bottom: 4px; letter-spacing: -0.01em; }
-  .card .desc { font-size: 13.5px; color: var(--text-muted); min-height: 42px; }
+  /* top nav */
+  .nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+  .back{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink);
+    font-weight:800;font-size:14px;background:var(--surface);border:2.5px solid var(--ink);
+    border-radius:999px;padding:8px 16px;box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
+  .back:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .back:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+  .lesson-tag{font-weight:900;font-size:15px;letter-spacing:-.01em;background:var(--blue);color:#fff;
+    border:2.5px solid var(--ink);border-radius:999px;padding:6px 16px;box-shadow:var(--hard-sm)}
 
-  /* ── 파형(waveform) 모티프 ── */
-  .waveform { display: flex; align-items: center; justify-content: center; gap: 3px; height: 28px; margin-bottom: 6px; }
-  .waveform span { display: inline-block; width: 4px; border-radius: 2px; background: var(--sky); opacity: 0.35; height: 8px; }
-  /* 애니메이션은 .active 상태일 때만 */
-  .waveform.active span { opacity: 0.75; animation: waverise 0.7s ease-in-out infinite alternate; }
-  .waveform.active span:nth-child(1) { animation-delay: 0s;    --h: 10px; }
-  .waveform.active span:nth-child(2) { animation-delay: .10s;  --h: 20px; }
-  .waveform.active span:nth-child(3) { animation-delay: .18s;  --h: 26px; }
-  .waveform.active span:nth-child(4) { animation-delay: .08s;  --h: 22px; }
-  .waveform.active span:nth-child(5) { animation-delay: .22s;  --h: 14px; }
-  .waveform.active span:nth-child(6) { animation-delay: .04s;  --h: 18px; }
-  .waveform.active span:nth-child(7) { animation-delay: .15s;  --h: 24px; }
-  .waveform.active span:nth-child(8) { animation-delay: .06s;  --h: 16px; }
-  .waveform.active span:nth-child(9) { animation-delay: .20s;  --h: 12px; }
-  @keyframes waverise { from { height: 4px; } to { height: var(--h, 20px); } }
-  @media (prefers-reduced-motion: reduce) { .waveform.active span { animation: none; opacity: 0.6; height: 12px; } }
+  /* hero */
+  .kicker{display:inline-block;font-weight:900;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
+    background:var(--amber);border:2.5px solid var(--ink);border-radius:8px;padding:4px 12px;box-shadow:var(--hard-sm);margin-bottom:16px}
+  h1{font-size:clamp(30px,7vw,52px);font-weight:900;letter-spacing:-.035em;line-height:1.02}
+  h1 .vs{display:inline-block;background:var(--ink);color:var(--paper);font-size:.5em;vertical-align:middle;
+    padding:2px 12px;border-radius:999px;margin:0 6px;transform:rotate(-4deg);letter-spacing:0}
+  h1 .u{ -webkit-text-decoration:6px underline var(--blue);text-decoration:6px underline var(--blue);text-underline-offset:6px}
+  .lead{font-size:17px;color:var(--muted);margin-top:14px;max-width:620px;font-weight:600}
 
-  .bulb { font-size: 60px; text-align: center; filter: grayscale(1) brightness(.55); transition: filter .35s ease, text-shadow .35s ease; margin: 6px 0 2px; }
-  .bulb.on { filter: none; text-shadow: 0 0 18px #FBBF24, 0 0 42px rgba(251,191,36,.55), 0 0 80px rgba(251,191,36,.25); animation: glowpulse 1.6s ease-in-out infinite; }
-  @keyframes glowpulse { 0%,100%{text-shadow:0 0 18px #FBBF24,0 0 42px rgba(251,191,36,.55),0 0 80px rgba(251,191,36,.25);} 50%{text-shadow:0 0 28px #FBBF24,0 0 60px rgba(251,191,36,.7),0 0 110px rgba(251,191,36,.35);} }
-  @media (prefers-reduced-motion: reduce) { .bulb, .bulb.on { transition: none; animation: none; } }
-  .stateline { text-align: center; font-size: 14px; min-height: 42px; color: var(--text-muted); font-weight: 600; }
-  .stateline b { color: var(--text); }
+  .safe{display:flex;align-items:center;gap:10px;background:var(--surface);border:2.5px solid var(--ink);
+    border-radius:var(--r-sm);box-shadow:var(--hard-sm);padding:11px 16px;font-size:13.5px;font-weight:600;margin:22px 0 26px}
+  .safe svg{flex-shrink:0}
 
-  .volwrap { background: #F1F5F9; border-radius: 999px; height: 20px; overflow: hidden; position: relative; margin: 8px 0 4px; }
-  .volbar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--mint), var(--amber), var(--coral)); transition: width .06s linear; }
-  .volmark { position: absolute; top: -2px; bottom: -2px; left: 65%; width: 3px; background: var(--coral); border-radius: 2px; }
-  .vollabel { font-size: 12px; color: var(--text-muted); text-align: right; }
+  /* duel */
+  .duel{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media(max-width:680px){.duel{grid-template-columns:1fr}}
+  .panel{background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:22px;position:relative}
+  .panel.b{background:var(--blue-soft)}
+  .tagrow{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .sigil{width:38px;height:38px;flex-shrink:0;display:grid;place-items:center;font-weight:900;font-size:19px;
+    border:2.5px solid var(--ink);border-radius:10px;background:var(--paper);box-shadow:var(--hard-sm)}
+  .panel.b .sigil{background:var(--blue);color:#fff}
+  .ptitle{font-size:19px;font-weight:900;letter-spacing:-.02em;line-height:1.1}
+  .psub{font-size:11.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+  .pdesc{font-size:13.5px;color:#333;margin:10px 0 4px;min-height:58px;font-weight:500}
+  .pdesc b{font-weight:900;background:linear-gradient(transparent 62%,var(--amber-soft) 0);padding:0 1px}
 
-  .sttbox { background: var(--sky-light); border-radius: var(--radius-sm); padding: 10px 12px; min-height: 46px; font-size: 16px; text-align: center; margin: 8px 0 4px; }
-  .sttbox .dim { color: var(--text-muted); font-size: 14px; }
+  /* bulb */
+  .bulb{display:flex;justify-content:center;margin:6px 0 2px}
+  .bulb svg{width:74px;height:92px}
+  .bulb .glass{fill:#EDEDED;stroke:var(--ink);stroke-width:3;transition:fill .3s}
+  .bulb .fil{fill:none;stroke:#BDBDBD;stroke-width:2.5;stroke-linecap:round;transition:stroke .3s}
+  .bulb .cap{fill:var(--ink)}
+  .bulb .ray{stroke:var(--amber);stroke-width:3.5;stroke-linecap:round;opacity:0;transition:opacity .3s}
+  .bulb.on .glass{fill:var(--amber);filter:drop-shadow(0 0 14px rgba(255,184,0,.75))}
+  .bulb.on .fil{stroke:#8A5A00}
+  .bulb.on .ray{opacity:1;animation:flick 1.8s ease-in-out infinite}
+  @keyframes flick{0%,100%{opacity:1}50%{opacity:.55}}
 
-  .btn { display: inline-block; width: 100%; border: 0; cursor: pointer; font-family: inherit; font-size: 15.5px; font-weight: 700; color: white; background: var(--sky); padding: 12px 10px; border-radius: var(--radius-sm); min-height: 46px; min-width: 44px; }
-  .btn:active { transform: scale(.97); }
-  .btn:focus-visible { outline: 3px solid var(--sky); outline-offset: 3px; border-radius: var(--radius-sm); }
-  .btn.rec { background: var(--coral); animation: pulse 1s infinite; }
-  .btn.mint { background: var(--mint); }
-  @keyframes pulse { 0%{box-shadow: 0 0 0 0 rgba(248,113,113,.45);} 100%{box-shadow: 0 0 0 16px rgba(248,113,113,0);} }
-  @media (prefers-reduced-motion: reduce) { .btn.rec { animation: none; } }
+  /* waveform */
+  .wave{display:flex;align-items:center;justify-content:center;gap:4px;height:26px;margin:8px 0}
+  .wave span{width:5px;border-radius:3px;background:var(--ink);opacity:.28;height:8px}
+  .wave.active span{opacity:1}
+  .wave.active span:nth-child(1){animation:wv .6s ease-in-out infinite alternate;--h:12px}
+  .wave.active span:nth-child(2){animation:wv .6s ease-in-out .08s infinite alternate;--h:22px}
+  .wave.active span:nth-child(3){animation:wv .6s ease-in-out .16s infinite alternate;--h:26px}
+  .wave.active span:nth-child(4){animation:wv .6s ease-in-out .04s infinite alternate;--h:18px}
+  .wave.active span:nth-child(5){animation:wv .6s ease-in-out .20s infinite alternate;--h:24px}
+  .wave.active span:nth-child(6){animation:wv .6s ease-in-out .12s infinite alternate;--h:14px}
+  .wave.active span:nth-child(7){animation:wv .6s ease-in-out .18s infinite alternate;--h:22px}
+  .wave.active span:nth-child(8){animation:wv .6s ease-in-out .06s infinite alternate;--h:16px}
+  .wave.active span:nth-child(9){animation:wv .6s ease-in-out .22s infinite alternate;--h:12px}
+  @keyframes wv{to{height:var(--h)}}
 
-  .cmd { display: inline-block; background: var(--amber-light); border: 1.5px solid var(--amber); border-radius: 999px; padding: 2px 10px; font-size: 13.5px; font-weight: 700; margin: 2px; }
+  /* volume meter */
+  .vol{position:relative;height:22px;background:var(--paper);border:2.5px solid var(--ink);border-radius:999px;overflow:hidden;margin:8px 0 2px}
+  .volbar{height:100%;width:0%;background:repeating-linear-gradient(45deg,var(--blue),var(--blue) 8px,#5B72FF 8px,#5B72FF 16px);transition:width .06s linear}
+  .volmark{position:absolute;top:-4px;bottom:-4px;left:65%;width:3px;background:var(--ink)}
+  .vcap{font-size:11px;font-weight:800;color:var(--muted);text-align:right;letter-spacing:.02em}
 
-  table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14.5px; background: white; border-radius: var(--radius-sm); overflow: hidden; box-shadow: var(--shadow); }
-  th, td { padding: 10px 12px; border: 1px solid var(--border); text-align: center; }
-  thead th { background: var(--sky); color: white; font-size: 14px; }
-  tbody th { background: var(--sky-light); font-size: 13.5px; width: 26%; }
-  td.hl-a { background: var(--mint-light); }
-  td.hl-b { background: var(--amber-light); }
+  .stt{background:var(--paper);border:2.5px dashed var(--ink);border-radius:var(--r-sm);padding:11px;min-height:48px;
+    display:flex;align-items:center;justify-content:center;text-align:center;font-size:16px;font-weight:700;margin:8px 0 2px}
+  .stt .dim{color:var(--muted);font-weight:600;font-size:14px}
+  .stt b{font-weight:900}
 
-  .obs { background: white; border-radius: var(--radius-sm); box-shadow: var(--shadow); padding: 12px 16px; font-size: 14.5px; margin-top: 14px; }
-  .fallback { display: none; background: var(--coral-light); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 14px; margin-top: 10px; text-align: center; }
-  footer { text-align: center; margin-top: 26px; font-size: 14px; }
-  footer a { color: var(--sky); text-decoration: none; font-weight: 700; }
-  h3.mid { text-align: center; margin: 22px 0 2px; font-size: 18px; }
+  .state{text-align:center;font-size:13.5px;min-height:40px;color:#333;font-weight:700;margin-top:6px;display:flex;align-items:center;justify-content:center}
+  .state b{color:var(--ink)}
 
-  .hero-art { display: block; margin: 6px auto 0; height: 90px; max-width: 92%; object-fit: contain; border-radius: 14px; }
-  @media (max-width: 640px) { .hero-art { height: auto; max-height: 80px; } }
+  .cmds{display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 8px}
+  .cmd{font-weight:800;font-size:12.5px;background:var(--paper);border:2px solid var(--ink);border-radius:999px;padding:2px 11px}
+
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;cursor:pointer;
+    font-family:inherit;font-size:16px;font-weight:900;letter-spacing:-.01em;color:var(--ink);background:var(--amber);
+    border:2.5px solid var(--ink);border-radius:14px;box-shadow:var(--hard-sm);padding:13px 14px;min-height:50px;
+    transition:transform .1s,box-shadow .1s}
+  .btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .btn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+  .btn:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+  .panel.b .btn{background:var(--blue);color:#fff}
+  .btn.rec{background:var(--red);color:#fff;animation:beat 1s ease-in-out infinite}
+  @keyframes beat{50%{transform:scale(1.02)}}
+  .btn svg{flex-shrink:0}
+
+  .obs{display:flex;gap:12px;align-items:flex-start;background:var(--ink);color:var(--paper);
+    border-radius:var(--r);padding:18px 20px;font-size:14px;font-weight:600;margin:26px 0;line-height:1.55}
+  .obs svg{flex-shrink:0;margin-top:2px}
+  .obs b{color:var(--amber);font-weight:900}
+  .fallback{display:none;background:#FFE8E8;border:2.5px solid var(--ink);border-radius:var(--r-sm);
+    box-shadow:var(--hard-sm);padding:12px 16px;font-size:14px;font-weight:600;margin-bottom:20px}
+
+  .cmp-head{display:flex;align-items:center;gap:10px;margin:6px 0 14px}
+  .cmp-head h2{font-size:22px;font-weight:900;letter-spacing:-.02em}
+  .cmp-head .bar{height:3px;background:var(--ink);flex:1;border-radius:2px}
+  table{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;background:var(--surface);
+    border:3px solid var(--ink);border-radius:var(--r);overflow:hidden;box-shadow:var(--hard);font-weight:600}
+  thead th{background:var(--ink);color:var(--paper);font-size:14px;font-weight:900;padding:12px}
+  tbody th{background:var(--paper);font-weight:800;font-size:13px;text-align:left;padding:12px 14px;width:28%}
+  td{padding:12px 14px;text-align:center;border-top:2px solid var(--ink)}
+  tbody th{border-top:2px solid var(--ink)}
+  td.a{background:#fff}
+  td.b{background:var(--blue-soft);font-weight:800}
+  tr td:first-of-type{border-right:2px solid var(--ink)}
+  tbody th{border-right:2px solid var(--ink)}
+
+  footer{text-align:center;margin-top:34px}
+  footer a{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font-weight:900;color:var(--ink);
+    background:var(--surface);border:2.5px solid var(--ink);border-radius:999px;padding:11px 22px;box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
+  footer a:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  footer a:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
-<header>
-  <span class="chip">AI 탐험대 · 15 음성 명령 AI</span>
-  <h1>🔊 소리 크기 반응 <small style="color:var(--text-muted)">VS</small> 🎤 음성 인식</h1>
-  <p class="sub">둘 다 "불을 켜는" 프로그램이에요. 무엇이 다른지 직접 비교해 봐요.</p>
-  <img class="hero-art" src="../assets/art/15_mic.png" alt="">
-</header>
-<p class="safe">🛡️ 이름·주소 같은 개인정보는 말하지 않아요. 내 목소리는 화면에만 쓰이고 저장되지 않아요.</p>
 
-<div class="duo">
-  <!-- A. 소리 크기 반응 -->
-  <div class="card">
-    <div class="waveform" id="waveA" aria-label="소리 파형 애니메이션" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-    <h2>Ⓐ 소리 크기 반응</h2>
-    <p class="desc">센서처럼 <b>소리의 크기</b>만 재요. <b>무슨 말인지는 몰라요.</b> 박수를 치거나 아무 말이나 크게 하면 불이 켜져요.</p>
-    <div class="bulb" id="bulbA" aria-hidden="true">💡</div>
-    <div class="volwrap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="소리 크기 측정값"><div class="volbar" id="volbar"></div><div class="volmark" aria-hidden="true"></div></div>
-    <p class="vollabel">빨간 선(기준)을 넘으면 켜져요</p>
-    <p class="stateline" id="stateA">버튼을 누르고 소리를 내 봐요</p>
-    <button class="btn" id="btnA" aria-label="소리 크기 재기 시작">소리 크기 재기 시작</button>
+  <nav class="nav">
+    <a class="back" href="../">← 전체 목록</a>
+    <span class="lesson-tag">15강 · 음성 명령 AI</span>
+  </nav>
+
+  <header>
+    <span class="kicker">소리를 다루는 두 가지 방법</span>
+    <h1>소리 크기<span class="vs">VS</span><span class="u">음성 인식</span></h1>
+    <p class="lead">둘 다 “불을 켜는” 프로그램이에요. 하나는 소리가 <b>얼마나 큰지</b>만, 다른 하나는 <b>무슨 말인지</b>를 봐요. 직접 소리 내며 차이를 찾아봐요.</p>
+  </header>
+
+  <div class="safe">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6l-8-4Z" fill="var(--amber)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/></svg>
+    <span>이름·주소 같은 개인정보는 말하지 않아요. 내 목소리는 화면에만 쓰이고 저장되지 않아요.</span>
   </div>
 
-  <!-- B. 음성 인식 -->
-  <div class="card">
-    <div class="waveform" id="waveB" aria-label="소리 파형 애니메이션" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
-    <h2>Ⓑ 음성 인식 (STT)</h2>
-    <p class="desc">학습된 AI가 <b>말의 내용</b>을 글자로 바꿔요. 등록된 명령어 <span class="cmd">불 켜 줘</span><span class="cmd">불 꺼 줘</span> 와 맞을 때만 실행돼요.</p>
-    <div class="bulb" id="bulbB" aria-hidden="true">💡</div>
-    <div class="sttbox" id="sttout"><span class="dim">내 말이 글자로 나타나요</span></div>
-    <p class="stateline" id="stateB">버튼을 누르고 명령을 말해요</p>
-    <button class="btn" id="btnB" aria-label="음성 인식 시작">🎤 음성 인식 시작</button>
+  <div class="duel">
+    <!-- A -->
+    <section class="panel a" aria-labelledby="tA">
+      <div class="tagrow"><span class="sigil">A</span><div><div class="psub">소리 센서</div><div class="ptitle" id="tA">소리 크기 반응</div></div></div>
+      <p class="pdesc">소리가 <b>얼마나 큰지</b>만 재요. 무슨 말인지는 몰라요. 박수를 치거나 크게 말하면 불이 켜져요.</p>
+      <div class="bulb" id="bulbA" aria-hidden="true">
+        <svg viewBox="0 0 64 92"><g class="ray"><line x1="32" y1="2" x2="32" y2="-6"/><line x1="7" y1="12" x2="1" y2="7"/><line x1="57" y1="12" x2="63" y2="7"/></g><path class="glass" d="M32 6C19 6 9 16 9 29c0 9 6 15 10 21v6h26v-6c4-6 10-12 10-21C55 16 45 6 32 6Z"/><path class="fil" d="M24 40c3-5 5-5 8 0s5 5 8 0"/><rect class="cap" x="21" y="56" width="22" height="7" rx="2"/><rect class="cap" x="24" y="64" width="16" height="6" rx="2"/></svg>
+      </div>
+      <div class="vol" id="volwrap" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="소리 크기"><div class="volbar" id="volbar"></div><div class="volmark" aria-hidden="true"></div></div>
+      <p class="vcap">가운데 선을 넘으면 불이 켜져요</p>
+      <p class="state" id="stateA">버튼을 누르고 소리를 내 봐요</p>
+      <button class="btn" id="btnA">소리 크기 재기 시작</button>
+    </section>
+
+    <!-- B -->
+    <section class="panel b" aria-labelledby="tB">
+      <div class="tagrow"><span class="sigil">B</span><div><div class="psub">학습한 AI · STT</div><div class="ptitle" id="tB">음성 인식</div></div></div>
+      <p class="pdesc"><b>말의 내용</b>을 글자로 바꿔요. 등록된 명령어와 맞을 때만 실행돼요.</p>
+      <div class="cmds"><span class="cmd">불 켜 줘</span><span class="cmd">불 꺼 줘</span></div>
+      <div class="bulb" id="bulbB" aria-hidden="true">
+        <svg viewBox="0 0 64 92"><g class="ray"><line x1="32" y1="2" x2="32" y2="-6"/><line x1="7" y1="12" x2="1" y2="7"/><line x1="57" y1="12" x2="63" y2="7"/></g><path class="glass" d="M32 6C19 6 9 16 9 29c0 9 6 15 10 21v6h26v-6c4-6 10-12 10-21C55 16 45 6 32 6Z"/><path class="fil" d="M24 40c3-5 5-5 8 0s5 5 8 0"/><rect class="cap" x="21" y="56" width="22" height="7" rx="2"/><rect class="cap" x="24" y="64" width="16" height="6" rx="2"/></svg>
+      </div>
+      <div class="wave" id="waveB" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="stt" id="sttout"><span class="dim">내 말이 글자로 나타나요</span></div>
+      <p class="state" id="stateB">버튼을 누르고 명령을 말해요</p>
+      <button class="btn" id="btnB" aria-label="음성 인식 시작">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        음성 인식 시작</button>
+    </section>
   </div>
-</div>
 
-<div class="obs" id="obsA">
-  🔍 <b>실험해 봐요</b> — Ⓐ에서 "불 꺼 줘"라고 <b>크게</b> 외치면? (그래도 켜져요! 크기만 재니까요) &nbsp;|&nbsp; Ⓑ에서 아주 <b>작게</b> "불 켜 줘"라고 하면? 내용을 알아들으면 작아도 켜져요. 시끄러우면 틀릴 수도 있어요.
-</div>
-<div class="fallback" id="nosr">⚠️ 이 브라우저는 음성 인식을 지원하지 않아요. <b>크롬(Chrome)·엣지(Edge)</b>로 열어 주세요.</div>
+  <div class="obs" id="obsA">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--amber)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/></svg>
+    <span><b>실험해 봐요</b> — Ⓐ에서 “불 꺼 줘”라고 크게 외쳐도 불이 켜져요. 크기만 재니까요. 반대로 Ⓑ는 작게 말해도 내용을 알아들으면 켜지고, 시끄러우면 틀리기도 해요.</span>
+  </div>
+  <div class="fallback" id="nosr">⚠️ 이 브라우저는 음성 인식을 지원하지 않아요. <b>크롬(Chrome)·엣지(Edge)</b>로 열어 주세요.</div>
 
-<h3 class="mid">📋 한눈에 비교</h3>
-<table>
-  <thead><tr><th>구분</th><th>Ⓐ 소리 크기 반응</th><th>Ⓑ 음성 인식</th></tr></thead>
-  <tbody>
-    <tr><th>무엇을 보나요?</th><td class="hl-a">소리의 크기</td><td class="hl-b">말의 내용(단어, 문장)</td></tr>
-    <tr><th>프로그램 활용</th><td class="hl-a">크기에 따른 조건</td><td class="hl-b">사용자의 명령어에 따른 조건</td></tr>
-    <tr><th>판단 방법</th><td class="hl-a">센서를 활용한 측정</td><td class="hl-b">학습된 데이터로 단어, 문장을 찾기</td></tr>
-  </tbody>
-</table>
+  <div class="cmp-head"><h2>한눈에 비교</h2><span class="bar" aria-hidden="true"></span></div>
+  <table>
+    <thead><tr><th>구분</th><th>Ⓐ 소리 크기 반응</th><th>Ⓑ 음성 인식</th></tr></thead>
+    <tbody>
+      <tr><th>무엇을 보나요?</th><td class="a">소리의 크기</td><td class="b">말의 내용(단어·문장)</td></tr>
+      <tr><th>프로그램 활용</th><td class="a">크기에 따른 조건</td><td class="b">명령어에 따른 조건</td></tr>
+      <tr><th>판단 방법</th><td class="a">센서로 측정</td><td class="b">학습한 데이터로 단어·문장 찾기</td></tr>
+    </tbody>
+  </table>
 
-<footer><a href="../">← AI 탐험대 체험 전체 목록</a></footer>
+  <footer><a href="../">← AI 탐험대 체험 전체 목록</a></footer>
 </div>
 
 <script>
@@ -157,16 +232,14 @@ $('btnA').onclick=async function(){
     analyser=audioCtx.createAnalyser(); analyser.fftSize=512;
     srcNode.connect(analyser);
     volRunning=true; this.textContent='멈추기'; this.classList.add('rec');
-    $('stateA').innerHTML='소리를 내 봐요! (박수 👏, 아무 말 크게)';
-    $('waveA').classList.add('active');
+    $('stateA').innerHTML='소리를 내 봐요! (박수, 아무 말 크게)';
     loopVol();
   }catch(e){ $('stateA').innerHTML='마이크 사용을 허용해 주세요'; }
 };
 function stopVol(){
   volRunning=false; $('btnA').textContent='소리 크기 재기 시작'; $('btnA').classList.remove('rec');
   if(volStream){volStream.getTracks().forEach(t=>t.stop()); volStream=null;}
-  $('volbar').style.width='0%'; $('stateA').textContent='버튼을 누르고 소리를 내 봐요';
-  $('waveA').classList.remove('active');
+  $('volbar').style.width='0%'; $('volwrap').setAttribute('aria-valuenow',0); $('stateA').textContent='버튼을 누르고 소리를 내 봐요';
 }
 function loopVol(){
   if(!volRunning) return;
@@ -176,10 +249,10 @@ function loopVol(){
   const rms=Math.sqrt(sum/data.length);
   const pct=Math.min(100, Math.round(rms*300));
   $('volbar').style.width=pct+'%';
-  $('volbar').parentElement.setAttribute('aria-valuenow', pct);
+  $('volwrap').setAttribute('aria-valuenow', pct);
   if(pct>=65){
     $('bulbA').classList.add('on');
-    $('stateA').innerHTML='큰 소리 감지! → <b>불 켜짐</b> (무슨 말인지는 모른 채로요)';
+    $('stateA').innerHTML='큰 소리 감지! → <b>불 켜짐</b> (무슨 말인지는 몰라요)';
     clearTimeout(offTimer);
     offTimer=setTimeout(()=>{ $('bulbA').classList.remove('on'); if(volRunning)$('stateA').textContent='다시 소리를 내 봐요'; },2500);
   }
@@ -193,7 +266,7 @@ $('btnB').onclick=function(){
   if(listening){ try{rec.stop();}catch(e){} return; }
   rec=new SR(); rec.lang='ko-KR'; rec.interimResults=true;
   rec.onstart=()=>{listening=true; this.textContent='듣는 중… (누르면 멈춤)'; this.classList.add('rec'); $('stateB').textContent='명령을 말해 보세요'; $('waveB').classList.add('active');};
-  rec.onend=()=>{listening=false; this.textContent='🎤 음성 인식 시작'; this.classList.remove('rec'); $('waveB').classList.remove('active');};
+  rec.onend=()=>{listening=false; this.textContent='음성 인식 시작'; this.classList.remove('rec'); $('waveB').classList.remove('active');};
   rec.onerror=e=>{ $('stateB').textContent = e.error==='not-allowed' ? '마이크 사용을 허용해 주세요' : '잘 못 들었어요. 다시 시도!'; };
   rec.onresult=ev=>{
     let fin='', inter='';
@@ -205,9 +278,9 @@ $('btnB').onclick=function(){
 };
 function judge(t){
   const n=t.replace(/[\s.,!?~]/g,'');
-  if(n.includes('불켜')){ $('bulbB').classList.add('on'); $('stateB').innerHTML='명령어 <b>“불 켜 줘”</b> 와 일치 → <b>불 켜짐</b> ✔'; }
-  else if(n.includes('불꺼')){ $('bulbB').classList.remove('on'); $('stateB').innerHTML='명령어 <b>“불 꺼 줘”</b> 와 일치 → <b>불 꺼짐</b> ✔'; }
-  else { $('stateB').innerHTML='등록된 명령어가 아니에요 ✘ (크게 말해도 실행되지 않아요)'; }
+  if(n.includes('불켜')){ $('bulbB').classList.add('on'); $('stateB').innerHTML='명령어 <b>“불 켜 줘”</b> 일치 → <b>불 켜짐</b>'; }
+  else if(n.includes('불꺼')){ $('bulbB').classList.remove('on'); $('stateB').innerHTML='명령어 <b>“불 꺼 줘”</b> 일치 → <b>불 꺼짐</b>'; }
+  else { $('stateB').innerHTML='등록된 명령어가 아니에요 (크게 말해도 실행 안 돼요)'; }
 }
 function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 </script>
