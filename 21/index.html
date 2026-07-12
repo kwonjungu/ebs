@@ -5,145 +5,200 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI 기사 편집장 — AI 탐험대 21</title>
 <style>
-  :root {
-    --sky: #5B9CF6; --sky-light: #EBF3FF;
-    --mint: #34D399; --mint-light: #D1FAE5;
-    --amber: #FBBF24; --amber-light: #FEF3C7;
-    --coral: #F87171; --coral-light: #FEE2E2;
-    --bg: #F0F7FF; --card: #FFFFFF;
-    --text: #1E293B; --text-muted: #64748B; --border: #E2E8F0;
-    --radius: 20px; --radius-sm: 12px;
-    --shadow: 0 4px 20px rgba(91,156,246,0.12);
-    --shadow-lg: 0 8px 40px rgba(91,156,246,0.2);
+  :root{
+    --ink:#141414; --paper:#FBF7EC; --surface:#FFFFFF;
+    --point:#3D5AFE; --point-soft:#E4E8FF;
+    --amber:#FFB800; --amber-soft:#FFF0C7;
+    --green:#12B76A; --red:#FF4D4D; --muted:#6B6B6B;
+    --r:20px; --r-sm:13px;
+    --hard:5px 5px 0 var(--ink); --hard-sm:3px 3px 0 var(--ink);
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.6; }
-  .wrap { max-width: 760px; margin: 0 auto; padding: 24px 16px 50px; }
-  header { text-align: center; margin-bottom: 14px; }
-  .chip { display: inline-block; background: var(--sky); color: white; font-size: 13px; font-weight: 800; padding: 4px 14px; border-radius: 999px; margin-bottom: 8px; }
-  h1 { font-size: 28px; font-weight: 900; line-height: 1.2; letter-spacing: -0.02em; }
-  .sub { color: var(--text-muted); font-size: 15px; margin-top: 4px; }
-  .safe { background: var(--amber-light); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 13.5px; text-align: center; margin: 12px 0; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    background:var(--paper);color:var(--ink);
+    font-size:17px;line-height:1.55;
+    background-image:radial-gradient(var(--ink) .5px,transparent .5px);
+    background-size:22px 22px;background-position:-11px -11px;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:18px 18px 64px}
 
-  .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; margin-bottom: 14px; }
-  .card h2 { font-size: 17px; margin-bottom: 8px; }
+  /* nav */
+  .nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+  .back{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink);
+    font-weight:800;font-size:14px;background:var(--surface);border:2.5px solid var(--ink);
+    border-radius:999px;padding:8px 16px;box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
+  .back:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .back:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+  .back:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .lesson-tag{font-weight:900;font-size:15px;letter-spacing:-.01em;background:var(--point);color:#fff;
+    border:2.5px solid var(--ink);border-radius:999px;padding:6px 16px;box-shadow:var(--hard-sm)}
+
+  /* hero */
+  .kicker{display:inline-block;font-weight:900;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
+    background:var(--amber);border:2.5px solid var(--ink);border-radius:8px;padding:4px 12px;box-shadow:var(--hard-sm);margin-bottom:16px}
+  h1{font-size:clamp(30px,7vw,52px);font-weight:900;letter-spacing:-.035em;line-height:1.02}
+  .lead{font-size:17px;color:var(--muted);margin-top:14px;max-width:640px;font-weight:600}
+  .lead b{color:var(--ink);font-weight:800}
+
+  /* safe notice */
+  .safe{display:flex;align-items:center;gap:10px;background:var(--surface);border:2.5px solid var(--ink);
+    border-radius:var(--r-sm);box-shadow:var(--hard-sm);padding:11px 16px;font-size:13.5px;font-weight:600;margin:22px 0 26px}
+  .safe svg{flex-shrink:0}
 
   /* 기록 카드 */
-  .reccard { background: var(--amber-light); box-shadow: var(--shadow); }
-  .reccard ul { list-style: none; }
-  .reccard li { background: white; border-radius: var(--radius-sm); padding: 7px 12px; font-size: 14.5px; margin-top: 6px; }
-  .reccard li.hl { outline: 2.5px solid var(--mint); }
-  .rechint { font-size: 13px; color: var(--text-muted); margin-top: 8px; }
+  .reccard{background:var(--amber-soft);border:3px solid var(--ink);border-radius:var(--r);
+    box-shadow:var(--hard);padding:20px;margin-bottom:16px}
+  .reccard h2{font-size:18px;font-weight:900;letter-spacing:-.02em;margin-bottom:10px}
+  .reccard ul{list-style:none}
+  .reccard li{background:var(--surface);border:2px solid var(--ink);border-radius:var(--r-sm);
+    padding:9px 14px;font-size:14.5px;font-weight:600;margin-top:8px;box-shadow:var(--hard-sm);transition:box-shadow .12s,transform .12s}
+  .reccard li.hl{outline:3px solid var(--green);outline-offset:2px;background:var(--point-soft)}
+  .rechint{font-size:13px;color:var(--muted);font-weight:600;margin-top:10px}
 
-  /* 신문 지면 감성 */
-  .card.newspaper {
-    background: #FFFEF9;
-    border: 1.5px solid #D4C9A8;
-    font-family: 'Batang', 'KoPubBatang', 'NanumMyeongjo', Georgia, serif;
-  }
-  .card.newspaper h2 {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    letter-spacing: 0;
-  }
+  /* 신문 카드 */
+  .newspaper{background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);
+    box-shadow:var(--hard);padding:22px;margin-bottom:16px}
+  .newspaper h2{font-size:18px;font-weight:900;letter-spacing:-.02em;margin-bottom:10px}
 
-  /* 기사 초안 */
-  .headline {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-size: 19px;
-    font-weight: 900;
-    text-align: center;
-    background: var(--sky-light);
-    border-radius: var(--radius-sm);
-    padding: 9px 10px;
-    margin-bottom: 12px;
-    letter-spacing: -0.01em;
-    border-bottom: 3px solid var(--sky);
-  }
-  .counter { font-size: 13.5px; color: var(--text-muted); text-align: right; margin-bottom: 6px; }
-  .counter b { color: var(--sky); }
-  .sent { border: 1.5px solid #D4C9A8; border-radius: var(--radius-sm); margin-top: 8px; overflow: hidden; }
-  .sent-btn { display: block; width: 100%; border: 0; background: white; font-family: inherit; font-size: 15.5px; line-height: 1.55; text-align: left; padding: 11px 14px; cursor: pointer; min-height: 44px; color: var(--text); }
-  .sent-btn:active { background: var(--sky-light); }
-  .sent.open { border-color: var(--sky); box-shadow: var(--shadow); }
-  .sent.done { border-color: var(--mint); }
-  .sent.done .sent-btn { cursor: default; }
-  .old { text-decoration: line-through; text-decoration-color: var(--coral); text-decoration-thickness: 2.5px; color: var(--text-muted); }
-  .newtxt { display: block; background: var(--mint-light); border-left: 3px solid var(--mint); border-radius: 0 8px 8px 0; padding: 5px 10px 5px 10px; margin-top: 6px; font-weight: 700; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
-  .oktag { display: block; font-size: 13px; color: var(--mint); font-weight: 700; margin-top: 3px; }
+  /* 기사 헤드라인 */
+  .headline{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    font-size:19px;font-weight:900;text-align:center;
+    background:var(--point-soft);border:2.5px solid var(--ink);border-radius:var(--r-sm);
+    padding:10px 12px;margin-bottom:12px;letter-spacing:-.01em;box-shadow:var(--hard-sm)}
+  .counter{font-size:13.5px;color:var(--muted);font-weight:700;text-align:right;margin-bottom:8px}
+  .counter b{color:var(--point);font-weight:900}
+
+  /* 문장 토글 (기사 초안) */
+  .sent{border:2.5px solid var(--ink);border-radius:var(--r-sm);margin-top:10px;overflow:hidden;
+    background:var(--surface);box-shadow:var(--hard-sm);transition:box-shadow .12s}
+  .sent-btn{display:block;width:100%;border:0;background:transparent;
+    font-family:'Batang','KoPubBatang','NanumMyeongjo',Georgia,serif;
+    font-size:15.5px;line-height:1.65;text-align:left;
+    padding:13px 16px;cursor:pointer;min-height:44px;color:var(--ink);
+    border-bottom:2px solid transparent;transition:background .1s}
+  .sent-btn:hover{background:var(--paper)}
+  .sent-btn:active{background:var(--point-soft)}
+  .sent.open{border-color:var(--point);box-shadow:var(--hard)}
+  .sent.open .sent-btn{border-bottom-color:var(--ink)}
+  .sent.done{border-color:var(--green)}
+  .sent.done .sent-btn{cursor:default}
+  .old{text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:2.5px;color:var(--muted)}
+  .newtxt{display:block;background:rgba(18,183,106,.1);border:2px solid var(--green);
+    border-radius:var(--r-sm);padding:7px 12px;margin-top:8px;font-weight:700;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14.5px;color:var(--ink)}
+  .oktag{display:block;font-size:13px;font-weight:800;color:var(--green);
+    margin-top:5px;letter-spacing:.02em}
 
   /* 판정 패널 */
-  .panel { display: none; background: var(--sky-light); padding: 12px 14px; border-top: 1.5px solid var(--border); }
-  .sent.open .panel { display: block; }
-  .panel .q { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
-  .jbtns { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-  @media (max-width: 520px) { .jbtns { grid-template-columns: 1fr; } }
-  .jbtn { border: 0; cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 700; color: white; padding: 10px 6px; border-radius: var(--radius-sm); min-height: 44px; }
-  .jbtn:active { transform: scale(.97); }
-  .jbtn.j-ok { background: var(--mint); } .jbtn.j-fact { background: var(--sky); } .jbtn.j-tone { background: var(--amber); }
-  .fb { font-size: 14px; margin-top: 8px; border-radius: var(--radius-sm); padding: 8px 12px; display: none; }
-  .fb.bad { display: block; background: var(--coral-light); }
-  .fb.good { display: block; background: var(--mint-light); }
-  .contrast { display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 800; font-size: 15px; margin-top: 6px; flex-wrap: wrap; }
-  .contrast .d { background: var(--coral-light); border-bottom: 3px solid var(--coral); padding: 1px 8px; border-radius: 6px; }
-  .contrast .r { background: var(--mint-light); border-bottom: 3px solid var(--mint); padding: 1px 8px; border-radius: 6px; }
+  .panel{display:none;background:var(--point-soft);padding:14px 16px;border-top:2.5px solid var(--ink)}
+  .sent.open .panel{display:block}
+  .panel .q{font-size:14.5px;font-weight:900;margin-bottom:10px;letter-spacing:-.01em}
+  .jbtns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  @media(max-width:520px){.jbtns{grid-template-columns:1fr}}
+  .jbtn{border:2.5px solid var(--ink);cursor:pointer;font-family:inherit;font-size:13.5px;
+    font-weight:900;color:var(--ink);background:var(--surface);padding:10px 6px;
+    border-radius:var(--r-sm);min-height:44px;box-shadow:var(--hard-sm);
+    transition:transform .1s,box-shadow .1s}
+  .jbtn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .jbtn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+  .jbtn:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .jbtn.j-ok{border-color:var(--green);background:rgba(18,183,106,.08)}
+  .jbtn.j-fact{border-color:var(--point);background:var(--point-soft)}
+  .jbtn.j-tone{border-color:var(--amber);background:var(--amber-soft)}
+
+  /* 피드백 */
+  .fb{font-size:14px;margin-top:10px;border:2px solid var(--ink);border-radius:var(--r-sm);
+    padding:10px 12px;display:none;font-weight:700}
+  .fb.bad{display:block;background:#FFE8E8;border-color:var(--red)}
+  .fb.good{display:block;background:rgba(18,183,106,.1);border-color:var(--green)}
+
+  /* 대비 표시 */
+  .contrast{display:flex;align-items:center;justify-content:center;gap:10px;
+    font-weight:800;font-size:14.5px;margin-top:8px;flex-wrap:wrap}
+  .contrast .d{background:#FFE8E8;border:2px solid var(--red);border-radius:7px;padding:2px 10px}
+  .contrast .r{background:rgba(18,183,106,.1);border:2px solid var(--green);border-radius:7px;padding:2px 10px}
 
   /* 비교 카드 */
-  #compare { display: none; }
-  .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
-  @media (max-width: 560px) { .duo { grid-template-columns: 1fr; } }
-  .col { border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px; font-size: 13.5px; }
-  .col h3 { font-size: 14.5px; margin-bottom: 6px; }
-  .col p { margin-top: 5px; }
-  .col.before p.chg { background: var(--coral-light); border-radius: 6px; padding: 2px 6px; }
-  .col.after p.chg { background: var(--mint-light); border-radius: 6px; padding: 2px 6px; }
-  .stamp { text-align: center; font-size: 17px; font-weight: 800; color: var(--mint); margin-top: 10px; }
+  #compare{display:none;border:3px solid var(--ink);border-radius:var(--r);
+    box-shadow:var(--hard);padding:22px;background:var(--surface);margin-bottom:16px}
+  #compare h2{font-size:18px;font-weight:900;letter-spacing:-.02em;margin-bottom:14px}
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+  @media(max-width:560px){.duo{grid-template-columns:1fr}}
+  .col{border:2.5px solid var(--ink);border-radius:var(--r-sm);padding:14px;font-size:13.5px;box-shadow:var(--hard-sm)}
+  .col h3{font-size:14.5px;font-weight:900;margin-bottom:8px;letter-spacing:-.01em}
+  .col p{margin-top:6px;line-height:1.6;font-weight:600}
+  .col.before p.chg{background:#FFE8E8;border-radius:6px;padding:3px 7px}
+  .col.after p.chg{background:rgba(18,183,106,.12);border-radius:6px;padding:3px 7px}
+  .stamp{text-align:center;font-size:16px;font-weight:900;color:var(--green);
+    margin-top:14px;border:2.5px solid var(--green);border-radius:999px;
+    padding:8px 20px;display:inline-block;margin-left:50%;transform:translateX(-50%)}
 
-  .obs { background: white; border-radius: var(--radius-sm); box-shadow: var(--shadow); padding: 12px 16px; font-size: 14.5px; margin-top: 4px; }
-  footer { text-align: center; margin-top: 26px; font-size: 14px; }
-  footer a { color: var(--sky); text-decoration: none; font-weight: 700; }
-  :focus-visible { outline: 3px solid var(--sky); outline-offset: 3px; border-radius: 4px; }
-  .jbtn:focus-visible, .btn:focus-visible, .sent-btn:focus-visible { outline: 3px solid var(--sky); outline-offset: 2px; }
-  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+  /* 관찰 박스 */
+  .obs{display:flex;gap:12px;align-items:flex-start;background:var(--ink);color:var(--paper);
+    border-radius:var(--r);padding:18px 20px;font-size:14px;font-weight:600;margin:26px 0;line-height:1.55}
+  .obs svg{flex-shrink:0;margin-top:2px}
+  .obs b{color:var(--amber);font-weight:900}
 
-  .hero-art { display: block; margin: 6px auto 0; height: 88px; max-width: 92%; object-fit: contain; border-radius: 14px; }
-  @media (max-width: 640px) { .hero-art { height: auto; max-height: 70px; } }
+  footer{text-align:center;margin-top:34px}
+  footer a{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font-weight:900;color:var(--ink);
+    background:var(--surface);border:2.5px solid var(--ink);border-radius:999px;
+    padding:11px 22px;box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
+  footer a:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  footer a:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+
+  :focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header>
-  <span class="chip">AI 탐험대 · 21 AI 글 편집장</span>
-  <h1>📰 AI 기사 편집장 체험</h1>
-  <p class="sub">AI가 쓴 체육대회 기사 초안이에요. 실제 기록과 비교해 문장을 판정하고 고쳐 봐요.</p>
-  <img class="hero-art" src="../assets/art/21_press.png" alt="">
-</header>
-<p class="safe">🛡️ 이 기사와 이름(마루)은 모두 가상의 이야기예요. AI 글의 최종 판단은 사람(편집장)이 해요.</p>
 
-<div class="card reccard">
-  <h2>📋 실제 기록 카드 — 편집장의 근거 자료</h2>
-  <ul id="reclist"></ul>
-  <p class="rechint">아래 초안 문장을 누르면, 비교할 기록에 초록 테두리가 켜져요.</p>
-</div>
+  <nav class="nav">
+    <a class="back" href="../">← 전체 목록</a>
+    <span class="lesson-tag">21강 · AI 글 편집장</span>
+  </nav>
 
-<div class="card newspaper">
-  <h2>🤖 AI가 쓴 기사 초안</h2>
-  <p class="headline">6학년 2반, 가을 체육대회 우승!</p>
-  <p class="counter">고친 문제 문장 <b id="cnt">0</b> / 5</p>
-  <div id="article"></div>
-</div>
+  <header>
+    <span class="kicker">AI 초안 · 사람이 최종 판단</span>
+    <h1>AI 기사<br>편집장 체험</h1>
+    <p class="lead">AI가 쓴 체육대회 기사 초안이에요. 실제 기록과 비교해 <b>문장을 판정</b>하고 고쳐 봐요.</p>
+  </header>
 
-<div class="card" id="compare">
-  <h2>📰 초안 vs 편집 후</h2>
-  <div class="duo">
-    <div class="col before"><h3>🤖 AI 초안</h3><div id="beforeCol"></div></div>
-    <div class="col after"><h3>✅ 편집 후 기사</h3><div id="afterCol"></div></div>
+  <div class="safe">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6l-8-4Z" fill="var(--amber)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/></svg>
+    <span>이 기사와 이름(마루)은 모두 가상의 이야기예요. AI 글의 최종 판단은 사람(편집장)이 해요.</span>
   </div>
-  <p class="stamp">편집 완료 — 채택! ✅</p>
-</div>
 
-<div class="obs">🔍 <b>관찰 포인트</b> — AI 글은 초안이에요. 순위·금액 같은 <b>확인할 수 있는 사실</b>부터 기록과 비교하고, 표현은 학교 신문 독자에 맞게 다듬어요.</div>
+  <div class="reccard">
+    <h2>실제 기록 카드 — 편집장의 근거 자료</h2>
+    <ul id="reclist"></ul>
+    <p class="rechint">아래 초안 문장을 누르면, 비교할 기록에 초록 테두리가 켜져요.</p>
+  </div>
 
-<footer><a href="../">← AI 탐험대 체험 전체 목록</a></footer>
+  <div class="newspaper">
+    <h2>AI가 쓴 기사 초안</h2>
+    <p class="headline">6학년 2반, 가을 체육대회 우승!</p>
+    <p class="counter">고친 문제 문장 <b id="cnt">0</b> / 5</p>
+    <div id="article"></div>
+  </div>
+
+  <div id="compare">
+    <h2>초안 vs 편집 후</h2>
+    <div class="duo">
+      <div class="col before"><h3>AI 초안</h3><div id="beforeCol"></div></div>
+      <div class="col after"><h3>편집 후 기사</h3><div id="afterCol"></div></div>
+    </div>
+    <p class="stamp">편집 완료 — 채택!</p>
+  </div>
+
+  <div class="obs">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--amber)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/></svg>
+    <span><b>관찰 포인트</b> — AI 글은 초안이에요. 순위·금액 같은 <b>확인할 수 있는 사실</b>부터 기록과 비교하고, 표현은 학교 신문 독자에 맞게 다듬어요.</span>
+  </div>
+
+  <footer><a href="../">← AI 탐험대 체험 전체 목록</a></footer>
 </div>
 
 <script>

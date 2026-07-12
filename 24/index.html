@@ -5,175 +5,248 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI 편향 탐정 — AI 탐험대 24</title>
 <style>
-  :root {
-    --sky: #5B9CF6; --sky-light: #EBF3FF;
-    --mint: #34D399; --mint-light: #D1FAE5;
-    --amber: #FBBF24; --amber-light: #FEF3C7;
-    --coral: #F87171; --coral-light: #FEE2E2;
-    --purple: #A78BFA; --purple-light: #EDE9FE;
-    --bg: #F0F7FF; --card: #FFFFFF;
-    --text: #1E293B; --text-muted: #64748B; --border: #E2E8F0;
-    --radius: 20px; --radius-sm: 12px;
-    --shadow: 0 4px 20px rgba(91,156,246,0.12);
-    --shadow-lg: 0 8px 40px rgba(91,156,246,0.2);
+  :root{
+    --ink:#141414; --paper:#FBF7EC; --surface:#FFFFFF;
+    --point:#F59E0B; --point-soft:#FFF0C7;
+    --amber:#FFB800; --amber-soft:#FFF0C7;
+    --green:#12B76A; --red:#FF4D4D; --muted:#6B6B6B;
+    --r:20px; --r-sm:13px;
+    --hard:5px 5px 0 var(--ink); --hard-sm:3px 3px 0 var(--ink);
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.6; }
-  .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 50px; }
-  header { text-align: center; margin-bottom: 14px; }
-  .chip { display: inline-block; background: var(--amber); color: white; font-size: 13px; font-weight: 800; padding: 4px 14px; border-radius: 999px; margin-bottom: 8px; letter-spacing: 0.02em; }
-  h1 { font-size: 28px; font-weight: 900; line-height: 1.2; letter-spacing: -0.02em; }
-  .sub { color: var(--text-muted); font-size: 15px; margin-top: 4px; }
-  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
-  .safe { background: var(--amber-light); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 13.5px; text-align: center; margin: 12px 0; }
-
-  .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px 20px; margin-top: 16px; }
-  .card h2 { font-size: 18px; margin-bottom: 4px; text-align: center; }
-  .card .desc { font-size: 14px; color: var(--text-muted); text-align: center; }
-  .vcap { font-size: 12.5px; color: var(--text-muted); text-align: center; margin-top: 8px; }
-
-  .hidden { display: none; }
-  .reveal { animation: rise .45s ease; }
-  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-
-  /* 도넛 → 차트 반전 오케스트레이션 */
-  @keyframes barSlideIn {
-    from { opacity: 0; transform: translateX(-18px); }
-    to   { opacity: 1; transform: none; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    background:var(--paper);color:var(--ink);
+    font-size:17px;line-height:1.55;
+    background-image:radial-gradient(var(--ink) .5px,transparent .5px);
+    background-size:22px 22px;background-position:-11px -11px;
   }
-  #chart .row { opacity: 0; }
-  #chart .row.bar-in { animation: barSlideIn .38s ease forwards; }
+  .wrap{max-width:720px;margin:0 auto;padding:18px 18px 64px}
+
+  /* nav */
+  .nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+  .back{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink);
+    font-weight:800;font-size:14px;background:var(--surface);border:2.5px solid var(--ink);
+    border-radius:999px;padding:8px 16px;box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
+  .back:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .back:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+  .back:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .lesson-tag{font-weight:900;font-size:15px;letter-spacing:-.01em;background:var(--point);color:#fff;
+    border:2.5px solid var(--ink);border-radius:999px;padding:6px 16px;box-shadow:var(--hard-sm)}
+
+  /* hero */
+  .kicker{display:inline-block;font-weight:900;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
+    background:var(--amber);border:2.5px solid var(--ink);border-radius:8px;padding:4px 12px;box-shadow:var(--hard-sm);margin-bottom:16px}
+  h1{font-size:clamp(30px,7vw,52px);font-weight:900;letter-spacing:-.035em;line-height:1.02}
+  .lead{font-size:17px;color:var(--muted);margin-top:14px;max-width:620px;font-weight:600}
+  .lead b{color:var(--ink);font-weight:800}
+
+  /* safe notice */
+  .safe{display:flex;align-items:center;gap:10px;background:var(--surface);border:2.5px solid var(--ink);
+    border-radius:var(--r-sm);box-shadow:var(--hard-sm);padding:11px 16px;font-size:13.5px;font-weight:600;margin:22px 0 26px}
+  .safe svg{flex-shrink:0}
+
+  /* 카드 공통 */
+  .card{background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);
+    box-shadow:var(--hard);padding:22px 20px;margin-top:18px}
+  .card h2{font-size:19px;font-weight:900;letter-spacing:-.02em;margin-bottom:6px;text-align:center}
+  .card .desc{font-size:14px;color:var(--muted);font-weight:600;text-align:center;margin-bottom:2px}
+  .vcap{font-size:12.5px;color:var(--muted);font-weight:700;text-align:center;margin-top:10px}
+
+  /* 숨김 / 등장 */
+  .hidden{display:none}
+  .reveal{animation:rise .45s ease}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+  /* 막대 슬라이드인 */
+  @keyframes barSlideIn{
+    from{opacity:0;transform:translateX(-18px)}
+    to{opacity:1;transform:none}
+  }
+  #chart .row{opacity:0}
+  #chart .row.bar-in{animation:barSlideIn .38s ease forwards}
 
   /* 도넛 게이지 */
-  .donutbox { display: flex; align-items: center; justify-content: center; gap: 18px; margin: 12px 0 4px; flex-wrap: wrap; transition: opacity .4s ease, filter .4s ease; }
-  .donutbox.dimmed { opacity: .25; filter: blur(2px) grayscale(.6); pointer-events: none; }
-  .donut { position: relative; width: 150px; height: 150px; flex: 0 0 auto; }
-  .donut svg { transform: rotate(-90deg); }
-  .donut .track { fill: none; stroke: var(--amber-light); stroke-width: 15; }
-  .donut .val { fill: none; stroke: var(--amber); stroke-width: 15; stroke-linecap: round; stroke-dasharray: 339.3; stroke-dashoffset: 339.3; transition: stroke-dashoffset .8s ease; }
-  .donut .num { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 900; font-size: 36px; line-height: 1; letter-spacing: -0.03em; }
-  .donut .num small { font-size: 11px; color: var(--text-muted); font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
-  .adcopy { max-width: 240px; background: var(--sky-light); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 14.5px; }
-  .adcopy b { font-size: 16px; }
+  .donutbox{display:flex;align-items:center;justify-content:center;gap:18px;
+    margin:14px 0 6px;flex-wrap:wrap;transition:opacity .4s ease,filter .4s ease}
+  .donutbox.dimmed{opacity:.25;filter:blur(2px) grayscale(.6);pointer-events:none}
+  .donut{position:relative;width:150px;height:150px;flex:0 0 auto}
+  .donut svg{transform:rotate(-90deg)}
+  .donut .track{fill:none;stroke:var(--point-soft);stroke-width:15}
+  .donut .val{fill:none;stroke:var(--point);stroke-width:15;stroke-linecap:round;
+    stroke-dasharray:339.3;stroke-dashoffset:339.3;transition:stroke-dashoffset .8s ease}
+  .donut .num{position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;font-weight:900;font-size:36px;
+    line-height:1;letter-spacing:-.03em}
+  .donut .num small{font-size:11px;color:var(--muted);font-weight:700;
+    letter-spacing:.04em;text-transform:uppercase}
+  .adcopy{max-width:240px;background:var(--point-soft);border:2.5px solid var(--ink);
+    border-radius:var(--r-sm);padding:12px 16px;font-size:14.5px;font-weight:600;
+    box-shadow:var(--hard-sm)}
+  .adcopy b{font-size:16px;font-weight:900}
 
-  .btn { display: block; width: 100%; border: 0; cursor: pointer; font-family: inherit; font-size: 16px; font-weight: 800; color: white; background: var(--amber); padding: 13px 10px; border-radius: var(--radius-sm); min-height: 48px; margin-top: 14px; letter-spacing: -0.01em; transition: box-shadow .15s; }
-  .btn:active { transform: scale(.97); }
-  .btn:focus-visible { outline: 3px solid var(--amber); outline-offset: 3px; }
-  .btn:disabled { background: var(--border); color: var(--text-muted); cursor: default; }
+  /* 버튼 */
+  .btn{display:block;width:100%;border:2.5px solid var(--ink);cursor:pointer;font-family:inherit;
+    font-size:16px;font-weight:900;color:var(--ink);background:var(--point);
+    padding:13px 10px;border-radius:var(--r-sm);min-height:48px;margin-top:14px;
+    letter-spacing:-.01em;box-shadow:var(--hard-sm);transition:transform .1s,box-shadow .1s}
+  .btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .btn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+  .btn:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .btn:disabled{background:var(--paper);color:var(--muted);cursor:default;box-shadow:none;transform:none}
 
   /* 막대 차트 */
-  .chart { margin-top: 12px; }
-  .row { display: grid; grid-template-columns: 118px 1fr 44px; align-items: center; gap: 8px; margin: 9px 0; font-size: 13.5px; }
-  .row .lab { text-align: right; line-height: 1.3; font-weight: 600; }
-  .track2 { background: #F1F5F9; border-radius: 999px; height: 20px; overflow: hidden; }
-  .fill { height: 100%; width: 0%; border-radius: 999px; background: var(--amber); transition: width .7s ease, background .4s; }
-  .fill.mint { background: var(--mint); } .fill.coral { background: var(--coral); }
-  .row .pct { font-weight: 900; font-variant-numeric: tabular-nums; font-size: 15px; }
-  .row.low .lab, .row.low .pct { color: var(--coral); }
-  .row.low .track2 { background: #FEE2E2; }
-  .row.low .pct::after { content: ' ⚠'; font-size: 12px; vertical-align: middle; }
-  .twist { background: var(--coral-light); border: 2px solid var(--coral); border-radius: var(--radius-sm); padding: 9px 14px; font-size: 14.5px; text-align: center; font-weight: 800; margin-top: 12px; color: #B91C1C; }
+  .chart{margin-top:14px}
+  .row{display:grid;grid-template-columns:118px 1fr 44px;align-items:center;gap:8px;
+    margin:10px 0;font-size:13.5px}
+  .row .lab{text-align:right;line-height:1.3;font-weight:700}
+  .track2{background:var(--paper);border:2px solid var(--ink);border-radius:999px;
+    height:22px;overflow:hidden}
+  .fill{height:100%;width:0%;border-radius:999px;background:var(--point);transition:width .7s ease,background .4s}
+  .fill.mint{background:var(--green)}
+  .fill.coral{background:var(--red)}
+  .row .pct{font-weight:900;font-variant-numeric:tabular-nums;font-size:15px}
+  .row.low .lab,.row.low .pct{color:var(--red)}
+  .row.low .track2{background:#FFE8E8;border-color:var(--red)}
+  .row.low .pct::after{content:' !';font-size:12px;vertical-align:middle;font-weight:900}
+  .twist{background:var(--ink);color:var(--paper);border-radius:var(--r-sm);
+    padding:10px 16px;font-size:14.5px;text-align:center;font-weight:800;margin-top:14px}
+  .twist b{color:var(--point)}
 
   /* 원인 카드 */
-  .causes { display: grid; gap: 10px; margin-top: 12px; }
-  .cause { border: 2px solid var(--border); background: white; border-radius: var(--radius-sm); padding: 12px 14px; font-size: 15px; font-weight: 700; cursor: pointer; text-align: left; font-family: inherit; min-height: 48px; transition: border-color .15s; }
-  .cause:active { transform: scale(.98); }
-  .cause:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
-  .cause.no { border-color: var(--coral); background: var(--coral-light); animation: shake .4s; }
-  .cause.yes { border-color: var(--mint); background: var(--mint-light); }
-  @keyframes shake { 0%,100%{transform:none} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
-  .feedback { font-size: 14px; margin-top: 10px; border-radius: var(--radius-sm); padding: 9px 13px; display: none; }
-  .feedback.show { display: block; }
-  .feedback.bad { background: var(--coral-light); }
-  .feedback.good { background: var(--mint-light); font-weight: 700; }
+  .causes{display:grid;gap:10px;margin-top:14px}
+  .cause{border:2.5px solid var(--ink);background:var(--surface);border-radius:var(--r-sm);
+    padding:13px 16px;font-size:15px;font-weight:800;cursor:pointer;text-align:left;
+    font-family:inherit;min-height:48px;box-shadow:var(--hard-sm);
+    transition:transform .1s,box-shadow .1s}
+  .cause:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .cause:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+  .cause:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .cause.no{border-color:var(--red);background:#FFE8E8;animation:shake .4s}
+  .cause.yes{border-color:var(--green);background:rgba(18,183,106,.1);box-shadow:var(--hard-sm)}
+  @keyframes shake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .feedback{font-size:14px;margin-top:12px;border:2px solid var(--ink);border-radius:var(--r-sm);
+    padding:10px 14px;display:none;font-weight:700}
+  .feedback.show{display:block}
+  .feedback.bad{background:#FFE8E8;border-color:var(--red)}
+  .feedback.good{background:rgba(18,183,106,.1);border-color:var(--green)}
 
   /* 데이터 접시 */
-  .plates { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 12px; }
-  @media (max-width: 560px) { .plates { grid-template-columns: repeat(2, 1fr); } }
-  .plate { background: var(--sky-light); border-radius: var(--radius-sm); padding: 8px 6px 10px; text-align: center; position: relative; }
-  .plate .pl-name { font-size: 12.5px; font-weight: 700; line-height: 1.3; }
-  .plate .grains { min-height: 52px; display: flex; flex-wrap: wrap; gap: 3px; justify-content: center; align-content: flex-start; padding: 6px 2px 2px; }
-  .grain { width: 9px; height: 9px; border-radius: 50%; background: var(--amber); box-shadow: 0 1px 2px rgba(0,0,0,.15); }
-  .grain.new { animation: drop .35s ease; }
-  @keyframes drop { from { transform: translateY(-14px); opacity: 0; } to { transform: none; opacity: 1; } }
-  .plate .cnt { font-size: 11.5px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
-  .plate .warn { position: absolute; top: -7px; right: -5px; background: var(--coral); color: white; font-size: 12px; font-weight: 800; width: 22px; height: 22px; border-radius: 50%; line-height: 22px; }
-  .refchip { text-align: center; font-size: 12.5px; color: var(--text-muted); margin-top: 8px; }
-  .limit { background: var(--purple-light); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 14.5px; margin-top: 12px; display: none; }
-  .limit.show { display: block; animation: rise .45s ease; }
+  .plates{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+  @media(max-width:560px){.plates{grid-template-columns:repeat(2,1fr)}}
+  .plate{background:var(--point-soft);border:2.5px solid var(--ink);border-radius:var(--r-sm);
+    padding:10px 8px 12px;text-align:center;position:relative;box-shadow:var(--hard-sm)}
+  .plate .pl-name{font-size:12.5px;font-weight:800;line-height:1.3}
+  .plate .grains{min-height:52px;display:flex;flex-wrap:wrap;gap:3px;
+    justify-content:center;align-content:flex-start;padding:6px 2px 2px}
+  .grain{width:9px;height:9px;border-radius:50%;background:var(--point);
+    border:1.5px solid var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.15)}
+  .grain.new{animation:drop .35s ease}
+  @keyframes drop{from{transform:translateY(-14px);opacity:0}to{transform:none;opacity:1}}
+  .plate .cnt{font-size:11.5px;color:var(--muted);font-weight:700;
+    font-variant-numeric:tabular-nums;margin-top:4px}
+  .plate .warn{position:absolute;top:-8px;right:-6px;background:var(--red);color:#fff;
+    font-size:12px;font-weight:900;width:22px;height:22px;border-radius:50%;
+    line-height:22px;border:2px solid var(--ink)}
+  .refchip{text-align:center;font-size:12.5px;color:var(--muted);font-weight:600;margin-top:10px}
+  .limit{background:var(--point-soft);border:2.5px solid var(--ink);border-radius:var(--r-sm);
+    padding:12px 16px;font-size:14.5px;margin-top:14px;display:none;box-shadow:var(--hard-sm)}
+  .limit.show{display:block;animation:rise .45s ease}
 
-  .obs { background: white; border-radius: var(--radius-sm); box-shadow: var(--shadow); padding: 12px 16px; font-size: 14.5px; margin-top: 16px; }
-  footer { text-align: center; margin-top: 26px; font-size: 14px; }
-  footer a { color: var(--sky); text-decoration: none; font-weight: 700; }
+  /* 관찰 박스 */
+  .obs{display:flex;gap:12px;align-items:flex-start;background:var(--ink);color:var(--paper);
+    border-radius:var(--r);padding:18px 20px;font-size:14px;font-weight:600;margin:26px 0;line-height:1.55}
+  .obs svg{flex-shrink:0;margin-top:2px}
+  .obs b{color:var(--point);font-weight:900}
 
-  .hero-art { display: block; margin: 6px auto 0; height: 96px; max-width: 92%; object-fit: contain; border-radius: 14px; }
-  @media (max-width: 640px) { .hero-art { height: auto; max-height: 80px; } }
+  footer{text-align:center;margin-top:34px}
+  footer a{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font-weight:900;color:var(--ink);
+    background:var(--surface);border:2.5px solid var(--ink);border-radius:999px;
+    padding:11px 22px;box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
+  footer a:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  footer a:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+
+  :focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header>
-  <span class="chip">AI 탐험대 · 24 AI 편향 탐정</span>
-  <h1>⚖️ 점수 하나에 숨은 비밀</h1>
-  <p class="sub">전체 점수가 좋아 보이는 AI, 정말 모두에게 공정할까요? 직접 파헤쳐 봐요.</p>
-  <img class="hero-art" src="../assets/art/24_scale.png" alt="" aria-hidden="true">
-</header>
-<p class="safe">🧪 이 체험의 점수는 전부 수업용 가상 데이터예요. 입력하거나 저장되는 정보는 없어요.</p>
 
-<!-- 1. 전체 점수 -->
-<div class="card">
-  <h2>🎤 우리 학교 음성 인식 AI</h2>
-  <p class="desc">AI 회사가 자랑하는 전체 점수예요.</p>
-  <div class="donutbox">
-    <div class="donut" role="meter" aria-label="전체 정확도" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="donutMeter">
-      <svg width="150" height="150" viewBox="0 0 120 120" aria-hidden="true">
-        <circle class="track" cx="60" cy="60" r="54"></circle>
-        <circle class="val" id="donutVal" cx="60" cy="60" r="54"></circle>
-      </svg>
-      <div class="num"><span id="donutNum">0%</span><small>전체 정확도</small></div>
+  <nav class="nav">
+    <a class="back" href="../">← 전체 목록</a>
+    <span class="lesson-tag">24강 · AI 편향 탐정</span>
+  </nav>
+
+  <header>
+    <span class="kicker">데이터 편향 · 공정한 AI</span>
+    <h1>점수 하나에<br>숨은 비밀</h1>
+    <p class="lead">전체 점수가 좋아 보이는 AI, 정말 <b>모두에게 공정</b>할까요? 직접 파헤쳐 봐요.</p>
+  </header>
+
+  <div class="safe">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6l-8-4Z" fill="var(--amber)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/></svg>
+    <span>이 체험의 점수는 전부 수업용 가상 데이터예요. 입력하거나 저장되는 정보는 없어요.</span>
+  </div>
+
+  <!-- 1. 전체 점수 -->
+  <div class="card">
+    <h2>우리 학교 음성 인식 AI</h2>
+    <p class="desc">AI 회사가 자랑하는 전체 점수예요.</p>
+    <div class="donutbox">
+      <div class="donut" role="meter" aria-label="전체 정확도" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="donutMeter">
+        <svg width="150" height="150" viewBox="0 0 120 120" aria-hidden="true">
+          <circle class="track" cx="60" cy="60" r="54"></circle>
+          <circle class="val" id="donutVal" cx="60" cy="60" r="54"></circle>
+        </svg>
+        <div class="num"><span id="donutNum">0%</span><small>전체 정확도</small></div>
+      </div>
+      <div class="adcopy"><b>"전체 정확도 82%!"</b><br>열 번 중 여덟 번은 알아들어요. 문제없어 보이죠?</div>
     </div>
-    <div class="adcopy">📢 <b>"전체 정확도 82%!"</b><br>열 번 중 여덟 번은 알아들어요. 문제없어 보이죠?</div>
+    <p class="vcap">가상 데이터예요</p>
+    <button class="btn" id="btnSplit">상황별로 나누어 보기</button>
   </div>
-  <p class="vcap">🧪 가상 데이터예요</p>
-  <button class="btn" id="btnSplit">🔍 상황별로 나누어 보기</button>
-</div>
 
-<!-- 2. 상황별 차트 -->
-<div class="card hidden" id="secChart">
-  <h2>📊 상황별 기록</h2>
-  <p class="desc">같은 AI인데, 누구의 말인지·어디인지에 따라 점수가 달라요.</p>
-  <div class="chart" id="chart"></div>
-  <p class="twist">🚨 전체 점수에 가려져 있던 편향이 보여요!</p>
-  <p class="vcap">🧪 가상 데이터예요</p>
-</div>
-
-<!-- 3. 원인 추리 -->
-<div class="card hidden" id="secCause">
-  <h2>🕵️ 왜 이런 일이 생겼을까요?</h2>
-  <p class="desc">원인이라고 생각하는 카드를 골라 봐요.</p>
-  <div class="causes">
-    <button class="cause" data-k="blame" aria-label="원인 선택: 도윤이 말투 탓이에요">🗣️ 도윤이 말투 탓이에요</button>
-    <button class="cause" data-k="data" aria-label="원인 선택: 데이터가 부족하고 치우쳤어요">📉 데이터가 부족하고 치우쳤어요</button>
-    <button class="cause" data-k="hate" aria-label="원인 선택: AI가 미워해서요">😠 AI가 미워해서요</button>
+  <!-- 2. 상황별 차트 -->
+  <div class="card hidden" id="secChart">
+    <h2>상황별 기록</h2>
+    <p class="desc">같은 AI인데, 누구의 말인지·어디인지에 따라 점수가 달라요.</p>
+    <div class="chart" id="chart"></div>
+    <p class="twist"><b>전체 점수에 가려져 있던 편향</b>이 보여요!</p>
+    <p class="vcap">가상 데이터예요</p>
   </div>
-  <p class="feedback" id="causeFb"></p>
-</div>
 
-<!-- 4. 해결 시뮬레이션 -->
-<div class="card hidden" id="secFix">
-  <h2>🍽️ 데이터 급식판 — 골고루 담아 봐요</h2>
-  <p class="desc">부족한 접시에 데이터를 더하면 위의 차트와 전체 점수가 실시간으로 바뀌어요.</p>
-  <div class="plates" id="plates"></div>
-  <p class="refchip">참고: 조용한 교실·표준 말투 데이터는 이미 5,000개나 있어요 (치우침!)</p>
-  <button class="btn" id="btnAdd">➕ 데이터 골고루 추가</button>
-  <p class="feedback" id="fixFb"></p>
-  <div class="limit" id="limitMsg">🧭 <b>90%에서 멈췄어요.</b> 데이터만으로 100%는 안 돼요 — 그래서 AI가 못 알아들을 때를 위한 <b>버튼 입력 같은 대체 방법</b>과 <b>사람의 확인</b>이 함께 필요해요.</div>
-  <p class="vcap">🧪 가상 데이터예요</p>
-</div>
+  <!-- 3. 원인 추리 -->
+  <div class="card hidden" id="secCause">
+    <h2>왜 이런 일이 생겼을까요?</h2>
+    <p class="desc">원인이라고 생각하는 카드를 골라 봐요.</p>
+    <div class="causes">
+      <button class="cause" data-k="blame" aria-label="원인 선택: 도윤이 말투 탓이에요">도윤이 말투 탓이에요</button>
+      <button class="cause" data-k="data" aria-label="원인 선택: 데이터가 부족하고 치우쳤어요">데이터가 부족하고 치우쳤어요</button>
+      <button class="cause" data-k="hate" aria-label="원인 선택: AI가 미워해서요">AI가 미워해서요</button>
+    </div>
+    <p class="feedback" id="causeFb"></p>
+  </div>
 
-<div class="obs">🔍 <b>관찰 포인트</b> — AI가 공정한지 보려면 전체 평균이 아니라 <b>상황별로 나눠 봐야 해요</b>. 그리고 편향은 사람 탓이 아니라 <b>데이터의 부족·치우침</b> 때문이에요.</div>
+  <!-- 4. 해결 시뮬레이션 -->
+  <div class="card hidden" id="secFix">
+    <h2>데이터 급식판 — 골고루 담아 봐요</h2>
+    <p class="desc">부족한 접시에 데이터를 더하면 위의 차트와 전체 점수가 실시간으로 바뀌어요.</p>
+    <div class="plates" id="plates"></div>
+    <p class="refchip">참고: 조용한 교실·표준 말투 데이터는 이미 5,000개나 있어요 (치우침!)</p>
+    <button class="btn" id="btnAdd">데이터 골고루 추가</button>
+    <p class="feedback" id="fixFb"></p>
+    <div class="limit" id="limitMsg"><b>90%에서 멈췄어요.</b> 데이터만으로 100%는 안 돼요 — 그래서 AI가 못 알아들을 때를 위한 <b>버튼 입력 같은 대체 방법</b>과 <b>사람의 확인</b>이 함께 필요해요.</div>
+    <p class="vcap">가상 데이터예요</p>
+  </div>
 
-<footer><a href="../">← AI 탐험대 체험 전체 목록</a></footer>
+  <div class="obs">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--point)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--point)" stroke-width="2.4" stroke-linecap="round"/></svg>
+    <span><b>관찰 포인트</b> — AI가 공정한지 보려면 전체 평균이 아니라 <b>상황별로 나눠 봐야 해요</b>. 그리고 편향은 사람 탓이 아니라 <b>데이터의 부족·치우침</b> 때문이에요.</span>
+  </div>
+
+  <footer><a href="../">← AI 탐험대 체험 전체 목록</a></footer>
 </div>
 
 <script>
