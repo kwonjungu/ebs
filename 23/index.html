@@ -166,6 +166,15 @@
   .ql.tool{background:var(--point-soft)}
   .ql .arw{margin-left:auto;font-weight:900}
   .ql svg{flex-shrink:0;color:var(--point)}
+
+  .entdl{margin-top:18px}
+  .dl{display:flex;align-items:center;gap:10px;width:100%;text-decoration:none;cursor:pointer;font-family:inherit;
+    font-size:15.5px;font-weight:900;color:#fff;background:var(--point);border:2.5px solid var(--ink);border-radius:14px;
+    box-shadow:var(--hard-sm);padding:14px 18px;min-height:52px;transition:transform .1s,box-shadow .1s}
+  .dl:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .dl:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+  .dl:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+  .dl .arw{margin-left:auto}
 </style>
 </head>
 <body>
@@ -278,6 +287,10 @@
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--amber)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/></svg>
     <span><b>관찰 포인트</b> — 물건을 <b>멀리</b> 두거나, <b>손으로 가리거나</b>, <b>불을 어둡게</b> 하면 박스가 사라지나요? AI가 언제 잘 못 찾는지 관찰해요.</span>
   </div>
+  <div class="entdl">
+    <a class="dl" href="../assets/entry/object-box.ent" download="(중급23차시)찰칵! AI 카메라의 네모 박스.ent"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 19h16" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>엔트리 파일 내려받기 (AI 카메라 네모 박스)<span class="arw" aria-hidden="true">↓</span></a>
+  </div>
+
   <div class="quicklinks">
     <div class="ql-h">🔗 링크 바로가기</div>
     <a class="ql tool" href="https://playentry.org/" target="_blank" rel="noopener noreferrer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4M14 4h6v6M20 4l-9 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>체험 도구 · 엔트리에서 사물 인식 해보기</span><span class="arw" aria-hidden="true">↗</span></a>
