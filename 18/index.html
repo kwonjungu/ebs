@@ -164,6 +164,52 @@
   @media(prefers-reduced-motion:reduce){
     *{animation:none!important;transition:none!important}
   }
+
+  /* 엔트리 활동 */
+  .entryact{margin-top:30px;background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:22px}
+  .entryact h2{font-size:20px;font-weight:900;letter-spacing:-.02em;margin-bottom:4px}
+  .entryact .sub{font-size:13.5px;color:var(--muted);font-weight:600;margin-bottom:16px}
+  .dl{display:flex;align-items:center;gap:10px;width:100%;text-decoration:none;cursor:pointer;font-family:inherit;
+    font-size:16px;font-weight:900;color:#fff;background:var(--point);border:2.5px solid var(--ink);border-radius:14px;
+    box-shadow:var(--hard-sm);padding:14px 18px;min-height:52px;transition:transform .1s,box-shadow .1s;margin-bottom:18px}
+  .dl:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .dl:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+  .dl:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+  .dl .arw{margin-left:auto}
+  .steps{list-style:none;counter-reset:st;margin:0 0 20px;padding:0}
+  .steps li{counter-increment:st;position:relative;padding:8px 0 8px 42px;font-size:14.5px;font-weight:600;line-height:1.5;border-bottom:1.5px dashed var(--border,#E2E8F0)}
+  .steps li:last-child{border-bottom:0}
+  .steps li::before{content:counter(st);position:absolute;left:0;top:7px;width:28px;height:28px;display:grid;place-items:center;
+    font-weight:900;font-size:13px;color:#fff;background:var(--ink);border-radius:8px}
+  .steps b{font-weight:900;background:linear-gradient(transparent 60%,var(--point-soft) 0);padding:0 2px}
+  .copywrap{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:600px){.copywrap{grid-template-columns:1fr}}
+  .cc{border:2.5px solid var(--ink);border-radius:var(--r-sm);box-shadow:var(--hard-sm);padding:14px;background:var(--paper)}
+  .cc .ch{display:flex;align-items:center;gap:8px;font-weight:900;font-size:15px;margin-bottom:6px}
+  .cc .ch .cnt{margin-left:auto;font-size:11.5px;font-weight:800;color:var(--muted);background:var(--surface);border:2px solid var(--ink);border-radius:999px;padding:1px 9px}
+  .cc .prev{font-size:12px;color:var(--muted);font-weight:600;line-height:1.5;max-height:52px;overflow:hidden;margin-bottom:10px}
+  .cbtn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;cursor:pointer;font-family:inherit;
+    font-size:14px;font-weight:900;color:var(--ink);background:var(--surface);border:2.5px solid var(--ink);border-radius:11px;
+    box-shadow:var(--hard-sm);padding:10px;min-height:46px;transition:transform .1s,box-shadow .1s}
+  .cbtn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .cbtn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+  .cbtn:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .cbtn.ok{background:var(--point);color:#fff}
+  .cc.test{grid-column:1/-1;background:var(--ink);color:var(--paper)}
+  .cc.test .ch{color:var(--paper)}
+  .cc.test .prev{color:#C9C4B8}
+  .cc.test .cbtn{background:var(--paper)}
+  .tiptxt{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:12px;line-height:1.55}
+
+  .quicklinks{margin-top:18px;background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:18px 20px}
+  .ql-h{font-size:14px;font-weight:900;letter-spacing:-.01em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .ql{display:flex;align-items:center;gap:9px;text-decoration:none;font-size:14px;font-weight:800;color:var(--ink);
+    background:var(--point-soft);border:2.5px solid var(--ink);border-radius:12px;box-shadow:var(--hard-sm);padding:11px 15px;min-height:48px;transition:transform .1s,box-shadow .1s}
+  .ql:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .ql:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+  .ql:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .ql .arw{margin-left:auto;font-weight:900}
+  .ql svg{flex-shrink:0;color:var(--point)}
 </style>
 </head>
 <body>
@@ -233,6 +279,45 @@
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--amber)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/></svg>
     <span><b>관찰 포인트</b> — AI는 속마음이 아니라 <b>단어</b>를 봐요. "오늘 급식은 카레였다"처럼 감정 단어가 없는 일기도 넣어 봐요.</span>
   </div>
+  <section class="entryact" aria-label="엔트리로 감정 분석 AI DJ 만들기">
+    <h2>🛠️ 도전! 엔트리로 감정 분석 AI DJ 만들기</h2>
+    <p class="sub">엔트리에서 감정 4개를 직접 학습시켜 노래를 추천받아요. 아래 파일을 내려받아 열고, 클래스마다 예시 문장을 붙여넣어요.</p>
+
+    <a class="dl" href="../assets/entry/emotion-dj.ent" download="(중급18편) 감정에 따른 노래추천.ent">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 19h16" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>
+      엔트리 파일 내려받기 (감정에 따른 노래추천.ent)
+      <span class="arw" aria-hidden="true">↓</span>
+    </a>
+
+    <ol class="steps">
+      <li>위 버튼으로 <b>.ent 파일</b>을 내려받고, <b>엔트리(playentry.org)</b>에서 [작품 불러오기]로 열어요.</li>
+      <li>인공지능 블록의 <b>학습하기</b>에서 감정 클래스 <b>네 개</b>가 있는지 확인해요: 기쁨/신남, 슬픔/우울, 화남/스트레스, 불안/긴장.</li>
+      <li>아래 카드의 <b>[예시 문장 복사]</b>를 눌러, 같은 이름의 클래스 입력칸에 <b>붙여넣기</b> 해요. (한 줄에 한 문장씩 들어가요.)</li>
+      <li><b>[학습하기]</b>를 눌러요. AI는 마음을 읽는 게 아니라 <b>표현의 패턴</b>을 익히는 거예요.</li>
+      <li>학습에 안 쓴 <b>새 문장</b>을 넣어 결과를 확인하고, 추천 음악이 어울리는지 <b>내가 판단</b>해요.</li>
+    </ol>
+
+    <div class="copywrap">
+      <div class="cc"><div class="ch"><span aria-hidden="true">😊</span><span>기쁨 / 신남</span><span class="cnt">문장 20개</span></div><p class="prev">체육 시간에 우리 모둠이 피구 대회에서 우승해서 정말 신났다 / 선생님이 내 발표를 듣고 훌륭하다고 칭찬해 주셔서 어깨가 으쓱했다 …</p><button class="cbtn" id="cb-joy" onclick="copyClass('joy',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="2.2"/><path d="M5 15V5a2 2 0 0 1 2-2h10" stroke="currentColor" stroke-width="2.2"/></svg>예시 문장 복사</button></div>
+      <div class="cc"><div class="ch"><span aria-hidden="true">😢</span><span>슬픔 / 우울</span><span class="cnt">문장 20개</span></div><p class="prev">제일 친한 단짝 친구가 멀리 전학을 가게 되어서 눈물이 날 만큼 슬프다 / 비가 와서 기대했던 현장체험학습이 취소되어 너무 아쉽고 시무룩해졌다 …</p><button class="cbtn" id="cb-sad" onclick="copyClass('sad',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="2.2"/><path d="M5 15V5a2 2 0 0 1 2-2h10" stroke="currentColor" stroke-width="2.2"/></svg>예시 문장 복사</button></div>
+      <div class="cc"><div class="ch"><span aria-hidden="true">😠</span><span>화남 / 스트레스</span><span class="cnt">문장 20개</span></div><p class="prev">급식 줄을 서고 있는데 다른 반 애들이 대놓고 새치기를 해서 머리끝까지 화가 났다 / 친구가 내 지우개를 빌려 가고선 잃어버렸다고 당당하게 말해서 너무 어이가 없고 열받았다 …</p><button class="cbtn" id="cb-angry" onclick="copyClass('angry',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="2.2"/><path d="M5 15V5a2 2 0 0 1 2-2h10" stroke="currentColor" stroke-width="2.2"/></svg>예시 문장 복사</button></div>
+      <div class="cc"><div class="ch"><span aria-hidden="true">😰</span><span>불안 / 긴장</span><span class="cnt">문장 20개</span></div><p class="prev">내일 전교생 앞에서 나의 꿈에 대해 발표를 해야 해서 심장이 콩닥콩닥하고 너무 떨렸다 / 열심히 공부를 못 했는데 내일이 바로 기말고사라 밤새 걱정돼서 잠이 안 온다 …</p><button class="cbtn" id="cb-fear" onclick="copyClass('fear',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="2.2"/><path d="M5 15V5a2 2 0 0 1 2-2h10" stroke="currentColor" stroke-width="2.2"/></svg>예시 문장 복사</button></div>
+      <div class="cc test">
+        <div class="ch"><span aria-hidden="true">🧪</span><span>복합 감정 테스트 문장</span></div>
+        <p class="prev">한 문장에 여러 감정이 섞이면 AI는 어떻게 할까요? 학습 뒤 이 문장으로 실험해요.</p>
+        <button class="cbtn" id="cb-test" onclick="copyClass('test',this)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="2.2"/><path d="M5 15V5a2 2 0 0 1 2-2h10" stroke="currentColor" stroke-width="2.2"/></svg>
+          “축구에서 져서 속상했지만 끝까지 뛰어서 뿌듯했어.” 복사</button>
+      </div>
+    </div>
+    <p class="tiptxt">💡 복합 감정 문장은 <b>속상함(슬픔)</b>과 <b>뿌듯함(기쁨)</b>이 함께 있어요. AI가 하나만 고른다면, 왜 그럴지·사람은 어떻게 판단할지 이야기해 봐요.</p>
+  </section>
+
+  <div class="quicklinks">
+    <div class="ql-h">🔗 링크 바로가기</div>
+    <a class="ql tool" href="https://playentry.org/" target="_blank" rel="noopener noreferrer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4M14 4h6v6M20 4l-9 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>체험 도구 · 엔트리에서 감정 분석 만들기</span><span class="arw" aria-hidden="true">↗</span></a>
+  </div>
+
 
   <footer><a href="../">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5M5 12l7-7M5 12l7 7" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -393,5 +478,26 @@ function stopMelody() {
   $('play').classList.remove('on');
 }
 </script>
+
+<script>
+(function(){
+  var CLASSDATA={"joy": "체육 시간에 우리 모둠이 피구 대회에서 우승해서 정말 신났다\n선생님이 내 발표를 듣고 훌륭하다고 칭찬해 주셔서 어깨가 으쓱했다\n점심시간에 내가 제일 좋아하는 돈까스가 나와서 행복했다\n수학 시험에서 처음으로 백 점을 맞아서 날아갈 것 같이 뿌듯했다\n주말에 가족들과 놀이공원에 가서 롤러코스터를 타니 스트레스가 확 풀리고 즐거웠다\n오랫동안 용돈을 모아서 드디어 갖고 싶던 게임기를 사서 세상을 다 가진 기분이다\n짝꿍이랑 같이 숙제를 끝내서 너무 홀가분하고 기뻤다\n우연히 뽑기에서 1등에 당첨되어서 대박이라고 소리쳤다\n강아지에게 새로운 개인기를 가르쳐줬는데 성공해서 너무 기특하고 좋았다\n생일 파티에 친구들이 깜짝 선물을 들고 찾아와서 가슴이 벅차고 행복했다\n잃어버렸던 소중한 필통을 교실 구석에서 다시 찾아서 안심되고 기뻤다\n방학이 시작되는 종소리를 듣는 순간 정말 짜릿하고 신났다\n길고양이에게 간식을 줬더니 내 손길을 피하지 않아서 신기하고 마음이 따뜻해졌다\n피아노 학원에서 어려운 곡을 마침내 끝까지 연주해 내서 엄청난 성취감을 느꼈다\n부모님이 이번 주말에 캠핑을 가자고 하셔서 벌써부터 마음이 들뜨고 설렌다\n내가 추천한 노래를 듣고 친구가 취향 저격이라고 해줘서 뿌듯했다\n달리기 계주에서 내가 마지막에 역전해서 1등으로 들어와서 짜릿했다\n그림 그리기 대회에서 특상을 받았다는 소식을 듣고 뛸 듯이 기뻤다\n오늘 급식으로 구슬 아이스크림이 나와서 친구들과 환호성을 질렀다\n오랫동안 연락하지 못했던 단짝 친구에게서 편지가 와서 너무 반갑고 행복했다", "sad": "제일 친한 단짝 친구가 멀리 전학을 가게 되어서 눈물이 날 만큼 슬프다\n비가 와서 기대했던 현장체험학습이 취소되어 너무 아쉽고 시무룩해졌다\n아끼던 유리구슬을 실수로 떨어뜨려 깨트리는 바람에 속상해서 울컥했다\n열심히 준비한 장기자랑에서 가사를 까먹어서 하루 종일 우울했다\n가족 여행을 가기로 한 날 갑자기 동생이 아파서 가지 못해 서운했다\n정성껏 키우던 방울토마토 화분이 시들어버려서 마음이 아팠다\n친구들이 나만 빼고 재미있는 비밀 이야기를 하는 것 같아 외로움을 느꼈다\n내가 좋아하는 아이돌의 콘서트 예매에 실패해서 세상이 무너지는 것 같았다\n오해 때문에 친구와 다투고 나서 집에 돌아오는 길 내내 마음이 무겁고 슬펐다\n기대했던 수학 시험 점수가 생각보다 너무 낮게 나와서 고개가 푹 숙여졌다\n주말 내내 비가 내려서 자전거를 타러 나가지 못해 답답하고 우울했다\n부모님이 내 마음을 몰라주고 동생 편만 들어서 억울하고 서러워서 울었다\n체육 시간에 넘어졌는데 아무도 일으켜 주지 않아서 조금 서글펐다\n아끼는 책을 친구에게 빌려줬는데 표지가 찢어져서 돌아와 정말 속상했다\n감기에 심하게 걸려서 맛있는 저녁 식사를 제대로 먹지 못해 우울했다\n오늘따라 아무 이유 없이 기운이 빠지고 혼자 있고 싶은 기분이 들었다\n도서관에 빌리고 싶었던 책이 이미 대출 중이어서 발걸음이 무거웠다\n내가 그린 그림을 동생이 실수로 낙서해서 망쳐버려 눈물이 핑 돌았다\n어릴 때부터 덮고 자던 애착 담요를 엄마가 버리셔서 마음 한구석이 텅 빈 것 같았다\n친척 집에서 놀다가 우리 집으로 돌아올 때 항상 아쉬워서 마음이 헛헛하다", "angry": "급식 줄을 서고 있는데 다른 반 애들이 대놓고 새치기를 해서 머리끝까지 화가 났다\n친구가 내 지우개를 빌려 가고선 잃어버렸다고 당당하게 말해서 너무 어이가 없고 열받았다\n내가 안 한 일인데 선생님이 나를 의심하셔서 너무 억울하고 분했다\n조별 숙제를 하는데 한 명만 아무것도 안 하고 놀아서 짜증이 확 밀려왔다\n내가 제일 좋아하는 간식을 동생이 말도 없이 다 먹어버려서 진짜 폭발할 뻔했다\n약속 시간보다 30분이나 늦은 친구가 미안하다는 말도 없이 웃어서 너무 얄미웠다\n게임을 하고 있는데 갑자기 인터넷이 끊겨서 다 이긴 판을 져서 마우스를 던질 뻔했다\n복도를 지나가는데 누군가 고의로 내 어깨를 치고 지나가서 속에서 화가 치밀어 올랐다\n부모님이 내 스마트폰 사용 시간을 갑자기 줄이겠다고 통보하셔서 스트레스가 심했다\n내 비밀을 절대 말하지 말라고 했는데 친구가 다른 애들에게 다 소문내서 배신감에 부들부들 떨렸다\n아침에 알람 소리를 못 들어서 지각하게 생겼는데 길이 막히기까지 해서 너무 짜증 났다\n내가 정성스럽게 접은 종이접기를 지나가던 애가 툭 쳐서 망가뜨리고 가버려 분노가 차올랐다\n학원 숙제가 산더미처럼 쌓여 있는데 내일이 학교 수행평가까지 겹쳐서 스트레스로 미칠 것 같다\n동생이 내 방문을 벌컥벌컥 열고 들어와서 공부를 방해해서 진짜 너무 화가 났다\n내가 의견을 내면 모둠 친구들이 무조건 반대만 하고 비웃어서 열이 뻗쳤다\n체육 시간에 내가 잘못 찬 공도 아닌데 같은 팀원들이 나만 탓해서 너무 억울하고 짜증 났다\n엘리베이터를 타려고 뛰어가는데 안에 있던 사람이 나를 보고도 닫힘 버튼을 눌러버려 화가 났다\n새 신발을 신고 나갔는데 비 웅덩이를 지나던 차가 구정물을 튀기고 가서 분노가 치밀었다\n내가 좋아하는 가수를 친구가 근거 없이 무시하고 험담해서 주먹을 꽉 쥐게 됐다\n하루 종일 되는 일이 하나도 없고 실수만 연발해서 나 자신에게 너무 짜증이 났다", "fear": "내일 전교생 앞에서 나의 꿈에 대해 발표를 해야 해서 심장이 콩닥콩닥하고 너무 떨렸다\n열심히 공부를 못 했는데 내일이 바로 기말고사라 밤새 걱정돼서 잠이 안 온다\n학교 가는 길에 실내화 주머니를 집에 두고 온 걸 깨닫고 식은땀이 났다\n학원 버스를 놓쳐서 지각할까 봐 초조하게 시계만 계속 쳐다보았다\n치과에 가서 충치 치료를 받아야 하는데 기계 소리가 들릴 때마다 손에 땀이 났다\n부모님 몰래 게임을 하다가 현관문 비밀번호 누르는 소리가 들려서 심장이 덜컥 내려앉았다\n모둠 활동 결과를 선생님께 검사받기 직전이라 우리가 틀렸을까 봐 조마조마했다\n밤에 혼자 화장실에 가는데 거실이 너무 어두워서 뒤에 누가 있을까 봐 오싹하고 긴장됐다\n좋아하는 친구에게 처음으로 문자를 보냈는데 1시간째 답장이 없어서 마음이 초조했다\n건강검진에서 주사를 맞아야 한다는 소식을 듣고 며칠 전부터 겁이 나고 불안했다\n체육 시간에 뜀틀 넘기 시험을 보는데 내 차례가 다가올수록 다리가 후들거렸다\n부주의로 부모님이 아끼시는 그릇을 깼는데 언제 말씀드려야 할지 몰라 하루 종일 불안했다\n선생님이 수업 시간에 갑자기 출석부를 보며 질문할 사람을 찾으실 때 심장이 터질 것 같았다\n내일 처음으로 피아노 콩쿠르 대회에 나가는 날이라 실수할까 봐 걱정이 태산이다\n깜빡하고 숙제를 안 가져왔는데 선생님이 숙제 검사를 시작하셔서 안절부절못했다\n새로 이사 온 동네라 학교 가는 길이 익숙하지 않아서 길을 잃을까 봐 긴장하며 걸었다\n롤러코스터가 꼭대기까지 천천히 올라가는 그 짧은 시간 동안 숨이 막힐 듯 긴장되었다\n전학을 온 첫날 교실 문을 열고 들어가기 전 친구들이 나를 싫어할까 봐 걱정되었다\n강아지가 산책하다가 갑자기 목줄을 끊고 도망가서 사고라도 날까 봐 심장이 쿵쾅거렸다\n친구와 작은 거짓말로 장난을 쳤는데 일이 점점 커져서 사실이 들통날까 봐 전전긍긍했다", "test": "축구에서 져서 속상했지만 끝까지 뛰어서 뿌듯했어."};
+  window.copyClass=function(key,btn){
+    var text=CLASSDATA[key]; if(text===undefined) return;
+    function done(){ var orig=btn.innerHTML; btn.classList.add('ok'); btn.textContent='✓ 복사됐어요!';
+      setTimeout(function(){ btn.classList.remove('ok'); btn.innerHTML=orig; },1600); }
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(done,function(){fallback(text,done);});
+    }else{ fallback(text,done); }
+  };
+  function fallback(text,cb){
+    var ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try{ document.execCommand('copy'); cb(); }catch(e){ alert('복사가 안 되면 길게 눌러 직접 복사해 주세요.'); }
+    document.body.removeChild(ta);
+  }
+})();
+</script>
+
 </body>
 </html>
