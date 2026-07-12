@@ -5,136 +5,220 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>내 얼굴이 열쇠! 얼굴 인식 문지기 — AI 탐험대 17</title>
 <style>
-  :root {
-    --sky: #5B9CF6; --sky-light: #EBF3FF;
-    --mint: #34D399; --mint-light: #D1FAE5;
-    --amber: #FBBF24; --amber-light: #FEF3C7;
-    --coral: #F87171; --coral-light: #FEE2E2;
-    --purple: #A78BFA; --purple-light: #EDE9FE;
-    --bg: #F0F7FF; --card: #FFFFFF;
-    --text: #1E293B; --text-muted: #64748B; --border: #E2E8F0;
-    --radius: 20px; --radius-sm: 12px;
-    --shadow: 0 4px 20px rgba(91,156,246,0.12);
-    --shadow-lg: 0 8px 40px rgba(91,156,246,0.2);
+  :root{
+    --ink:#141414; --paper:#FBF7EC; --surface:#FFFFFF;
+    --point:#12B76A; --point-soft:#D6F5E6;
+    --amber:#FFB800; --amber-soft:#FFF0C7;
+    --red:#FF4D4D; --muted:#6B6B6B;
+    --r:20px; --r-sm:13px;
+    --hard:5px 5px 0 var(--ink); --hard-sm:3px 3px 0 var(--ink);
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.6; }
-  .wrap { max-width: 860px; margin: 0 auto; padding: 24px 16px 50px; }
-  header { text-align: center; margin-bottom: 14px; }
-  .chip { display: inline-block; background: var(--mint); color: white; font-size: 13px; font-weight: 800; padding: 4px 14px; border-radius: 999px; margin-bottom: 8px; letter-spacing: .03em; }
-  h1 { font-size: 28px; font-weight: 900; line-height: 1.25; letter-spacing: -0.02em; }
-  .sub { color: var(--text-muted); font-size: 15px; margin-top: 4px; }
-  .safe { background: var(--amber-light); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 13.5px; text-align: center; margin: 12px 0; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    background:var(--paper);color:var(--ink);
+    font-size:17px;line-height:1.55;
+    background-image:radial-gradient(var(--ink) .5px,transparent .5px);
+    background-size:22px 22px;background-position:-11px -11px;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:18px 18px 64px}
 
-  .duo { display: grid; grid-template-columns: 1fr 1.15fr; gap: 14px; align-items: start; }
-  @media (max-width: 680px) { .duo { grid-template-columns: 1fr; } }
-  .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; }
-  .card h2 { font-size: 16.5px; margin-bottom: 8px; }
+  /* nav */
+  .nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+  .back{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink);
+    font-weight:800;font-size:14px;background:var(--surface);border:2.5px solid var(--ink);
+    border-radius:999px;padding:8px 16px;box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
+  .back:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .back:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+  .back:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .lesson-tag{font-weight:900;font-size:15px;letter-spacing:-.01em;background:var(--point);color:#fff;
+    border:2.5px solid var(--ink);border-radius:999px;padding:6px 16px;box-shadow:var(--hard-sm)}
 
-  .reg { background: var(--mint-light); border: 2px solid var(--mint); border-radius: var(--radius-sm); padding: 8px 12px; font-size: 13.5px; display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-  .reg .emo { font-size: 30px; }
-  .reg b { font-size: 14px; }
-  .feat { color: var(--text-muted); font-size: 12.5px; }
+  /* hero */
+  .kicker{display:inline-block;font-weight:900;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
+    background:var(--amber);border:2.5px solid var(--ink);border-radius:8px;padding:4px 12px;box-shadow:var(--hard-sm);margin-bottom:16px}
+  h1{font-size:clamp(30px,7vw,52px);font-weight:900;letter-spacing:-.035em;line-height:1.02}
+  h1 .acc{-webkit-text-decoration:6px underline var(--point);text-decoration:6px underline var(--point);text-underline-offset:6px}
+  .lead{font-size:17px;color:var(--muted);margin-top:14px;max-width:620px;font-weight:600}
 
-  .faces { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .face { border: 2px solid var(--border); background: white; border-radius: var(--radius-sm); padding: 10px 6px; text-align: center; cursor: pointer; font-family: inherit; min-height: 44px; min-width: 44px; transition: border-color .15s, transform .15s; }
-  .face:focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; }
-  .face:active { transform: scale(.96); }
-  .face.sel { border-color: var(--mint); box-shadow: 0 0 0 3px var(--mint-light); }
-  .face .emo { font-size: 40px; line-height: 1.2; }
-  .face .emo-img { width: 72px; height: 72px; border-radius: 12px; object-fit: cover; display: block; margin: 0 auto 4px; border: 2px solid var(--border); }
-  .face .nm { font-weight: 700; font-size: 14px; }
-  .face .feat { display: block; }
+  /* safe */
+  .safe{display:flex;align-items:center;gap:10px;background:var(--surface);border:2.5px solid var(--ink);
+    border-radius:var(--r-sm);box-shadow:var(--hard-sm);padding:11px 16px;font-size:13.5px;font-weight:600;margin:22px 0 26px}
+  .safe svg{flex-shrink:0}
 
-  .cmp { font-size: 13.5px; margin-bottom: 10px; }
-  .cmp-row { display: flex; align-items: center; gap: 8px; padding: 3px 0; opacity: 0; transition: opacity .3s; }
-  .cmp-row.show { opacity: 1; }
-  .cmp-row .lab { width: 92px; color: var(--text-muted); flex-shrink: 0; }
-  .cmp-row .vals { flex: 1; }
-  .diffb { display: inline-block; font-size: 12px; font-weight: 700; padding: 1px 8px; border-radius: 999px; background: var(--mint-light); color: #067A57; }
-  .diffb.big { background: var(--coral-light); color: #B91C1C; }
+  /* layout */
+  .duo{display:grid;grid-template-columns:1fr 1.15fr;gap:20px;align-items:start}
+  @media(max-width:680px){.duo{grid-template-columns:1fr}}
 
-  .score { text-align: center; font-size: 15px; margin: 6px 0 2px; }
-  .score b { font-size: 26px; color: var(--mint); }
-  .gauge { position: relative; background: #F1F5F9; border-radius: 999px; height: 22px; margin: 6px 0 2px; overflow: visible; }
-  .gauge-fill { height: 100%; width: 0%; border-radius: 999px; background: var(--mint); transition: width .5s ease-out, background .3s; }
-  .gauge-check { position: absolute; top: 0; bottom: 0; background: rgba(251,191,36,.35); border-left: 2px dashed rgba(251,191,36,.9); border-right: 2px dashed rgba(251,191,36,.9); pointer-events: none; }
-  .gauge-mark { position: absolute; top: -6px; bottom: -6px; width: 4px; background: var(--coral); border-radius: 2px; transition: left .15s; box-shadow: 0 0 8px rgba(248,113,113,0.65); transform: translateX(-50%); }
-  .gauge-mark::after { content: '기준'; position: absolute; top: -22px; left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 800; color: var(--coral); white-space: nowrap; letter-spacing: .01em; }
-  .gauge-cap { font-size: 12px; color: var(--text-muted); display: flex; justify-content: space-between; margin-bottom: 10px; }
+  .panel{background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:22px}
+  .panel h2{font-size:16.5px;font-weight:900;letter-spacing:-.02em;margin-bottom:12px}
 
-  .door-frame { position: relative; text-align: center; margin: 6px 0; }
-  .door-glow { position: absolute; inset: 0; border-radius: 8px; background: radial-gradient(ellipse at 50% 50%, rgba(52,211,153,0), rgba(52,211,153,0)); transition: background 0.4s ease-out; pointer-events: none; }
-  .door-frame.open .door-glow { background: radial-gradient(ellipse at 50% 50%, rgba(52,211,153,0.45) 0%, rgba(52,211,153,0) 70%); }
-  .door { display: inline-block; font-size: 64px; line-height: 1.2; transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), filter 0.3s; filter: none; }
-  .door-frame.open .door { transform: scale(1.18) rotate(-8deg); transform-origin: left center; filter: drop-shadow(0 0 12px rgba(52,211,153,0.7)); }
-  .verdict { text-align: center; font-weight: 700; font-size: 15.5px; min-height: 52px; border-radius: var(--radius-sm); padding: 8px 10px; margin: 6px 0 12px; background: var(--sky-light); color: var(--text-muted); }
-  .verdict.pass { background: var(--mint-light); color: #067A57; }
-  .verdict.check { background: var(--amber-light); color: #92600A; }
-  .verdict.reject { background: var(--coral-light); color: #B91C1C; }
+  /* 등록 얼굴 배지 */
+  .reg{display:flex;align-items:center;gap:12px;background:var(--point-soft);
+    border:2.5px solid var(--ink);border-radius:var(--r-sm);box-shadow:var(--hard-sm);
+    padding:10px 14px;font-size:13.5px;margin-bottom:14px}
+  .reg-icon{width:44px;height:44px;flex-shrink:0;display:grid;place-items:center;
+    background:var(--ink);border-radius:10px;border:2px solid var(--ink)}
+  .reg b{font-size:14px;font-weight:900}
+  .feat{color:var(--muted);font-size:12.5px;font-weight:600;display:block;margin-top:2px}
 
-  .thr { background: #F8FAFC; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; }
-  .thr .tv { text-align: center; font-size: 14px; margin-bottom: 2px; }
-  .thr .tv b { font-size: 22px; color: var(--mint); }
-  input[type=range] { width: 100%; accent-color: var(--mint); height: 44px; cursor: pointer; }
+  /* 얼굴 카드 4장 — 아웃라인 + 하드섀도우 */
+  .faces{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .face{border:2.5px solid var(--ink);background:var(--surface);border-radius:var(--r-sm);
+    box-shadow:var(--hard-sm);padding:10px 6px;text-align:center;cursor:pointer;
+    font-family:inherit;min-height:44px;transition:transform .1s,box-shadow .1s}
+  .face:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .face:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+  .face:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .face.sel{background:var(--point-soft);border-color:var(--point)}
+  .emo-img{width:68px;height:68px;border-radius:10px;object-fit:cover;display:block;
+    margin:0 auto 6px;border:2.5px solid var(--ink)}
+  .face .nm{font-weight:900;font-size:13.5px;letter-spacing:-.01em}
 
-  .obs { background: white; border-radius: var(--radius-sm); box-shadow: var(--shadow); padding: 12px 16px; font-size: 14.5px; margin-top: 14px; }
-  footer { text-align: center; margin-top: 26px; font-size: 14px; }
-  footer a { color: var(--mint); text-decoration: none; font-weight: 700; }
-  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; } }
-  :focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; border-radius: 4px; }
+  /* 비교 3줄 */
+  .cmp{font-size:13.5px;margin-bottom:10px}
+  .cmp-row{display:flex;align-items:center;gap:8px;padding:4px 0;opacity:0;transition:opacity .3s}
+  .cmp-row.show{opacity:1}
+  .cmp-row .lab{width:92px;color:var(--muted);flex-shrink:0;font-weight:700}
+  .cmp-row .vals{flex:1;font-weight:600}
+  .diffb{display:inline-block;font-size:12px;font-weight:800;padding:1px 9px;
+    border-radius:999px;border:1.5px solid var(--ink);background:var(--point-soft);color:#067A57}
+  .diffb.big{background:#FFE0E0;color:#B91C1C}
+
+  /* 유사도 */
+  .score{text-align:center;font-size:15px;margin:6px 0 2px;font-weight:700}
+  .score b{font-size:26px;color:var(--point)}
+
+  /* 게이지 — 아웃라인 트랙 + 먹색 마커 */
+  .gauge{position:relative;background:var(--paper);border:2.5px solid var(--ink);
+    border-radius:999px;height:24px;margin:8px 0 2px;overflow:visible;box-shadow:var(--hard-sm)}
+  .gauge-fill{height:100%;width:0%;border-radius:999px;
+    background:repeating-linear-gradient(45deg,var(--point),var(--point) 8px,#0ea05a 8px,#0ea05a 16px);
+    transition:width .5s ease-out,background .3s;border-radius:999px}
+  /* 확인 구간 */
+  .gauge-check{position:absolute;top:0;bottom:0;background:rgba(255,184,0,.22);
+    border-left:2px dashed var(--amber);border-right:2px dashed var(--amber);pointer-events:none}
+  /* 기준값 마커 — 먹색 하드 마커 */
+  .gauge-mark{position:absolute;top:-7px;bottom:-7px;width:4px;background:var(--ink);
+    border-radius:2px;transition:left .15s;transform:translateX(-50%)}
+  .gauge-mark::after{content:'기준';position:absolute;top:-22px;left:50%;transform:translateX(-50%);
+    font-size:11px;font-weight:900;color:var(--ink);white-space:nowrap;letter-spacing:.03em;
+    background:var(--paper);padding:0 3px;border:1.5px solid var(--ink);border-radius:4px}
+  .gauge-cap{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;
+    margin-bottom:12px;font-weight:600}
+
+  /* 문 */
+  .door-frame{position:relative;text-align:center;margin:8px 0}
+  .door{display:inline-block;font-size:58px;line-height:1.2;transition:transform .35s cubic-bezier(.34,1.56,.64,1),filter .3s}
+  .door-frame.open .door{transform:scale(1.18) rotate(-8deg);transform-origin:left center;
+    filter:drop-shadow(0 0 16px rgba(18,183,106,.65))}
+
+  /* 판정 배너 */
+  .verdict{text-align:center;font-weight:700;font-size:15.5px;min-height:52px;
+    border:2.5px solid var(--ink);border-radius:var(--r-sm);box-shadow:var(--hard-sm);
+    padding:10px 12px;margin:8px 0 14px;background:var(--paper);color:var(--muted)}
+  .verdict.pass{background:var(--point-soft);color:#067A57;border-color:var(--ink)}
+  .verdict.check{background:var(--amber-soft);color:#7A5200;border-color:var(--ink)}
+  .verdict.reject{background:#FFE0E0;color:#B91C1C;border-color:var(--ink)}
+
+  /* 기준값 슬라이더 */
+  .thr{background:var(--paper);border:2.5px solid var(--ink);border-radius:var(--r-sm);
+    box-shadow:var(--hard-sm);padding:12px 16px}
+  .thr .tv{text-align:center;font-size:14px;margin-bottom:4px;font-weight:700}
+  .thr .tv b{font-size:22px;color:var(--point)}
+  input[type=range]{width:100%;accent-color:var(--point);height:44px;cursor:pointer}
+
+  /* 관찰 박스 */
+  .obs{display:flex;gap:12px;align-items:flex-start;background:var(--ink);color:var(--paper);
+    border-radius:var(--r);padding:18px 20px;font-size:14px;font-weight:600;margin:26px 0;line-height:1.55}
+  .obs svg{flex-shrink:0;margin-top:2px}
+  .obs b{color:var(--amber);font-weight:900}
+
+  footer{text-align:center;margin-top:34px}
+  footer a{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font-weight:900;color:var(--ink);
+    background:var(--surface);border:2.5px solid var(--ink);border-radius:999px;padding:11px 22px;
+    box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
+  footer a:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  footer a:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+  :focus-visible{outline:3px solid var(--point);outline-offset:3px}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header>
-  <span class="chip">AI 탐험대 · 17 얼굴 인식</span>
-  <h1>🚪 내 얼굴이 열쇠! 얼굴 인식 문지기</h1>
-  <p class="sub">가상 얼굴 카드로 유사도와 기준값을 실험해요. 카메라는 쓰지 않아요.</p>
-</header>
-<p class="safe">🛡️ 얼굴 정보는 민감한 개인정보예요. 여기서는 가상 카드로만 실험해요.</p>
 
-<div class="duo">
-  <!-- 왼쪽: 등록 얼굴 + 카드 4장 -->
-  <div class="card">
-    <h2>① 얼굴 카드를 골라 문 앞에 세워요</h2>
-    <div class="reg">
-      <span class="emo">🐻</span>
-      <span><b>등록된 마루</b><br><span class="feat">눈 사이 42 · 코 위치 58 · 얼굴 너비 80</span></span>
-    </div>
-    <div class="faces" id="faces"></div>
+  <nav class="nav">
+    <a class="back" href="../">← 전체 목록</a>
+    <span class="lesson-tag">17강 · 얼굴 인식</span>
+  </nav>
+
+  <header>
+    <span class="kicker">유사도가 문을 열어요</span>
+    <h1>내 얼굴이 <span class="acc">열쇠!</span></h1>
+    <p class="lead">가상 얼굴 카드로 유사도와 기준값을 실험해요. 카메라는 쓰지 않아요.</p>
+  </header>
+
+  <div class="safe">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6l-8-4Z" fill="var(--amber)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/></svg>
+    <span>얼굴 정보는 민감한 개인정보예요. 여기서는 가상 카드로만 실험해요.</span>
   </div>
 
-  <!-- 오른쪽: 비교 → 유사도 → 판정 -->
-  <div class="card">
-    <h2>② 특징값 비교 → 유사도 → 문지기 판정</h2>
-    <div class="cmp" id="cmp">
-      <div class="cmp-row" id="r0"><span class="lab">눈 사이 거리</span><span class="vals" id="v0">—</span></div>
-      <div class="cmp-row" id="r1"><span class="lab">코 위치</span><span class="vals" id="v1">—</span></div>
-      <div class="cmp-row" id="r2"><span class="lab">얼굴 너비</span><span class="vals" id="v2">—</span></div>
+  <div class="duo">
+    <!-- 왼쪽: 등록 얼굴 + 카드 4장 -->
+    <div class="panel">
+      <h2>얼굴 카드를 골라 문 앞에 세워요</h2>
+      <div class="reg">
+        <div class="reg-icon" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="#FBF7EC" stroke-width="2"/><path d="M4 20c0-4 3.6-6 8-6s8 2 8 6" stroke="#FBF7EC" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <span>
+          <b>등록된 마루</b>
+          <span class="feat">눈 사이 42 · 코 위치 58 · 얼굴 너비 80</span>
+        </span>
+      </div>
+      <div class="faces" id="faces"></div>
     </div>
-    <p class="score">유사도 <b id="scoreNum">?</b><span style="color:var(--text-muted)"> / 100</span></p>
-    <div class="gauge" id="gauge" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="유사도 게이지">
-      <div class="gauge-check" id="gCheck" aria-hidden="true"></div>
-      <div class="gauge-fill" id="gFill"></div>
-      <div class="gauge-mark" id="gMark" aria-hidden="true"></div>
-    </div>
-    <p class="gauge-cap"><span>0</span><span>빨간 선 = 기준값 · 노란 띠 = 확인 필요 구간</span><span>100</span></p>
-    <div class="door-frame" id="doorFrame">
-      <div class="door-glow"></div>
-      <div class="door" id="door">🚪</div>
-    </div>
-    <p class="verdict" id="verdict">얼굴 카드를 눌러 문 앞에 세워 봐요</p>
-    <div class="thr">
-      <p class="tv">문지기의 기준값: <b id="thrNum">75</b></p>
-      <input type="range" id="thr" min="60" max="95" step="1" value="75" aria-label="기준값">
+
+    <!-- 오른쪽: 비교 → 유사도 → 판정 -->
+    <div class="panel">
+      <h2>특징값 비교 → 유사도 → 문지기 판정</h2>
+      <div class="cmp" id="cmp">
+        <div class="cmp-row" id="r0"><span class="lab">눈 사이 거리</span><span class="vals" id="v0">—</span></div>
+        <div class="cmp-row" id="r1"><span class="lab">코 위치</span><span class="vals" id="v1">—</span></div>
+        <div class="cmp-row" id="r2"><span class="lab">얼굴 너비</span><span class="vals" id="v2">—</span></div>
+      </div>
+      <p class="score">유사도 <b id="scoreNum">?</b><span style="color:var(--muted)"> / 100</span></p>
+
+      <!-- 게이지 — 아웃라인 트랙 + 먹색 마커 -->
+      <div class="gauge" id="gauge" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="유사도 게이지">
+        <div class="gauge-check" id="gCheck" aria-hidden="true"></div>
+        <div class="gauge-fill" id="gFill"></div>
+        <div class="gauge-mark" id="gMark" aria-hidden="true"></div>
+      </div>
+      <p class="gauge-cap"><span>0</span><span>검은 선 = 기준값 · 노란 띠 = 확인 필요 구간</span><span>100</span></p>
+
+      <div class="door-frame" id="doorFrame">
+        <div class="door" id="door">🚪</div>
+      </div>
+      <p class="verdict" id="verdict">얼굴 카드를 눌러 문 앞에 세워 봐요</p>
+
+      <div class="thr">
+        <p class="tv">문지기의 기준값: <b id="thrNum">75</b></p>
+        <input type="range" id="thr" min="60" max="95" step="1" value="75" aria-label="기준값">
+      </div>
     </div>
   </div>
-</div>
 
-<div class="obs">🔍 <b>관찰 포인트</b> — 기준값을 높이면 마루도 거부되고, 낮추면 지훈이도 통과해요 — 직접 확인해 봐요.</div>
+  <div class="obs">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--amber)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/></svg>
+    <span><b>관찰 포인트</b> — 기준값을 높이면 마루도 거부되고, 낮추면 지훈이도 통과해요 — 직접 확인해 봐요.</span>
+  </div>
 
-<footer><a href="../">← AI 탐험대 체험 전체 목록</a></footer>
+  <footer><a href="../">← AI 탐험대 체험 전체 목록</a></footer>
 </div>
 
 <script>
@@ -155,7 +239,8 @@ let current = null, animTimers = [], runToken = 0;
 CARDS.forEach((c, i) => {
   const b = document.createElement('button');
   b.className = 'face';
-  b.innerHTML = '<img class="emo-img" src="' + c.img + '" alt="' + c.name + '">' +<span class="nm">' + c.name + '</span>' +
+  b.innerHTML = '<img class="emo-img" src="' + c.img + '" alt="' + c.name + '">' +
+    '<span class="nm">' + c.name + '</span>' +
     '<span class="feat">눈 ' + c.eye + ' · 코 ' + c.nose + ' · 너비 ' + c.width + '</span>' +
     '<span class="feat">유사도 ' + sim(c) + '</span>';
   b.onclick = () => pick(i, b);
@@ -202,18 +287,18 @@ function judge() {
   if (s >= t) {
     door.textContent = '🎉'; door.classList.add('open'); doorFrame.classList.add('open');
     v.classList.add('pass');
-    v.innerHTML = '🟢 통과! ' + s + ' ≥ 기준값 ' + t + ' → 문이 열려요';
-    $('gFill').style.background = 'var(--mint)';
+    v.innerHTML = '통과! ' + s + ' ≥ 기준값 ' + t + ' → 문이 열려요';
+    $('gFill').style.background = 'repeating-linear-gradient(45deg,var(--point),var(--point) 8px,#0ea05a 8px,#0ea05a 16px)';
   } else if (s >= t - 10) {
     door.textContent = '🚪';
     v.classList.add('check');
-    v.innerHTML = '⚠️ 확인 필요 — ' + s + '점은 기준값 ' + t + '에 조금 모자라요. 사람이 한 번 더 확인해요';
-    $('gFill').style.background = 'var(--amber)';
+    v.innerHTML = '확인 필요 — ' + s + '점은 기준값 ' + t + '에 조금 모자라요. 사람이 한 번 더 확인해요';
+    $('gFill').style.background = 'repeating-linear-gradient(45deg,var(--amber),var(--amber) 8px,#e0a000 8px,#e0a000 16px)';
   } else {
     door.textContent = '❌';
     v.classList.add('reject');
-    v.innerHTML = '🔴 거부 — ' + s + ' < 기준값 ' + t + ' → 문이 열리지 않아요';
-    $('gFill').style.background = 'var(--coral)';
+    v.innerHTML = '거부 — ' + s + ' < 기준값 ' + t + ' → 문이 열리지 않아요';
+    $('gFill').style.background = 'repeating-linear-gradient(45deg,var(--red),var(--red) 8px,#cc3333 8px,#cc3333 16px)';
   }
 }
 

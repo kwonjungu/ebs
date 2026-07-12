@@ -5,130 +5,202 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>프롬프트 마스코트 체험 — AI 탐험대 20</title>
 <style>
-  :root {
-    --sky: #5B9CF6;      --sky-light: #EBF3FF;
-    --mint: #34D399;     --mint-light: #D1FAE5;
-    --amber: #FBBF24;    --amber-light: #FEF3C7;
-    --coral: #F87171;    --coral-light: #FEE2E2;
-    --purple: #A78BFA;   --purple-light: #EDE9FE;
-    --bg: #F0F7FF;  --card: #FFFFFF;
-    --text: #1E293B;  --text-muted: #64748B;  --border: #E2E8F0;
-    --radius: 20px;  --radius-sm: 12px;
-    --shadow: 0 4px 20px rgba(91,156,246,0.12);
-    --shadow-lg: 0 8px 40px rgba(91,156,246,0.2);
+  :root{
+    --ink:#141414; --paper:#FBF7EC; --surface:#FFFFFF;
+    --point:#F59E0B; --point-soft:#FFF0C7;
+    --amber:#FFB800; --amber-soft:#FFF0C7;
+    --green:#12B76A; --red:#FF4D4D; --muted:#6B6B6B;
+    --r:20px; --r-sm:13px;
+    --hard:5px 5px 0 var(--ink); --hard-sm:3px 3px 0 var(--ink);
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.6; }
-  .wrap { max-width: 860px; margin: 0 auto; padding: 24px 16px 50px; }
-  header { text-align: center; margin-bottom: 8px; }
-  .chip { display: inline-block; background: var(--amber); color: #78350F; font-size: 13px; font-weight: 800; padding: 4px 14px; border-radius: 999px; margin-bottom: 8px; }
-  h1 { font-size: 28px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.3; }
-  .sub { color: var(--text-muted); font-size: 15px; margin-top: 4px; }
-  .safe { background: var(--amber-light); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 13.5px; text-align: center; margin: 12px 0; }
-
-  .duo { display: grid; grid-template-columns: 300px 1fr; gap: 14px; align-items: start; }
-  @media (max-width: 680px) { .duo { grid-template-columns: 1fr; } }
-  .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; }
-
-  /* 캔버스 */
-  .canvasWrap { position: relative; }
-  .canvas { width: 100%; aspect-ratio: 1; border-radius: var(--radius); border: 4px solid var(--amber); background: white; display: block; box-shadow: 0 0 0 6px var(--amber-light), 0 8px 32px rgba(251,191,36,0.18); }
-  .canvas.pixel { shape-rendering: crispEdges; }
-  .aiTag { display: none; margin-top: 8px; background: var(--amber-light); border: 2px dashed var(--amber); border-radius: var(--radius-sm); padding: 7px 10px; font-size: 13.5px; font-weight: 700; text-align: center; }
-  .promptBand {
-    margin-top: 10px;
-    background: var(--amber-light);
-    border: 2px solid var(--amber);
-    border-radius: var(--radius-sm);
-    padding: 10px 14px;
-    font-size: 15px;
-    font-weight: 800;
-    min-height: 52px;
-    text-align: center;
-    letter-spacing: -0.01em;
-    line-height: 1.8;
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    background:var(--paper);color:var(--ink);
+    font-size:17px;line-height:1.55;
+    background-image:radial-gradient(var(--ink) .5px,transparent .5px);
+    background-size:22px 22px;background-position:-11px -11px;
   }
-  .promptBand .q {
-    display: inline-block;
-    border: 2px dashed var(--coral);
-    border-radius: 8px;
-    padding: 1px 8px;
-    color: var(--coral);
-    font-weight: 800;
-    background: white;
-  }
-  .promptBand .part {
-    display: inline-block;
-    background: var(--amber);
-    color: white;
-    border-radius: 8px;
-    padding: 1px 9px;
-    font-weight: 800;
-  }
-  .promptBand .flash {
-    background: var(--amber);
-    color: white;
-    border-radius: 8px;
-    padding: 1px 9px;
-    animation: fl .6s;
-  }
-  @keyframes fl { from { background: #D97706; } to { background: var(--amber); } }
+  .wrap{max-width:860px;margin:0 auto;padding:18px 18px 64px}
 
-  /* 빌더 */
-  .catLabel { font-size: 13.5px; font-weight: 800; color: var(--text-muted); margin: 10px 0 4px; }
-  .catLabel:first-child { margin-top: 0; }
-  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
-  .opt { border: 2px solid var(--border); background: white; border-radius: 999px; padding: 8px 14px; font-family: inherit; font-size: 14.5px; font-weight: 700; cursor: pointer; min-height: 44px; color: var(--text); }
-  .opt:hover:not(.on) { border-color: var(--amber); background: var(--amber-light); }
-  .opt:active { transform: scale(.96); }
-  .opt.on { border-color: var(--amber); background: var(--amber-light); }
+  /* nav */
+  .nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+  .back{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink);
+    font-weight:800;font-size:14px;background:var(--surface);border:2.5px solid var(--ink);
+    border-radius:999px;padding:8px 16px;box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
+  .back:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .back:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+  .lesson-tag{font-weight:900;font-size:15px;letter-spacing:-.01em;background:var(--point);color:#fff;
+    border:2.5px solid var(--ink);border-radius:999px;padding:6px 16px;box-shadow:var(--hard-sm)}
 
-  :focus-visible { outline: 3px solid var(--amber); outline-offset: 3px; border-radius: 4px; }
-  .opt:focus-visible, .btnVague:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
-  .btnVague { display: block; width: 100%; border: 0; cursor: pointer; font-family: inherit; font-size: 15.5px; font-weight: 800; color: white; background: var(--coral); padding: 13px; border-radius: var(--radius-sm); min-height: 48px; margin-top: 16px; }
-  .btnVague:active { transform: scale(.97); }
-  .hint { font-size: 12.5px; color: var(--text-muted); text-align: center; margin-top: 5px; }
-
-  .obs { background: white; border-radius: var(--radius-sm); box-shadow: var(--shadow); padding: 12px 16px; font-size: 14.5px; margin-top: 14px; }
-  footer { text-align: center; margin-top: 26px; font-size: 14px; }
-  footer a { color: #D97706; text-decoration: none; font-weight: 700; }
-  @media (prefers-reduced-motion: reduce) {
-    .promptBand .flash, .opt { animation: none !important; transition: none !important; }
-  }
-
-  .hero-art{display:block;margin:6px auto 0;height:96px;max-width:92%;object-fit:contain;border-radius:14px}
+  /* hero */
+  .kicker{display:inline-block;font-weight:900;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
+    background:var(--amber);border:2.5px solid var(--ink);border-radius:8px;padding:4px 12px;box-shadow:var(--hard-sm);margin-bottom:16px}
+  h1{font-size:clamp(30px,7vw,52px);font-weight:900;letter-spacing:-.035em;line-height:1.02;margin-bottom:2px}
+  .lead{font-size:17px;color:var(--muted);margin-top:14px;max-width:620px;font-weight:600}
+  .hero-art{display:block;margin:12px auto 0;height:96px;max-width:92%;object-fit:contain;
+    border:2.5px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard)}
   @media(max-width:640px){.hero-art{height:auto;max-height:80px}}
+
+  /* safe */
+  .safe{display:flex;align-items:center;gap:10px;background:var(--surface);border:2.5px solid var(--ink);
+    border-radius:var(--r-sm);box-shadow:var(--hard-sm);padding:11px 16px;font-size:13.5px;font-weight:600;margin:22px 0 26px}
+  .safe svg{flex-shrink:0}
+  :focus-visible{outline:3px solid var(--point);outline-offset:3px}
+
+  /* layout */
+  .duo{display:grid;grid-template-columns:300px 1fr;gap:18px;align-items:start}
+  @media(max-width:680px){.duo{grid-template-columns:1fr}}
+
+  /* canvas panel */
+  .canvasWrap{background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:18px}
+  .canvas{width:100%;aspect-ratio:1;border:3px solid var(--ink);border-radius:var(--r-sm);
+    background:var(--surface);display:block;box-shadow:var(--hard-sm)}
+  .canvas.pixel{shape-rendering:crispEdges}
+
+  /* aiTag */
+  .aiTag{display:none;margin-top:12px;background:var(--point-soft);border:2px dashed var(--ink);
+    border-radius:var(--r-sm);padding:8px 12px;font-size:13.5px;font-weight:700;text-align:center}
+
+  /* prompt band */
+  .promptBand{
+    margin-top:12px;
+    background:var(--point-soft);
+    border:2.5px solid var(--ink);
+    border-radius:var(--r-sm);
+    box-shadow:var(--hard-sm);
+    padding:10px 14px;
+    font-size:15px;
+    font-weight:800;
+    min-height:54px;
+    text-align:center;
+    letter-spacing:-0.01em;
+    line-height:1.8;
+  }
+  /* placeholder slot — dashed outline tag */
+  .promptBand .q{
+    display:inline-block;
+    border:2px dashed var(--ink);
+    border-radius:8px;
+    padding:1px 8px;
+    color:var(--muted);
+    font-weight:800;
+    background:var(--paper);
+  }
+  /* selected chip inside prompt */
+  .promptBand .part{
+    display:inline-block;
+    background:var(--point);
+    color:#fff;
+    border:2px solid var(--ink);
+    border-radius:8px;
+    padding:1px 9px;
+    font-weight:900;
+  }
+  .promptBand .flash{
+    background:var(--point);
+    color:#fff;
+    border:2px solid var(--ink);
+    border-radius:8px;
+    padding:1px 9px;
+    animation:fl .6s;
+  }
+  @keyframes fl{from{background:#D97706}to{background:var(--point)}}
+
+  /* builder panel */
+  .builderPanel{background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:18px}
+  .catLabel{font-size:13.5px;font-weight:800;color:var(--muted);margin:12px 0 6px;letter-spacing:.04em;text-transform:uppercase}
+  .catLabel:first-child{margin-top:0}
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+
+  /* outline tag chips */
+  .opt{border:2px solid var(--ink);background:var(--paper);border-radius:999px;padding:8px 16px;
+    font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer;min-height:44px;color:var(--ink);
+    box-shadow:var(--hard-sm);transition:transform .1s,box-shadow .1s}
+  .opt:hover:not(.on){transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .opt:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+  .opt.on{background:var(--point);color:#fff;border-color:var(--ink);box-shadow:var(--hard-sm)}
+  .opt:focus-visible{outline:3px solid var(--point);outline-offset:2px}
+
+  /* vague button */
+  .btnVague{display:block;width:100%;cursor:pointer;font-family:inherit;font-size:15.5px;font-weight:900;
+    color:var(--ink);background:var(--amber);border:2.5px solid var(--ink);border-radius:14px;
+    box-shadow:var(--hard-sm);padding:13px;min-height:50px;margin-top:18px;
+    transition:transform .1s,box-shadow .1s}
+  .btnVague:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .btnVague:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+  .btnVague:focus-visible{outline:3px solid var(--point);outline-offset:2px}
+  .hint{font-size:12.5px;color:var(--muted);text-align:center;margin-top:7px;font-weight:600}
+
+  /* obs */
+  .obs{display:flex;gap:12px;align-items:flex-start;background:var(--ink);color:var(--paper);
+    border-radius:var(--r);padding:18px 20px;font-size:14px;font-weight:600;margin:26px 0;line-height:1.55}
+  .obs svg{flex-shrink:0;margin-top:2px}
+  .obs b{color:var(--amber);font-weight:900}
+
+  footer{text-align:center;margin-top:34px}
+  footer a{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font-weight:900;color:var(--ink);
+    background:var(--surface);border:2.5px solid var(--ink);border-radius:999px;padding:11px 22px;
+    box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
+  footer a:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  footer a:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+
+  @media(prefers-reduced-motion:reduce){
+    .promptBand .flash,.opt{animation:none!important;transition:none!important}
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
-<header>
-  <span class="chip">AI 탐험대 · 20 프롬프트 마스코트</span>
-  <h1>🎨 프롬프트로 마스코트를 그려요</h1>
-  <p class="sub">AI는 내 머릿속이 아니라 <b>내가 쓴 글(프롬프트)</b>을 읽고 그려요. 칩을 골라 봐요.</p>
-  <img class="hero-art" src="../assets/art/20_mascot.png" alt="" aria-hidden="true">
-</header>
-<p class="safe">🛡️ 진짜 AI 그림 도구를 쓸 때도 친구 얼굴 사진·유명 캐릭터·이름·학교 같은 개인정보는 넣지 않아요.</p>
 
-<div class="duo">
-  <div class="card canvasWrap">
-    <svg id="canvas" class="canvas" viewBox="0 0 200 200" role="img" aria-label="마스코트 미리보기">
-      <text x="100" y="105" text-anchor="middle" font-size="13" fill="#64748B">그림을 표시할 수 없어요</text>
-    </svg>
-    <p class="aiTag" id="aiTag">🤖 AI가 마음대로 정했어요! 원하는 그림이 나왔나요?</p>
-    <p class="promptBand" id="prompt"></p>
+  <nav class="nav">
+    <a class="back" href="../">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5M5 12l7-7M5 12l7 7" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      전체 목록
+    </a>
+    <span class="lesson-tag">20강 · 프롬프트 마스코트</span>
+  </nav>
+
+  <header>
+    <span class="kicker">프롬프트가 그림이 돼요</span>
+    <h1>프롬프트로<br>마스코트를 그려요</h1>
+    <p class="lead">AI는 내 머릿속이 아니라 <b>내가 쓴 글(프롬프트)</b>을 읽고 그려요. 칩을 골라 봐요.</p>
+    <img class="hero-art" src="../assets/art/20_mascot.png" alt="" aria-hidden="true">
+  </header>
+
+  <div class="safe">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6l-8-4Z" fill="var(--amber)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/></svg>
+    <span>친구 얼굴·유명 캐릭터·이름·학교 같은 개인정보는 넣지 않아요.</span>
   </div>
 
-  <div class="card">
-    <div id="builder"></div>
-    <button class="btnVague" id="vague">🙈 막연하게 요청하기: "멋진 마스코트 그려 줘"</button>
-    <p class="hint">여러 번 눌러 봐요 — 매번 다른 엉뚱한 그림이 나와요!</p>
+  <div class="duo">
+    <!-- 캔버스 (아웃라인 액자) -->
+    <div class="canvasWrap">
+      <svg id="canvas" class="canvas" viewBox="0 0 200 200" role="img" aria-label="마스코트 미리보기">
+        <text x="100" y="105" text-anchor="middle" font-size="13" fill="#64748B">그림을 표시할 수 없어요</text>
+      </svg>
+      <p class="aiTag" id="aiTag">AI가 마음대로 정했어요! 원하는 그림이 나왔나요?</p>
+      <p class="promptBand" id="prompt"></p>
+    </div>
+
+    <!-- 빌더 -->
+    <div class="builderPanel">
+      <div id="builder"></div>
+      <button class="btnVague" id="vague">막연하게 요청하기: "멋진 마스코트 그려 줘"</button>
+      <p class="hint">여러 번 눌러 봐요 — 매번 다른 엉뚱한 그림이 나와요!</p>
+    </div>
   </div>
-</div>
 
-<div class="obs">🔍 <b>관찰 포인트</b> — 대상·행동·스타일을 <b>구체적으로</b> 말할수록 원하는 그림에 가까워요. 비워 두면 AI가 마음대로 채워요. 친구 얼굴·유명 캐릭터는 넣지 않아요.</div>
+  <div class="obs">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--amber)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/></svg>
+    <span><b>관찰 포인트</b> — 대상·행동·스타일을 <b>구체적으로</b> 말할수록 원하는 그림에 가까워요. 비워 두면 AI가 마음대로 채워요. 친구 얼굴·유명 캐릭터는 넣지 않아요.</span>
+  </div>
 
-<footer><a href="../">← AI 탐험대 체험 전체 목록</a></footer>
+  <footer><a href="../">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5M5 12l7-7M5 12l7 7" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    AI 탐험대 체험 전체 목록
+  </a></footer>
 </div>
 
 <script>
@@ -136,33 +208,33 @@ const $ = id => document.getElementById(id);
 
 const CATS = {
   subject: { label: '대상', opts: [
-    { id: 'robot', name: '🤖 로봇',   phrase: '로봇' },
-    { id: 'cat',   name: '🐱 고양이', phrase: '고양이' },
-    { id: 'bird',  name: '🐦 새',     phrase: '새' },
+    { id: 'robot', name: '로봇',   phrase: '로봇' },
+    { id: 'cat',   name: '고양이', phrase: '고양이' },
+    { id: 'bird',  name: '새',     phrase: '새' },
   ]},
   action: { label: '행동', opts: [
-    { id: 'run',  name: '🏃 달려요',      phrase: '달리는' },
-    { id: 'jump', name: '🦘 점프해요',    phrase: '높이 점프하는' },
-    { id: 'wave', name: '👋 손 흔들어요', phrase: '손을 흔드는' },
+    { id: 'run',  name: '달려요',      phrase: '달리는' },
+    { id: 'jump', name: '점프해요',    phrase: '높이 점프하는' },
+    { id: 'wave', name: '손 흔들어요', phrase: '손을 흔드는' },
   ]},
   prop: { label: '소품', opts: [
-    { id: 'hat',   name: '🎩 탐험 모자', phrase: '탐험 모자를 쓰고' },
-    { id: 'badge', name: '⭐ 별 배지',   phrase: '별 배지를 달고' },
-    { id: 'bag',   name: '🎒 가방',      phrase: '가방을 메고' },
+    { id: 'hat',   name: '탐험 모자', phrase: '탐험 모자를 쓰고' },
+    { id: 'badge', name: '별 배지',   phrase: '별 배지를 달고' },
+    { id: 'bag',   name: '가방',      phrase: '가방을 메고' },
   ]},
   style: { label: '스타일', opts: [
-    { id: 'toon',  name: '✏️ 만화풍', phrase: '만화풍' },
-    { id: 'pixel', name: '🟩 픽셀풍', phrase: '픽셀풍' },
+    { id: 'toon',  name: '만화풍', phrase: '만화풍' },
+    { id: 'pixel', name: '픽셀풍', phrase: '픽셀풍' },
   ]},
   mood: { label: '분위기', opts: [
-    { id: 'bright', name: '☀️ 밝은',   phrase: '밝은' },
-    { id: 'calm',   name: '🌙 차분한', phrase: '차분한' },
+    { id: 'bright', name: '밝은',   phrase: '밝은' },
+    { id: 'calm',   name: '차분한', phrase: '차분한' },
   ]},
 };
 const sel = { subject: null, action: null, prop: null, style: null, mood: null };
 let lastChanged = null, isVague = false;
 
-// ── 빌더 칩 생성 ──
+// 빌더 칩 생성
 for (const cat in CATS){
   const lab = document.createElement('p');
   lab.className = 'catLabel'; lab.textContent = CATS[cat].label;
@@ -182,17 +254,17 @@ for (const cat in CATS){
 function optOf(cat, id){ return CATS[cat].opts.find(o => o.id === id); }
 function randOf(cat){ const o = CATS[cat].opts; return o[Math.floor(Math.random() * o.length)].id; }
 
-// ── 막연 요청: 전 항목 랜덤 ──
+// 막연 요청: 전 항목 랜덤
 $('vague').onclick = () => {
   for (const cat in CATS) sel[cat] = randOf(cat);
   lastChanged = null; isVague = true;
   render();
 };
 
-// ── 프롬프트 문장 조립 ──
+// 프롬프트 문장 조립
 function renderPrompt(){
   if (isVague){
-    $('prompt').innerHTML = '“멋진 마스코트 그려 줘”<br><span style="font-size:12.5px;color:var(--text-muted)">→ AI가 읽은 건 이게 전부라서, 나머지는 전부 마음대로 골랐어요</span>';
+    $('prompt').innerHTML = '"멋진 마스코트 그려 줘"<br><span style="font-size:12.5px;color:var(--muted)">→ AI가 읽은 건 이게 전부라서, 나머지는 전부 마음대로 골랐어요</span>';
     return;
   }
   const piece = (cat, tail) => {
@@ -200,11 +272,11 @@ function renderPrompt(){
     const f = lastChanged === cat ? ' flash' : '';
     return '<span class="part' + f + '">' + optOf(cat, sel[cat]).phrase + '</span>' + (tail || '');
   };
-  $('prompt').innerHTML = '“' + piece('prop', ' ') + piece('action', ' ') + piece('style', ' ')
-    + piece('subject', '') + ' 마스코트, ' + piece('mood', ' 분위기”');
+  $('prompt').innerHTML = '"' + piece('prop', ' ') + piece('action', ' ') + piece('style', ' ')
+    + piece('subject', '') + ' 마스코트, ' + piece('mood', ' 분위기"');
 }
 
-// ── SVG 마스코트 ──
+// SVG 마스코트
 const PIXEL_FILTER = '<defs><filter id="pxl" x="-5%" y="-5%" width="110%" height="110%">'
   + '<feFlood x="4" y="4" height="2" width="2"/><feComposite width="7" height="7"/>'
   + '<feTile result="a"/><feComposite in="SourceGraphic" in2="a" operator="in"/>'
@@ -221,7 +293,6 @@ function bgSVG(mood){
     + '<line x1="168" y1="8" x2="168" y2="14"/><line x1="146" y1="12" x2="150" y2="17"/><line x1="190" y1="12" x2="186" y2="17"/><line x1="141" y1="34" x2="147" y2="34"/><line x1="189" y1="34" x2="195" y2="34"/></g>';
 }
 
-// 눈·입 (밝은=웃는 곡선 눈, 차분한=잔잔한 눈) — mw=0이면 입 생략(부리 등)
 function face(mood, ex, ey, gap, mw){
   const e1 = ex - gap / 2, e2 = ex + gap / 2;
   const eyes = mood === 'calm'
@@ -234,7 +305,6 @@ function face(mood, ex, ey, gap, mw){
   return eyes + mouth;
 }
 
-// 팔다리 좌표: [어깨L, 어깨R, 엉덩L, 엉덩R]
 const LIMB = {
   robot: { sh: [[72,110],[128,110]], hip: [[86,150],[114,150]], armC: '#64748B', legC: '#64748B', hat: [100,46], badge: [84,104], bag: [140,112] },
   cat:   { sh: [[76,118],[124,118]], hip: [[88,152],[112,152]], armC: '#F59E0B', legC: '#F59E0B', hat: [100,44], badge: [100,122], bag: [136,120] },
@@ -255,7 +325,7 @@ function limbs(subj, act){
     arms = line(L.sh[0], -8, 18, L.armC, w) + line(L.sh[1], 17, -24, L.armC, w)
       + '<text x="' + (L.sh[1][0]+20) + '" y="' + (L.sh[1][1]-28) + '" font-size="14">✨</text>';
     legs = line(L.hip[0], -2, 20, L.legC, lw) + line(L.hip[1], 2, 20, L.legC, lw);
-  } else { // 기본 서 있기
+  } else {
     arms = line(L.sh[0], -8, 18, L.armC, w) + line(L.sh[1], 8, 18, L.armC, w);
     legs = line(L.hip[0], -2, 20, L.legC, lw) + line(L.hip[1], 2, 20, L.legC, lw);
   }
@@ -278,12 +348,11 @@ function bodySVG(subj, mood){
       + '<circle cx="100" cy="72" r="29" fill="#FDBA74" stroke="#EA580C" stroke-width="3"/>'
       + '<g stroke="#EA580C" stroke-width="2" stroke-linecap="round"><line x1="66" y1="76" x2="80" y2="78"/><line x1="66" y1="86" x2="80" y2="84"/><line x1="134" y1="76" x2="120" y2="78"/><line x1="134" y1="86" x2="120" y2="84"/></g>'
       + face(mood, 100, 68, 24, 14);
-  // bird
   return '<ellipse cx="100" cy="118" rx="36" ry="42" fill="#7DD3FC" stroke="#0284C7" stroke-width="3"/>'
     + '<ellipse cx="100" cy="132" rx="21" ry="24" fill="#E0F2FE"/>'
     + '<path d="M64 118 q-16 10 -6 24 q8 -4 14 -12" fill="#38BDF8" stroke="#0284C7" stroke-width="2.5" stroke-linejoin="round"/>'
     + '<polygon points="91,94 109,94 100,107" fill="#FBBF24" stroke="#D97706" stroke-width="2" stroke-linejoin="round"/>'
-    + face(mood, 100, 86, 26, 0); // 입 대신 부리
+    + face(mood, 100, 86, 26, 0);
 }
 
 function propSVG(subj, prop){
@@ -319,13 +388,13 @@ function render(){
 
   const svg = $('canvas');
   if (!sel.subject && !isVague){
-    svg.innerHTML = '<rect width="200" height="200" fill="#F8FAFC"/><text x="100" y="96" text-anchor="middle" font-size="30">❓</text><text x="100" y="126" text-anchor="middle" font-size="12" fill="#64748B">칩을 골라 마스코트를 만들어요</text>';
+    svg.innerHTML = '<rect width="200" height="200" fill="#FBF7EC"/><text x="100" y="96" text-anchor="middle" font-size="28" fill="#141414">?</text><text x="100" y="126" text-anchor="middle" font-size="12" fill="#6B6B6B">칩을 골라 마스코트를 만들어요</text>';
     svg.classList.remove('pixel');
     return;
   }
   const subj = sel.subject || 'robot';
   const mood = sel.mood || 'bright';
-  const act = sel.action;            // 미선택이면 기본 자세
+  const act = sel.action;
   const pixel = sel.style === 'pixel';
 
   let charG = limbs(subj, act) + bodySVG(subj, mood) + (sel.prop ? propSVG(subj, sel.prop) : '');

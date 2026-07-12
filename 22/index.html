@@ -5,180 +5,246 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>팩트체크 탐정 — AI 탐험대 22</title>
 <style>
-  :root {
-    --sky: #5B9CF6; --sky-light: #EBF3FF;
-    --mint: #34D399; --mint-light: #D1FAE5;
-    --amber: #FBBF24; --amber-light: #FEF3C7;
-    --coral: #F87171; --coral-light: #FEE2E2;
-    --bg: #F0F7FF; --card: #FFFFFF;
-    --text: #1E293B; --text-muted: #64748B; --border: #E2E8F0;
-    --radius: 20px; --radius-sm: 12px;
-    --shadow: 0 4px 20px rgba(91,156,246,0.12);
-    --shadow-lg: 0 8px 40px rgba(91,156,246,0.2);
+  :root{
+    --ink:#141414; --paper:#FBF7EC; --surface:#FFFFFF;
+    --point:#FF5A5F; --point-soft:#FFE3E4;
+    --amber:#FFB800; --amber-soft:#FFF0C7;
+    --green:#12B76A; --red:#FF4D4D; --muted:#6B6B6B;
+    --r:20px; --r-sm:13px;
+    --hard:5px 5px 0 var(--ink); --hard-sm:3px 3px 0 var(--ink);
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.6; }
-  .wrap { max-width: 680px; margin: 0 auto; padding: 24px 16px 50px; }
-  header { text-align: center; margin-bottom: 14px; }
-  .chip { display: inline-block; background: var(--coral); color: white; font-size: 13px; font-weight: 700; padding: 4px 14px; border-radius: 999px; margin-bottom: 8px; }
-  h1 { font-size: 28px; font-weight: 900; line-height: 1.2; letter-spacing: -0.02em; }
-  .sub { color: var(--text-muted); font-size: 15px; margin-top: 4px; }
-  .safe { background: var(--amber-light); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 13.5px; text-align: center; margin: 12px 0; }
-
-  .dots { display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 14px; color: var(--text-muted); font-weight: 700; }
-  .dot { width: 11px; height: 11px; border-radius: 50%; background: var(--border); }
-  .dot.now { background: var(--coral); transform: scale(1.25); }
-  .dot.hit { background: var(--mint); }
-  .dot.miss { background: var(--amber); }
-
-  .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow-lg); padding: 20px; }
-  .ai { display: flex; gap: 10px; align-items: flex-start; }
-  .ai .face { font-size: 34px; line-height: 1; }
-  .bubble { background: var(--coral-light); border-radius: var(--radius-sm); border-left: 4px solid var(--coral); padding: 12px 14px; font-size: 16px; font-weight: 700; flex: 1; }
-  .bubble small { display: block; font-size: 12.5px; color: var(--text-muted); font-weight: 700; margin-bottom: 3px; }
-
-  .stepq { font-size: 14.5px; font-weight: 800; margin: 14px 0 8px; }
-  .guess { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .gbtn { border: 2px solid var(--border); background: white; cursor: pointer; font-family: inherit; font-size: 15.5px; font-weight: 700; padding: 12px 8px; border-radius: var(--radius-sm); min-height: 48px; color: var(--text); }
-  .gbtn:active { transform: scale(.97); }
-  .gbtn.sel { border-color: var(--coral); background: var(--coral-light); }
-  .gbtn:disabled { opacity: .55; cursor: default; }
-  .gbtn.sel:disabled { opacity: 1; }
-
-  .btn { display: block; width: 100%; border: 0; cursor: pointer; font-family: inherit; font-size: 15.5px; font-weight: 700; color: white; background: var(--coral); padding: 12px 10px; border-radius: var(--radius-sm); min-height: 48px; margin-top: 12px; }
-  .btn:active { transform: scale(.97); }
-  .btn.mint { background: var(--mint); }
-
-  .evi {
-    display: none;
-    background: var(--sky-light);
-    border-radius: 0 var(--radius-sm) var(--radius-sm) var(--radius-sm);
-    padding: 12px 14px 14px;
-    margin-top: 0;
-    border-top: 3px solid var(--sky);
-    position: relative;
-    animation: openup .35s ease;
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    background:var(--paper);color:var(--ink);
+    font-size:17px;line-height:1.55;
+    background-image:radial-gradient(var(--ink) .5px,transparent .5px);
+    background-size:22px 22px;background-position:-11px -11px;
   }
-  .evi::before {
-    content: '📁 근거 자료';
-    position: absolute;
-    top: -28px; left: 0;
-    background: var(--sky);
-    color: white;
-    font-size: 12.5px;
-    font-weight: 800;
-    padding: 4px 14px 0;
-    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-    height: 28px;
-    display: flex;
-    align-items: center;
-  }
-  .evi-wrap {
-    margin-top: 16px;
-    position: relative;
-  }
-  @keyframes openup { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-  .src { display: inline-block; background: var(--sky); color: white; font-size: 12.5px; font-weight: 700; padding: 2px 10px; border-radius: 999px; margin-bottom: 6px; }
-  .evi p { font-size: 14.5px; }
+  .wrap{max-width:700px;margin:0 auto;padding:18px 18px 64px}
 
-  .verdict { display: none; margin-top: 12px; animation: openup .35s ease; }
-  .vbadge {
-    display: inline-block;
-    font-size: 16px;
-    font-weight: 900;
-    padding: 6px 18px;
-    border-radius: 8px;
-    letter-spacing: -0.01em;
-    transform-origin: center;
-    border: 3px solid white;
-    box-shadow: 0 4px 16px rgba(0,0,0,.15);
-    animation: stamp .45s cubic-bezier(.25,1.6,.5,1) both;
+  /* nav */
+  .nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+  .back{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink);
+    font-weight:800;font-size:14px;background:var(--surface);border:2.5px solid var(--ink);
+    border-radius:999px;padding:8px 16px;box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
+  .back:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .back:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+  .back:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .lesson-tag{font-weight:900;font-size:15px;letter-spacing:-.01em;background:var(--point);color:#fff;
+    border:2.5px solid var(--ink);border-radius:999px;padding:6px 16px;box-shadow:var(--hard-sm)}
+
+  /* hero */
+  .kicker{display:inline-block;font-weight:900;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
+    background:var(--amber);border:2.5px solid var(--ink);border-radius:8px;padding:4px 12px;box-shadow:var(--hard-sm);margin-bottom:16px}
+  h1{font-size:clamp(30px,7vw,52px);font-weight:900;letter-spacing:-.035em;line-height:1.02}
+  .lead{font-size:17px;color:var(--muted);margin-top:14px;max-width:620px;font-weight:600}
+  .hero-art{display:block;margin:12px auto 0;height:90px;max-width:92%;object-fit:contain}
+  @media(max-width:640px){.hero-art{height:auto;max-height:80px}}
+
+  /* safe notice */
+  .safe{display:flex;align-items:center;gap:10px;background:var(--surface);border:2.5px solid var(--ink);
+    border-radius:var(--r-sm);box-shadow:var(--hard-sm);padding:11px 16px;font-size:13.5px;font-weight:600;margin:22px 0 26px}
+  .safe svg{flex-shrink:0}
+
+  /* dots progress */
+  .dots{display:flex;justify-content:center;align-items:center;gap:8px;margin-bottom:14px;font-size:14px;color:var(--muted);font-weight:700}
+  .dot{width:12px;height:12px;border-radius:50%;background:var(--surface);border:2.5px solid var(--ink);transition:background .2s}
+  .dot.now{background:var(--amber);transform:scale(1.25)}
+  .dot.hit{background:var(--green)}
+  .dot.miss{background:var(--point)}
+
+  /* main card */
+  .card{background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:22px}
+
+  /* AI bubble */
+  .ai{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px}
+  .ai-icon{width:42px;height:42px;flex-shrink:0;border:2.5px solid var(--ink);border-radius:10px;
+    background:var(--ink);display:grid;place-items:center;box-shadow:var(--hard-sm)}
+  .bubble{background:var(--point-soft);border:2.5px solid var(--ink);border-radius:var(--r-sm);
+    border-left:5px solid var(--point);padding:12px 14px;font-size:16px;font-weight:700;flex:1}
+  .bubble small{display:block;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:5px}
+
+  /* step labels */
+  .stepq{font-size:14.5px;font-weight:900;margin:14px 0 8px;letter-spacing:-.01em}
+
+  /* guess buttons */
+  .guess{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .gbtn{border:2.5px solid var(--ink);background:var(--surface);cursor:pointer;font-family:inherit;
+    font-size:15px;font-weight:800;padding:13px 8px;border-radius:var(--r-sm);min-height:48px;
+    color:var(--ink);box-shadow:var(--hard-sm);transition:transform .1s,box-shadow .1s;
+    display:flex;align-items:center;justify-content:center;gap:8px}
+  .gbtn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .gbtn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+  .gbtn:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .gbtn.sel{border-color:var(--point);background:var(--point-soft)}
+  .gbtn:disabled{opacity:.55;cursor:default;box-shadow:none;transform:none}
+  .gbtn.sel:disabled{opacity:1}
+
+  /* action buttons */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;cursor:pointer;
+    font-family:inherit;font-size:16px;font-weight:900;letter-spacing:-.01em;color:var(--ink);
+    background:var(--amber);border:2.5px solid var(--ink);border-radius:14px;box-shadow:var(--hard-sm);
+    padding:13px 14px;min-height:50px;margin-top:12px;transition:transform .1s,box-shadow .1s}
+  .btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .btn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+  .btn:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .btn.point{background:var(--point);color:#fff}
+  .btn.green{background:var(--green);color:#fff}
+
+  /* evidence card (서류 탭) */
+  .evi{display:none;margin-top:0;animation:openup .35s ease}
+  .evi-wrap{margin-top:16px;position:relative}
+  .evi-tab{display:inline-flex;align-items:center;gap:6px;background:var(--ink);color:var(--paper);
+    font-size:12px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;
+    padding:5px 14px;border-radius:8px 8px 0 0;margin-bottom:-1px;position:relative;z-index:1}
+  .evi-body{background:var(--point-soft);border:2.5px solid var(--ink);border-radius:0 var(--r-sm) var(--r-sm) var(--r-sm);
+    padding:13px 15px 15px}
+  .src{display:inline-block;background:var(--ink);color:var(--paper);font-size:12px;font-weight:900;
+    padding:3px 12px;border-radius:999px;margin-bottom:8px;letter-spacing:.04em}
+  .evi-body p{font-size:14.5px;font-weight:600;line-height:1.55}
+  @keyframes openup{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  /* verdict badge (도장) */
+  .verdict{display:none;margin-top:14px;animation:openup .35s ease}
+  .vbadge{
+    display:inline-block;font-size:16px;font-weight:900;padding:7px 22px;
+    border:3px solid var(--ink);border-radius:8px;letter-spacing:.01em;
+    box-shadow:var(--hard-sm);transform-origin:center;
   }
-  @keyframes stamp {
-    from { opacity: 0; transform: scale(1.4); }
-    to   { opacity: 1; }
+  @keyframes stamp{from{opacity:0;transform:scale(1.4) rotate(-3deg)}to{opacity:1}}
+  .vbadge.anim{animation:stamp .45s cubic-bezier(.25,1.6,.5,1) both}
+  .v-ok  {background:var(--green);color:#fff;transform:rotate(-2.5deg)}
+  .v-no  {background:var(--point);color:#fff;transform:rotate(1.8deg)}
+  .v-half{background:var(--amber);color:var(--ink);transform:rotate(-1.2deg)}
+  .why{font-size:14.5px;margin-top:10px;font-weight:600;line-height:1.55}
+  .fixline{background:var(--amber-soft);border:2px solid var(--ink);border-radius:var(--r-sm);
+    padding:8px 13px;font-size:14px;font-weight:700;margin-top:10px;box-shadow:var(--hard-sm)}
+  .gcheck{font-size:14px;margin-top:10px;color:var(--muted);font-weight:700}
+  .gcheck b{color:var(--ink)}
+
+  /* report */
+  #report{display:none}
+  .report-icon{display:flex;justify-content:center;margin-bottom:12px}
+  #report .big{font-size:21px;font-weight:900;margin:8px 0 4px;text-align:center}
+  #report .big b{color:var(--point)}
+  #report p.msg{font-size:15px;text-align:center;color:var(--muted);font-weight:600;line-height:1.6}
+
+  /* obs */
+  .obs{display:flex;gap:12px;align-items:flex-start;background:var(--ink);color:var(--paper);
+    border-radius:var(--r);padding:18px 20px;font-size:14px;font-weight:600;margin:26px 0;line-height:1.55}
+  .obs svg{flex-shrink:0;margin-top:2px}
+  .obs b{color:var(--amber);font-weight:900}
+
+  footer{text-align:center;margin-top:34px}
+  footer a{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font-weight:900;color:var(--ink);
+    background:var(--surface);border:2.5px solid var(--ink);border-radius:999px;padding:11px 22px;
+    box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
+  footer a:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  footer a:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    .v-ok{transform:rotate(-2.5deg)!important}
+    .v-no{transform:rotate(1.8deg)!important}
+    .v-half{transform:rotate(-1.2deg)!important}
   }
-  .v-ok   { background: var(--mint);  color: white; outline: 2.5px solid #059669; outline-offset: -1px; transform: rotate(-2.5deg); }
-  .v-no   { background: var(--coral); color: white; outline: 2.5px solid #DC2626; outline-offset: -1px; transform: rotate(1.8deg); }
-  .v-half { background: var(--amber); color: white; outline: 2.5px solid #D97706; outline-offset: -1px; transform: rotate(-1.2deg); }
-  .why { font-size: 14.5px; margin-top: 6px; }
-  .fixline { background: var(--mint-light); border-radius: var(--radius-sm); padding: 7px 12px; font-size: 14px; font-weight: 700; margin-top: 8px; }
-  .gcheck { font-size: 14px; margin-top: 8px; color: var(--text-muted); font-weight: 700; }
-  .gcheck b { color: var(--text); }
-
-  #report { display: none; text-align: center; }
-  #report .big { font-size: 21px; font-weight: 800; margin: 8px 0 4px; }
-  #report .big b { color: var(--coral); }
-  #report p.msg { font-size: 15px; }
-
-  .obs { background: white; border-radius: var(--radius-sm); box-shadow: var(--shadow); padding: 12px 16px; font-size: 14.5px; margin-top: 14px; }
-  footer { text-align: center; margin-top: 26px; font-size: 14px; }
-  footer a { color: var(--coral); text-decoration: none; font-weight: 700; }
-
-  .gbtn:focus-visible, .btn:focus-visible { outline: 3px solid var(--coral); outline-offset: 2px; }
-  @media (prefers-reduced-motion: reduce) {
-    .vbadge { animation: none !important; }
-    .v-ok   { transform: rotate(-2.5deg) !important; }
-    .v-no   { transform: rotate(1.8deg) !important; }
-    .v-half { transform: rotate(-1.2deg) !important; }
-    .evi { animation: none !important; }
-    * { transition-duration: 0.01ms !important; }
-  }
-
-  .hero-art { display: block; margin: 6px auto 0; height: 90px; max-width: 92%; object-fit: contain; border-radius: 14px; }
-  @media (max-width: 640px) { .hero-art { height: auto; max-height: 80px; } }
 </style>
 </head>
 <body>
 <div class="wrap">
-<header>
-  <span class="chip">AI 탐험대 · 22 팩트체크 탐정</span>
-  <h1>🕵️ 팩트체크 탐정 체험</h1>
-  <p class="sub">AI가 자신 있게 말한 상식 5가지 — 먼저 예상하고, 근거 자료를 열어 확인해요.</p>
-  <img class="hero-art" src="../assets/art/22_stamp.png" alt="" aria-hidden="true">
-</header>
-<p class="safe">🛡️ 이 체험의 AI 답변은 학습용으로 만든 예시예요. 입력하거나 저장되는 정보는 없어요.</p>
 
-<div class="dots" id="dots"></div>
+  <nav class="nav">
+    <a class="back" href="../">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      전체 목록
+    </a>
+    <span class="lesson-tag">22강 · 팩트체크 탐정</span>
+  </nav>
 
-<div class="card" id="stage">
-  <div class="ai"><div class="face">🤖</div>
-    <div class="bubble"><small>AI가 자신 있게 말해요</small><span id="aitxt"></span></div>
+  <header>
+    <span class="kicker">AI가 자신 있게 말할 때</span>
+    <h1>팩트체크 탐정 체험</h1>
+    <p class="lead">AI가 자신 있게 말한 상식 5가지 — 먼저 예상하고, 근거 자료를 열어 확인해요.</p>
+    <img class="hero-art" src="../assets/art/22_stamp.png" alt="" aria-hidden="true">
+  </header>
+
+  <div class="safe">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6l-8-4Z" fill="var(--amber)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/></svg>
+    <span>이 체험의 AI 답변은 학습용으로 만든 예시예요. 입력하거나 저장되는 정보는 없어요.</span>
   </div>
-  <div id="step1">
-    <p class="stepq">① 내 예상은?</p>
-    <div class="guess">
-      <button class="gbtn" id="gT" onclick="guess(true)">⭕ 참일 것 같아요</button>
-      <button class="gbtn" id="gF" onclick="guess(false)">❌ 거짓일 것 같아요</button>
+
+  <div class="dots" id="dots"></div>
+
+  <div class="card" id="stage">
+    <div class="ai">
+      <div class="ai-icon" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="6" width="18" height="13" rx="3" stroke="#FBF7EC" stroke-width="2"/><circle cx="9" cy="12" r="1.5" fill="#FBF7EC"/><circle cx="15" cy="12" r="1.5" fill="#FBF7EC"/><path d="M9 4v2M15 4v2" stroke="#FBF7EC" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <div class="bubble"><small>AI가 자신 있게 말해요</small><span id="aitxt"></span></div>
+    </div>
+    <div id="step1">
+      <p class="stepq">① 내 예상은?</p>
+      <div class="guess">
+        <button class="gbtn" id="gT" onclick="guess(true)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.5"/><path d="M7 12l3 3 7-7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          참일 것 같아요
+        </button>
+        <button class="gbtn" id="gF" onclick="guess(false)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2.5"/><path d="M8 8l8 8M16 8l-8 8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+          거짓일 것 같아요
+        </button>
+      </div>
+    </div>
+    <button class="btn point" id="openEvi" style="display:none" onclick="openEvi()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2.4"/><path d="m16 16 5 5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+      ② 근거 자료 열기
+    </button>
+    <div class="evi-wrap">
+      <div class="evi" id="evi">
+        <div class="evi-tab">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2.2"/><polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="2.2"/></svg>
+          근거 자료
+        </div>
+        <div class="evi-body">
+          <span class="src" id="src"></span>
+          <p id="evitxt"></p>
+        </div>
+      </div>
+    </div>
+    <div class="verdict" id="verdict">
+      <p class="stepq" style="margin-top:0">③ 판정 결과</p>
+      <span class="vbadge" id="vbadge"></span>
+      <p class="why" id="why"></p>
+      <p class="fixline" id="fixline"></p>
+      <p class="gcheck" id="gcheck"></p>
+      <button class="btn green" id="next" onclick="next()">다음 카드
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
   </div>
-  <button class="btn" id="openEvi" style="display:none" onclick="openEvi()">② 🔍 근거 자료 열기</button>
-  <div class="evi-wrap">
-  <div class="evi" id="evi">
-    <span class="src" id="src"></span>
-    <p id="evitxt"></p>
-  </div>
-  </div>
-  <div class="verdict" id="verdict">
-    <p class="stepq" style="margin-top:0">③ 판정 결과</p>
-    <span class="vbadge" id="vbadge"></span>
-    <p class="why" id="why"></p>
-    <p class="fixline" id="fixline"></p>
-    <p class="gcheck" id="gcheck"></p>
-    <button class="btn mint" id="next" onclick="next()">다음 카드 →</button>
-  </div>
-</div>
 
-<div class="card" id="report">
-  <div style="font-size:44px">🕵️</div>
-  <p class="big">내 직감 적중 <b id="score"></b>/5</p>
-  <p class="msg">자신 있는 말투라고 다 사실은 아니에요!<br>AI는 거짓말쟁이가 아니라, 근거가 부족한 곳을 그럴듯한 말로 채운 거예요. 그래서 마지막 확인은 사람이 해요.</p>
-  <button class="btn" onclick="location.reload()">처음부터 다시</button>
-</div>
+  <div class="card" id="report" style="margin-top:20px">
+    <div class="report-icon">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="var(--point)" stroke-width="2.5"/><circle cx="9" cy="10" r="1.5" fill="var(--ink)"/><circle cx="15" cy="10" r="1.5" fill="var(--ink)"/><path d="M8 15c1 1.5 2 2 4 2s3-.5 4-2" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/><path d="M12 5v1M12 18v1M5 12h1M18 12h1" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </div>
+    <p class="big">내 직감 적중 <b id="score"></b>/5</p>
+    <p class="msg">자신 있는 말투라고 다 사실은 아니에요!<br>AI는 거짓말쟁이가 아니라, 근거가 부족한 곳을 그럴듯한 말로 채운 거예요. 그래서 마지막 확인은 사람이 해요.</p>
+    <button class="btn" onclick="location.reload()">처음부터 다시</button>
+  </div>
 
-<div class="obs">🔍 <b>관찰 포인트</b> — AI 답은 <b>근거 자료와 비교(팩트 체크)</b>한 뒤에 사용해요. 숫자·이름·과학 사실이 나오면 꼭 확인해요.</div>
+  <div class="obs">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--amber)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/></svg>
+    <span><b>관찰 포인트</b> — AI 답은 <b>근거 자료와 비교(팩트 체크)</b>한 뒤에 사용해요. 숫자·이름·과학 사실이 나오면 꼭 확인해요.</span>
+  </div>
 
-<footer><a href="../">← AI 탐험대 체험 전체 목록</a></footer>
+  <footer><a href="../">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    AI 탐험대 체험 전체 목록
+  </a></footer>
+
 </div>
 
 <script>
@@ -216,7 +282,7 @@ const CARDS=[
    why:'"과학적으로 검증된"이라는 말까지 붙였지만 사실이 아니에요. 자신 있는 말투를 조심해요.',
    fixed:'달에는 바람과 비가 없어서 크레이터가 아주 오래 남아요.' }
 ];
-const VLABEL={ok:['확인됨 ✅','v-ok'], no:['사실과 다름 ❌','v-no'], half:['일부 다름 ⚠️','v-half']};
+const VLABEL={ok:['확인됨','v-ok'], no:['사실과 다름','v-no'], half:['일부 다름','v-half']};
 let idx=0, myGuess=null, hits=0;
 const results=[];
 
@@ -247,7 +313,7 @@ function guess(isTrue){
   myGuess=isTrue;
   $(isTrue?'gT':'gF').classList.add('sel');
   $('gT').disabled=true; $('gF').disabled=true;
-  $('openEvi').style.display='block';
+  $('openEvi').style.display='flex';
 }
 
 function openEvi(){
@@ -257,15 +323,17 @@ function openEvi(){
   $('evitxt').textContent=c.evi;
   $('evi').style.display='block';
   const [label,cls]=VLABEL[c.verdict];
-  $('vbadge').textContent=label; $('vbadge').className='vbadge '+cls; $('vbadge').setAttribute('aria-label','판정: '+label);
+  $('vbadge').textContent=label;
+  $('vbadge').className='vbadge anim '+cls;
+  $('vbadge').setAttribute('aria-label','판정: '+label);
   $('why').textContent=c.why;
   $('fixline').style.display=c.fixed?'block':'none';
-  if(c.fixed) $('fixline').textContent='✏️ 바르게 고치면: '+c.fixed;
+  if(c.fixed) $('fixline').textContent='바르게 고치면: '+c.fixed;
   const hit=(myGuess===true)===(c.verdict==='ok');
   if(hit) hits++;
   results.push(hit);
-  $('gcheck').innerHTML='내 직감: <b>'+(myGuess?'참':'거짓')+'</b> → 실제: <b>'+label+'</b> '+(hit?'— 적중! 🎯':'— 빗나감 😲');
-  $('next').textContent = idx<4 ? '다음 카드 →' : '수사 결과 보기 →';
+  $('gcheck').innerHTML='내 직감: <b>'+(myGuess?'참':'거짓')+'</b> → 실제: <b>'+label+'</b> '+(hit?'— 적중!':'— 빗나감');
+  $('next').innerHTML = (idx<4 ? '다음 카드' : '수사 결과 보기')+'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   $('verdict').style.display='block';
   renderDots();
 }

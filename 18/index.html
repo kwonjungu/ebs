@@ -5,121 +5,239 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI DJ! 내 기분을 읽고 노래를 골라요 — AI 탐험대 18</title>
 <style>
-  :root {
-    --sky: #5B9CF6; --sky-light: #EBF3FF;
-    --mint: #34D399; --mint-light: #D1FAE5;
-    --amber: #FBBF24; --amber-light: #FEF3C7;
-    --coral: #F87171; --coral-light: #FEE2E2;
-    --purple: #A78BFA; --purple-light: #EDE9FE;
-    --bg: #F0F7FF; --card: #FFFFFF;
-    --text: #1E293B; --text-muted: #64748B; --border: #E2E8F0;
-    --radius: 20px; --radius-sm: 12px;
-    --shadow: 0 4px 20px rgba(91,156,246,0.12);
-    --shadow-lg: 0 8px 40px rgba(91,156,246,0.2);
+  :root{
+    --ink:#141414; --paper:#FBF7EC; --surface:#FFFFFF;
+    --point:#FF5A5F; --point-soft:#FFE3E4;
+    --amber:#FFB800; --amber-soft:#FFF0C7;
+    --green:#12B76A; --red:#FF4D4D; --muted:#6B6B6B;
+    --r:20px; --r-sm:13px;
+    --hard:5px 5px 0 var(--ink); --hard-sm:3px 3px 0 var(--ink);
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.6; }
-  .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 50px; }
-  header { text-align: center; margin-bottom: 14px; }
-  .chip { display: inline-block; background: var(--coral); color: white; font-size: 13px; font-weight: 800; padding: 4px 14px; border-radius: 999px; margin-bottom: 8px; }
-  h1 { font-size: 28px; font-weight: 900; line-height: 1.25; letter-spacing: -0.02em; }
-  .sub { color: var(--text-muted); font-size: 15px; margin-top: 4px; }
-  .safe { background: var(--amber-light); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 13.5px; text-align: center; margin: 12px 0; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    background:var(--paper);color:var(--ink);
+    font-size:17px;line-height:1.55;
+    background-image:radial-gradient(var(--ink) .5px,transparent .5px);
+    background-size:22px 22px;background-position:-11px -11px;
+  }
+  .wrap{max-width:720px;margin:0 auto;padding:18px 18px 64px}
 
-  .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; margin-bottom: 14px; }
-  .card h2 { font-size: 16.5px; margin-bottom: 8px; }
-  .samples { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-  @media (max-width: 480px) { .samples { grid-template-columns: 1fr; } }
-  .sample { border: 1.5px solid var(--border); background: white; border-radius: var(--radius-sm); padding: 8px 10px; font-size: 13.5px; text-align: left; cursor: pointer; font-family: inherit; min-height: 44px; line-height: 1.45; transition: border-color .15s, box-shadow .15s; }
-  .sample:hover { border-color: var(--coral); box-shadow: 0 0 0 2px var(--coral-light); }
-  .sample:active { transform: scale(.97); }
-  .sample b { font-size: 14px; }
-  textarea { width: 100%; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-family: inherit; font-size: 15px; resize: vertical; min-height: 64px; margin-bottom: 10px; }
-  textarea:focus { outline: 2px solid var(--coral); border-color: transparent; }
-  .btn { display: block; width: 100%; border: 0; cursor: pointer; font-family: inherit; font-size: 16px; font-weight: 700; color: white; background: var(--coral); padding: 12px 10px; border-radius: var(--radius-sm); min-height: 46px; }
-  .btn:active { transform: scale(.97); }
+  /* nav */
+  .nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+  .back{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink);
+    font-weight:800;font-size:14px;background:var(--surface);border:2.5px solid var(--ink);
+    border-radius:999px;padding:8px 16px;box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
+  .back:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .back:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+  .lesson-tag{font-weight:900;font-size:15px;letter-spacing:-.01em;background:var(--point);color:#fff;
+    border:2.5px solid var(--ink);border-radius:999px;padding:6px 16px;box-shadow:var(--hard-sm)}
 
-  #result { display: none; }
-  .diarybox { background: #F8FAFC; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 15.5px; margin-bottom: 12px; }
-  mark { border-radius: 3px; padding: 1px 4px; font-weight: 800;
-    -webkit-box-decoration-break: clone; box-decoration-break: clone;
-    transform: rotate(-1.2deg); display: inline-block;
-    background-clip: padding-box; box-shadow: inset 0 -2px 0 rgba(0,0,0,0.08); }
-  .m-joy { background: #FDE68A; color: #78350F; }
-  .m-sad { background: #BAE6FD; color: #1E3A5F; }
-  .m-angry { background: #FECACA; color: #B91C1C; }
-  .m-anx { background: #DDD6FE; color: #4C1D95; }
+  /* hero */
+  .kicker{display:inline-block;font-weight:900;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
+    background:var(--amber);border:2.5px solid var(--ink);border-radius:8px;padding:4px 12px;box-shadow:var(--hard-sm);margin-bottom:16px}
+  h1{font-size:clamp(30px,7vw,52px);font-weight:900;letter-spacing:-.035em;line-height:1.02;margin-bottom:2px}
+  .lead{font-size:17px;color:var(--muted);margin-top:14px;max-width:620px;font-weight:600}
+  .hero-art{display:block;margin:12px auto 0;height:96px;max-width:92%;object-fit:contain;
+    border:2.5px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard)}
+  @media(max-width:640px){.hero-art{height:auto;max-height:80px}}
 
-  .bars { margin-bottom: 4px; }
-  .brow { display: flex; align-items: center; gap: 8px; margin: 6px 0; font-size: 15px; }
-  .brow .bl { width: 86px; flex-shrink: 0; font-weight: 700; }
-  .btrack { flex: 1; background: #F1F5F9; border-radius: 999px; height: 22px; overflow: hidden; }
-  .bfill { height: 100%; width: 0%; border-radius: 999px; transition: width .6s ease-out; }
-  .bnum { width: 44px; font-size: 13px; font-weight: 700; color: var(--text-muted); }
-  .f-joy { background: var(--amber); } .f-sad { background: var(--sky); }
-  .f-angry { background: var(--coral); } .f-anx { background: var(--purple); }
+  /* safe notice */
+  .safe{display:flex;align-items:center;gap:10px;background:var(--surface);border:2.5px solid var(--ink);
+    border-radius:var(--r-sm);box-shadow:var(--hard-sm);padding:11px 16px;font-size:13.5px;font-weight:600;margin:22px 0 26px}
+  .safe svg{flex-shrink:0}
 
-  .nohit { display: none; background: var(--sky-light); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 14.5px; text-align: center; margin-bottom: 10px; }
+  /* panel */
+  .panel{background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:22px;margin-bottom:20px}
+  .panel h2{font-size:18px;font-weight:900;letter-spacing:-.02em;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .panel h2 svg{flex-shrink:0}
 
-  .reco { display: none; background: linear-gradient(135deg, var(--coral-light), #FFF5F5); border: 2px solid var(--coral); border-radius: var(--radius-sm); padding: 14px; text-align: center; margin-top: 12px; }
-  .reco .big { font-size: 48px; line-height: 1.1; }
-  .reco .mood { font-size: 19px; font-weight: 900; letter-spacing: -0.01em; }
-  .reco .why { font-size: 13.5px; color: var(--text-muted); margin: 4px 0 10px; }
-  .playbtn { border: 0; cursor: pointer; font-family: inherit; font-size: 15px; font-weight: 700; color: white; background: var(--coral); padding: 10px 20px; border-radius: 999px; min-height: 44px; }
-  .playbtn:active { transform: scale(.97); }
-  .playbtn.on { background: var(--text); }
-  .dislike { display: inline-block; border: 1.5px solid var(--border); background: white; cursor: pointer; font-family: inherit; font-size: 13.5px; color: var(--text-muted); padding: 8px 14px; border-radius: 999px; margin-top: 10px; min-height: 44px; }
-  .fbnote { display: none; background: white; border-radius: var(--radius-sm); padding: 10px 12px; font-size: 14px; margin-top: 10px; text-align: center; }
-  .moodpick { display: none; gap: 6px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
-  .moodpick button { border: 1.5px solid var(--border); background: white; border-radius: 999px; padding: 8px 12px; font-family: inherit; font-size: 13.5px; cursor: pointer; min-height: 44px; }
-  .moodpick button:active { transform: scale(.95); }
+  /* samples */
+  .samples{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+  @media(max-width:480px){.samples{grid-template-columns:1fr}}
+  .sample{border:2px solid var(--ink);background:var(--paper);border-radius:var(--r-sm);
+    padding:10px 12px;font-size:13.5px;text-align:left;cursor:pointer;font-family:inherit;
+    min-height:44px;line-height:1.45;box-shadow:var(--hard-sm);
+    transition:transform .1s,box-shadow .1s;font-weight:600}
+  .sample:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .sample:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+  .sample b{font-size:14px;font-weight:900}
 
-  .obs { background: white; border-radius: var(--radius-sm); box-shadow: var(--shadow); padding: 12px 16px; font-size: 14.5px; margin-top: 2px; }
-  footer { text-align: center; margin-top: 24px; font-size: 14px; }
-  footer a { color: var(--coral); text-decoration: none; font-weight: 700; }
-  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; } }
-  :focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; border-radius: 4px; }
+  textarea{width:100%;border:2.5px solid var(--ink);border-radius:var(--r-sm);background:var(--paper);
+    padding:10px 12px;font-family:inherit;font-size:15px;resize:vertical;min-height:72px;margin-bottom:12px;
+    font-weight:600;transition:box-shadow .12s}
+  textarea:focus{outline:3px solid var(--point);outline-offset:2px;box-shadow:var(--hard-sm)}
 
-  .hero-art { display: block; margin: 6px auto 0; height: 96px; max-width: 92%; object-fit: contain; border-radius: 14px; }
-  @media (max-width: 640px) { .hero-art { height: auto; max-height: 80px; } }
+  /* btn */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;cursor:pointer;
+    font-family:inherit;font-size:16px;font-weight:900;letter-spacing:-.01em;color:var(--ink);background:var(--amber);
+    border:2.5px solid var(--ink);border-radius:14px;box-shadow:var(--hard-sm);padding:13px 14px;min-height:50px;
+    transition:transform .1s,box-shadow .1s}
+  .btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .btn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+  .btn:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  :focus-visible{outline:3px solid var(--point);outline-offset:3px}
+
+  /* result */
+  #result{display:none}
+
+  /* diary highlight box */
+  .diarybox{background:var(--paper);border:2.5px solid var(--ink);border-radius:var(--r-sm);
+    box-shadow:var(--hard-sm);padding:12px 16px;font-size:15.5px;margin-bottom:16px;font-weight:600;line-height:1.7}
+
+  /* mark — highlight with slight rotate */
+  mark{border-radius:3px;padding:1px 5px;font-weight:800;
+    -webkit-box-decoration-break:clone;box-decoration-break:clone;
+    display:inline-block;transform:rotate(-1.3deg);
+    border:1.5px solid var(--ink)}
+  .m-joy{background:#FDE68A;color:#78350F}
+  .m-sad{background:#BAE6FD;color:#1E3A5F}
+  .m-angry{background:#FECACA;color:#7F1D1D}
+  .m-anx{background:#DDD6FE;color:#3B0764}
+
+  /* nohit */
+  .nohit{display:none;background:var(--point-soft);border:2.5px solid var(--ink);border-radius:var(--r-sm);
+    box-shadow:var(--hard-sm);padding:10px 14px;font-size:14.5px;font-weight:700;margin-bottom:12px}
+
+  /* emotion bars */
+  .bars{margin-bottom:8px}
+  .brow{display:flex;align-items:center;gap:8px;margin:7px 0;font-size:15px}
+  .brow .bl{width:86px;flex-shrink:0;font-weight:800}
+  .btrack{flex:1;background:var(--paper);border:2px solid var(--ink);border-radius:999px;height:24px;overflow:hidden}
+  .bfill{height:100%;width:0%;border-radius:999px;transition:width .6s ease-out}
+  .bnum{width:44px;font-size:13px;font-weight:800;color:var(--muted)}
+  .f-joy{background:var(--amber)}
+  .f-sad{background:#5B9CF6}
+  .f-angry{background:var(--point)}
+  .f-anx{background:#A78BFA}
+
+  /* reco card */
+  .reco{display:none;border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);
+    padding:18px;text-align:center;margin-top:14px;background:var(--point-soft)}
+  .reco .big{font-size:46px;line-height:1.1;margin-bottom:4px}
+  .reco .mood{font-size:19px;font-weight:900;letter-spacing:-.01em}
+  .reco .why{font-size:13.5px;color:var(--muted);margin:6px 0 14px;font-weight:600}
+
+  .playbtn{display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-family:inherit;
+    font-size:15px;font-weight:900;color:#fff;background:var(--point);
+    border:2.5px solid var(--ink);border-radius:999px;padding:10px 22px;min-height:44px;
+    box-shadow:var(--hard-sm);transition:transform .1s,box-shadow .1s}
+  .playbtn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .playbtn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+  .playbtn.on{background:var(--ink)}
+
+  .dislike{display:inline-flex;align-items:center;gap:6px;border:2px solid var(--ink);background:var(--surface);
+    cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:700;color:var(--ink);
+    padding:8px 16px;border-radius:999px;margin-top:10px;min-height:44px;
+    box-shadow:var(--hard-sm);transition:transform .1s,box-shadow .1s}
+  .dislike:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .dislike:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+
+  .fbnote{display:none;background:var(--surface);border:2px solid var(--ink);border-radius:var(--r-sm);
+    box-shadow:var(--hard-sm);padding:10px 14px;font-size:14px;font-weight:600;margin-top:12px;text-align:center}
+  .moodpick{display:none;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+  .moodpick button{border:2px solid var(--ink);background:var(--surface);border-radius:999px;
+    padding:8px 14px;font-family:inherit;font-size:13.5px;font-weight:800;cursor:pointer;min-height:44px;
+    box-shadow:var(--hard-sm);transition:transform .1s,box-shadow .1s}
+  .moodpick button:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .moodpick button:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+
+  /* obs */
+  .obs{display:flex;gap:12px;align-items:flex-start;background:var(--ink);color:var(--paper);
+    border-radius:var(--r);padding:18px 20px;font-size:14px;font-weight:600;margin:26px 0;line-height:1.55}
+  .obs svg{flex-shrink:0;margin-top:2px}
+  .obs b{color:var(--amber);font-weight:900}
+
+  /* section divider */
+  .cmp-head{display:flex;align-items:center;gap:10px;margin:4px 0 14px}
+  .cmp-head h2{font-size:18px;font-weight:900;letter-spacing:-.02em}
+  .cmp-head .bar{height:3px;background:var(--ink);flex:1;border-radius:2px}
+
+  footer{text-align:center;margin-top:34px}
+  footer a{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font-weight:900;color:var(--ink);
+    background:var(--surface);border:2.5px solid var(--ink);border-radius:999px;padding:11px 22px;
+    box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
+  footer a:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  footer a:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
-<header>
-  <span class="chip">AI 탐험대 · 18 감정 분석</span>
-  <h1>🎧 AI DJ! 내 기분을 읽고 노래를 골라요</h1>
-  <p class="sub">일기 속 단어를 단서로 감정을 추정하고, 어울리는 음악을 추천해요.</p>
-  <img class="hero-art" src="../assets/art/18_dj.png" alt="">
-</header>
-<p class="safe">🛡️ 일기는 화면에만 쓰이고 저장되지 않아요. 개인정보는 쓰지 않아요.</p>
 
-<div class="card">
-  <h2>① 기분 일기를 고르거나 직접 써 봐요</h2>
-  <div class="samples" id="samples"></div>
-  <textarea id="diary" maxlength="200" placeholder="오늘 기분을 한두 문장으로 적어 봐요. 이름은 빼고요!"></textarea>
-  <button class="btn" id="go">🔍 감정 분석</button>
-</div>
+  <nav class="nav">
+    <a class="back" href="../">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5M5 12l7-7M5 12l7 7" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      전체 목록
+    </a>
+    <span class="lesson-tag">18강 · 감정 분석 DJ</span>
+  </nav>
 
-<div class="card" id="result">
-  <h2>② AI DJ의 분석 결과</h2>
-  <div class="diarybox" id="hl"></div>
-  <div class="nohit" id="nohit">🤔 감정 단서를 찾지 못했어요 — AI는 표현이 없으면 알기 어려워요. "뿌듯했다", "속상했다" 같은 단어를 넣어 볼까요?</div>
-  <div class="bars" id="bars" role="group" aria-label="감정 분석 막대 그래프"></div>
-  <div class="reco" id="reco">
-    <div class="big" id="recoEmo"></div>
-    <div class="mood" id="recoMood"></div>
-    <p class="why" id="recoWhy"></p>
-    <button class="playbtn" id="play">▶ 분위기 들어보기</button><br>
-    <button class="dislike" id="dislike">이 추천이 내 마음과 달라요 👎</button>
-    <div class="fbnote" id="fbnote">💬 AI 추천은 정답이 아니라 예상이에요. 사람마다 듣고 싶은 음악이 달라요.<br>지금 듣고 싶은 분위기를 직접 골라 봐요!</div>
-    <div class="moodpick" id="moodpick"></div>
+  <header>
+    <span class="kicker">단어가 곧 단서</span>
+    <h1>AI DJ! 내 기분을 읽고<br>노래를 골라요</h1>
+    <p class="lead">일기 속 단어를 단서로 감정을 추정하고, 어울리는 음악을 추천해요.</p>
+    <img class="hero-art" src="../assets/art/18_dj.png" alt="">
+  </header>
+
+  <div class="safe">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6l-8-4Z" fill="var(--amber)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/></svg>
+    <span>일기는 화면에만 쓰이고 저장되지 않아요. 개인정보는 쓰지 않아요.</span>
   </div>
-</div>
 
-<div class="obs">🔍 <b>관찰 포인트</b> — AI는 속마음이 아니라 <b>단어</b>를 봐요. "오늘 급식은 카레였다"처럼 감정 단어가 없는 일기도 넣어 봐요.</div>
+  <!-- 입력 -->
+  <div class="panel">
+    <h2>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="3" stroke="var(--ink)" stroke-width="2.5"/><path d="M7 9h10M7 13h6" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round"/></svg>
+      기분 일기를 고르거나 직접 써 봐요
+    </h2>
+    <div class="samples" id="samples"></div>
+    <textarea id="diary" maxlength="200" placeholder="오늘 기분을 한두 문장으로 적어 봐요. 이름은 빼고요!"></textarea>
+    <button class="btn" id="go">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--ink)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round"/></svg>
+      감정 분석
+    </button>
+  </div>
 
-<footer><a href="../">← AI 탐험대 체험 전체 목록</a></footer>
+  <!-- 결과 -->
+  <div class="panel" id="result">
+    <h2>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="var(--ink)" stroke-width="2.5"/><path d="M12 7v5l3 3" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      AI DJ의 분석 결과
+    </h2>
+    <div class="diarybox" id="hl"></div>
+    <div class="nohit" id="nohit">감정 단서를 찾지 못했어요 — AI는 표현이 없으면 알기 어려워요. "뿌듯했다", "속상했다" 같은 단어를 넣어 볼까요?</div>
+    <div class="bars" id="bars" role="group" aria-label="감정 분석 막대 그래프"></div>
+    <div class="reco" id="reco">
+      <div class="big" id="recoEmo"></div>
+      <div class="mood" id="recoMood"></div>
+      <p class="why" id="recoWhy"></p>
+      <button class="playbtn" id="play">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="5,3 19,12 5,21"/></svg>
+        분위기 들어보기
+      </button><br>
+      <button class="dislike" id="dislike">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 15H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h4M10 15l4-8h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2l-1 4H10v-4Z" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/></svg>
+        이 추천이 내 마음과 달라요
+      </button>
+      <div class="fbnote" id="fbnote">AI 추천은 정답이 아니라 예상이에요. 사람마다 듣고 싶은 음악이 달라요.<br>지금 듣고 싶은 분위기를 직접 골라 봐요!</div>
+      <div class="moodpick" id="moodpick"></div>
+    </div>
+  </div>
+
+  <div class="obs" id="obsNote">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--amber)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/></svg>
+    <span><b>관찰 포인트</b> — AI는 속마음이 아니라 <b>단어</b>를 봐요. "오늘 급식은 카레였다"처럼 감정 단어가 없는 일기도 넣어 봐요.</span>
+  </div>
+
+  <footer><a href="../">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M19 12H5M5 12l7-7M5 12l7 7" stroke="var(--ink)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    AI 탐험대 체험 전체 목록
+  </a></footer>
 </div>
 
 <script>
@@ -147,10 +265,10 @@ const MELODY = {
   angry: { notes: [262, 247, 220, 196, 220, 247, 220, 196],  dur: 0.5,  type: 'sine' },
 };
 const SAMPLES = [
-  { t: '😢 속상한 날', d: '비가 와서 축구를 못 하게 되어 속상했다. 눈물이 날 뻔했다.' },
-  { t: '😊 신나는 날', d: '시험을 잘 봐서 뿌듯했다. 친구들이 박수를 쳐 줘서 정말 신났다. 최고의 하루!' },
-  { t: '😰 긴장되는 날', d: '내일 발표가 있어서 너무 떨려. 실수할까 봐 걱정되고 마음이 불안하다.' },
-  { t: '😠 화나는 날', d: '급식 줄에서 새치기를 당해서 화가 났다. 생각할수록 짜증이 난다.' },
+  { t: '속상한 날', d: '비가 와서 축구를 못 하게 되어 속상했다. 눈물이 날 뻔했다.' },
+  { t: '신나는 날', d: '시험을 잘 봐서 뿌듯했다. 친구들이 박수를 쳐 줘서 정말 신났다. 최고의 하루!' },
+  { t: '긴장되는 날', d: '내일 발표가 있어서 너무 떨려. 실수할까 봐 걱정되고 마음이 불안하다.' },
+  { t: '화나는 날', d: '급식 줄에서 새치기를 당해서 화가 났다. 생각할수록 짜증이 난다.' },
 ];
 
 // 예시 일기 버튼
@@ -223,7 +341,7 @@ function showReco(mood, why) {
   stopMelody();
 }
 
-// 👎 피드백 → 다른 분위기 직접 고르기
+// 피드백 → 다른 분위기 직접 고르기
 $('dislike').onclick = () => {
   $('fbnote').style.display = 'block';
   const mp = $('moodpick');
@@ -233,22 +351,24 @@ $('dislike').onclick = () => {
     const b = document.createElement('button');
     b.textContent = MOODS[m].emo + ' ' + MOODS[m].name;
     b.onclick = () => {
-      showReco(m, '내가 직접 고른 분위기예요. 피드백 고마워요! 🎵');
+      showReco(m, '내가 직접 고른 분위기예요. 피드백 고마워요!');
       $('fbnote').style.display = 'none'; mp.style.display = 'none';
     };
     mp.appendChild(b);
   }
 };
 
-// ── Web Audio 멜로디 ──
+// Web Audio 멜로디
 let audioCtx = null, playing = false, noteTimers = [];
 $('play').onclick = async function () {
   if (playing) { stopMelody(); return; }
   try {
     audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') await audioCtx.resume();
-  } catch (e) { this.textContent = '🔇 소리 없이 카드로 즐겨요'; return; }
-  playing = true; this.textContent = '⏹ 멈추기'; this.classList.add('on');
+  } catch (e) { this.textContent = '소리 없이 카드로 즐겨요'; return; }
+  playing = true;
+  this.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> 멈추기';
+  this.classList.add('on');
   const m = MELODY[curMood] || MELODY.joy;
   let t = 0;
   for (let rep = 0; rep < 2; rep++) m.notes.forEach(f => {
@@ -269,7 +389,8 @@ function beep(freq, dur, type) {
 function stopMelody() {
   noteTimers.forEach(clearTimeout); noteTimers = [];
   playing = false;
-  $('play').textContent = '▶ 분위기 들어보기'; $('play').classList.remove('on');
+  $('play').innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="5,3 19,12 5,21"/></svg> 분위기 들어보기';
+  $('play').classList.remove('on');
 }
 </script>
 </body>

@@ -5,187 +5,273 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>찰칵! 네모 박스 탐험 — AI 탐험대 23</title>
 <style>
-  :root {
-    --sky: #5B9CF6; --sky-light: #EBF3FF;
-    --mint: #34D399; --mint-light: #D1FAE5;
-    --amber: #FBBF24; --amber-light: #FEF3C7;
-    --coral: #F87171; --coral-light: #FEE2E2;
-    --bg: #F0F7FF; --card: #FFFFFF;
-    --text: #1E293B; --text-muted: #64748B; --border: #E2E8F0;
-    --radius: 20px; --radius-sm: 12px;
-    --shadow: 0 4px 20px rgba(91,156,246,0.12);
-    --shadow-lg: 0 8px 40px rgba(91,156,246,0.2);
+  :root{
+    --ink:#141414; --paper:#FBF7EC; --surface:#FFFFFF;
+    --point:#12B76A; --point-soft:#D6F5E6;
+    --amber:#FFB800; --amber-soft:#FFF0C7;
+    --red:#FF4D4D; --muted:#6B6B6B;
+    --r:20px; --r-sm:13px;
+    --hard:5px 5px 0 var(--ink); --hard-sm:3px 3px 0 var(--ink);
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.6; }
-  .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 50px; }
-  header { text-align: center; margin-bottom: 14px; }
-  .chip { display: inline-block; background: var(--mint); color: white; font-size: 13px; font-weight: 800; padding: 4px 14px; border-radius: 999px; margin-bottom: 8px; letter-spacing: 0.02em; }
-  h1 { font-size: 28px; font-weight: 900; line-height: 1.2; letter-spacing: -0.02em; }
-  .sub { color: var(--text-muted); font-size: 15px; margin-top: 4px; }
-  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
-  .safe { background: var(--amber-light); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 13.5px; text-align: center; margin: 12px 0; }
-
-  .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; }
-
-  .stage { position: relative; background: #0F172A; border-radius: var(--radius-sm); overflow: hidden; aspect-ratio: 4 / 3; }
-  .stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-
-  /* 뷰파인더 브래킷 — 네 모서리 HUD 프레임 */
-  .stage::before, .stage::after,
-  .vf-br, .vf-bl {
-    content: ''; position: absolute; width: 28px; height: 28px; z-index: 5; pointer-events: none;
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    background:var(--paper);color:var(--ink);
+    font-size:17px;line-height:1.55;
+    background-image:radial-gradient(var(--ink) .5px,transparent .5px);
+    background-size:22px 22px;background-position:-11px -11px;
   }
-  .stage::before { top: 10px; left: 10px; border-top: 3px solid var(--mint); border-left: 3px solid var(--mint); border-radius: 3px 0 0 0; }
-  .stage::after  { top: 10px; right: 10px; border-top: 3px solid var(--mint); border-right: 3px solid var(--mint); border-radius: 0 3px 0 0; }
-  .vf-br { bottom: 10px; right: 10px; border-bottom: 3px solid var(--mint); border-right: 3px solid var(--mint); border-radius: 0 0 3px 0; }
-  .vf-bl { bottom: 10px; left: 10px; border-bottom: 3px solid var(--mint); border-left: 3px solid var(--mint); border-radius: 0 0 0 3px; }
+  .wrap{max-width:740px;margin:0 auto;padding:18px 18px 64px}
 
-  /* 계기판 카운터 */
-  .counter {
-    position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
-    background: rgba(15,23,42,.82); color: #94A3B8;
-    font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-    padding: 6px 16px 8px; border-radius: 10px; z-index: 3;
-    border: 1px solid rgba(52,211,153,.25); white-space: nowrap;
+  /* nav */
+  .nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+  .back{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink);
+    font-weight:800;font-size:14px;background:var(--surface);border:2.5px solid var(--ink);
+    border-radius:999px;padding:8px 16px;box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
+  .back:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .back:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+  .back:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .lesson-tag{font-weight:900;font-size:15px;letter-spacing:-.01em;background:var(--point);color:#fff;
+    border:2.5px solid var(--ink);border-radius:999px;padding:6px 16px;box-shadow:var(--hard-sm)}
+
+  /* hero */
+  .kicker{display:inline-block;font-weight:900;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
+    background:var(--amber);border:2.5px solid var(--ink);border-radius:8px;padding:4px 12px;box-shadow:var(--hard-sm);margin-bottom:16px}
+  h1{font-size:clamp(30px,7vw,52px);font-weight:900;letter-spacing:-.035em;line-height:1.02}
+  .lead{font-size:17px;color:var(--muted);margin-top:14px;max-width:620px;font-weight:600}
+  .hero-art{display:block;margin:12px auto 0;height:96px;max-width:92%;object-fit:contain}
+  @media(max-width:640px){.hero-art{height:auto;max-height:80px}}
+
+  /* safe */
+  .safe{display:flex;align-items:center;gap:10px;background:var(--surface);border:2.5px solid var(--ink);
+    border-radius:var(--r-sm);box-shadow:var(--hard-sm);padding:11px 16px;font-size:13.5px;font-weight:600;margin:22px 0 20px}
+  .safe svg{flex-shrink:0}
+
+  /* card panel */
+  .card{background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:20px}
+
+  /* camera stage — dark face + ink outline + corner brackets */
+  .stage{
+    position:relative;background:#0F1A12;border:3px solid var(--ink);border-radius:var(--r-sm);
+    overflow:hidden;aspect-ratio:4/3;box-shadow:var(--hard);
   }
-  .counter b {
-    display: block; color: var(--mint);
-    font-size: 42px; font-weight: 900; line-height: 1;
-    font-variant-numeric: tabular-nums; font-family: 'Courier New', 'Consolas', monospace;
-    letter-spacing: -0.02em; text-shadow: 0 0 18px rgba(52,211,153,.5);
+  .stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .stage canvas{position:absolute;inset:0;width:100%;height:100%}
+
+  /* four-corner brackets */
+  .stage::before,.stage::after,.vf-br,.vf-bl{
+    content:'';position:absolute;width:28px;height:28px;z-index:5;pointer-events:none
   }
-  .counter.pop b { animation: pop .3s; }
-  @keyframes pop { 0%{transform:scale(1.25);} 60%{transform:scale(0.95);} 100%{transform:scale(1);} }
-  .toast { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); background: #fff; border: 2px solid var(--coral); color: var(--text); font-size: 13.5px; font-weight: 700; padding: 7px 14px; border-radius: 999px; z-index: 4; white-space: nowrap; opacity: 0; transition: opacity .25s; pointer-events: none; max-width: 94%; overflow: hidden; text-overflow: ellipsis; }
-  .toast.show { opacity: 1; }
-  .overlay-msg { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #E2E8F0; font-size: 15px; text-align: center; padding: 16px; z-index: 2; }
-  .spinner { width: 34px; height: 34px; border: 4px solid rgba(255,255,255,.25); border-top-color: var(--mint); border-radius: 50%; animation: spin .8s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  .stage::before{top:10px;left:10px;border-top:3px solid var(--point);border-left:3px solid var(--point);border-radius:3px 0 0 0}
+  .stage::after{top:10px;right:10px;border-top:3px solid var(--point);border-right:3px solid var(--point);border-radius:0 3px 0 0}
+  .vf-br{bottom:10px;right:10px;border-bottom:3px solid var(--point);border-right:3px solid var(--point);border-radius:0 0 3px 0}
+  .vf-bl{bottom:10px;left:10px;border-bottom:3px solid var(--point);border-left:3px solid var(--point);border-radius:0 0 0 3px}
 
-  .caption { text-align: center; font-size: 13.5px; color: var(--text-muted); margin: 8px 0 2px; }
-  .stateline { text-align: center; font-size: 14px; min-height: 24px; color: var(--text-muted); font-weight: 600; margin-bottom: 8px; }
+  /* big counter gauge */
+  .counter{
+    position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+    background:rgba(15,26,18,.88);color:#94A3B8;
+    font-size:11px;font-weight:800;letter-spacing:.10em;text-transform:uppercase;
+    padding:6px 18px 10px;border-radius:10px;z-index:3;
+    border:1.5px solid rgba(18,183,106,.35);white-space:nowrap;font-family:'Courier New',Consolas,monospace;
+  }
+  .counter b{
+    display:block;color:var(--point);
+    font-size:46px;font-weight:900;line-height:1;
+    font-variant-numeric:tabular-nums;
+    letter-spacing:-0.02em;text-shadow:0 0 18px rgba(18,183,106,.55);
+  }
+  .counter.pop b{animation:pop .3s}
+  @keyframes pop{0%{transform:scale(1.25)}60%{transform:scale(0.95)}100%{transform:scale(1)}}
 
-  .btnrow { display: flex; gap: 10px; }
-  .btn { flex: 1; border: 0; cursor: pointer; font-family: inherit; font-size: 15.5px; font-weight: 800; color: white; background: var(--mint); padding: 12px 10px; border-radius: var(--radius-sm); min-height: 48px; letter-spacing: -0.01em; transition: box-shadow .15s; }
-  .btn:active { transform: scale(.97); }
-  .btn:focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; }
-  .btn.stop { background: var(--coral); animation: pulse 1s infinite; }
-  @keyframes pulse { 0%{box-shadow: 0 0 0 0 rgba(248,113,113,.45);} 100%{box-shadow: 0 0 0 14px rgba(248,113,113,0);} }
-  .linkbtn { display: block; width: 100%; margin-top: 10px; background: none; border: 0; cursor: pointer; font-family: inherit; font-size: 13.5px; color: var(--text-muted); text-decoration: underline; min-height: 44px; }
-  .linkbtn:focus-visible { outline: 2px solid var(--mint); outline-offset: 2px; border-radius: 4px; }
+  .toast{
+    position:absolute;top:10px;left:50%;transform:translateX(-50%);
+    background:var(--surface);border:2.5px solid var(--ink);color:var(--ink);
+    font-size:13.5px;font-weight:700;padding:7px 14px;border-radius:999px;
+    z-index:4;white-space:nowrap;opacity:0;transition:opacity .25s;pointer-events:none;
+    max-width:94%;overflow:hidden;text-overflow:ellipsis;box-shadow:var(--hard-sm);
+  }
+  .toast.show{opacity:1}
+  .overlay-msg{
+    position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;gap:10px;color:#D6F5E6;font-size:15px;
+    text-align:center;padding:16px;z-index:2;font-weight:700;
+  }
+  .spinner{width:34px;height:34px;border:4px solid rgba(255,255,255,.22);border-top-color:var(--point);border-radius:50%;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
 
-  /* 연습 모드 */
-  #simCard { display: none; }
-  #simCard h2 { font-size: 18px; margin-bottom: 2px; }
-  #simCard .desc { font-size: 14px; color: var(--text-muted); margin-bottom: 10px; }
-  .simstage { position: relative; border-radius: var(--radius-sm); overflow: hidden; background: #0F172A; }
-  .simstage::before { content: ''; position: absolute; top: 8px; left: 8px; width: 24px; height: 24px; border-top: 3px solid var(--mint); border-left: 3px solid var(--mint); border-radius: 3px 0 0 0; z-index: 2; pointer-events: none; }
-  .simstage::after  { content: ''; position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; border-top: 3px solid var(--mint); border-right: 3px solid var(--mint); border-radius: 0 3px 0 0; z-index: 2; pointer-events: none; }
-  .simstage svg { display: block; width: 100%; height: auto; }
-  .simbox { opacity: 0; }
-  .simbox.show { opacity: 1; animation: boxin .35s ease-out; }
-  @keyframes boxin { 0%{opacity:0; transform: scale(1.06);} 100%{opacity:1; transform: scale(1);} }
-  .simreason { background: var(--coral-light); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 14px; text-align: center; margin-bottom: 12px; }
+  .caption{font-size:13.5px;color:var(--muted);margin:10px 0 2px;font-weight:600}
+  .stateline{font-size:14px;min-height:24px;color:var(--muted);font-weight:700;margin-bottom:10px}
 
-  .obs { background: white; border-radius: var(--radius-sm); box-shadow: var(--shadow); padding: 12px 16px; font-size: 14.5px; margin-top: 14px; }
-  footer { text-align: center; margin-top: 26px; font-size: 14px; }
-  footer a { color: var(--mint); text-decoration: none; font-weight: 700; }
+  /* buttons */
+  .btnrow{display:flex;gap:10px}
+  .btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;
+    font-family:inherit;font-size:15.5px;font-weight:900;color:var(--ink);background:var(--point);
+    border:2.5px solid var(--ink);border-radius:14px;box-shadow:var(--hard-sm);padding:13px 10px;
+    min-height:48px;letter-spacing:-.01em;transition:transform .1s,box-shadow .1s;color:#fff}
+  .btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .btn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+  .btn:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .btn.stop{background:var(--red);animation:pulse 1s infinite}
+  @keyframes pulse{0%{box-shadow:var(--hard-sm)}50%{box-shadow:0 0 0 8px rgba(255,77,77,.2)}100%{box-shadow:var(--hard-sm)}}
+  .linkbtn{display:block;width:100%;margin-top:10px;background:none;border:0;cursor:pointer;
+    font-family:inherit;font-size:13.5px;color:var(--muted);text-decoration:underline;min-height:44px;font-weight:700}
+  .linkbtn:focus-visible{outline:2px solid var(--point);outline-offset:2px;border-radius:4px}
 
-  .hero-art { display: block; margin: 6px auto 0; height: 96px; max-width: 92%; object-fit: contain; border-radius: 14px; }
-  @media (max-width: 640px) { .hero-art { height: auto; max-height: 80px; } }
+  /* sim mode */
+  #simCard{display:none}
+  #simCard h2{font-size:18px;font-weight:900;margin-bottom:4px;letter-spacing:-.02em}
+  #simCard .desc{font-size:14px;color:var(--muted);margin-bottom:12px;font-weight:600}
+  .simstage{
+    position:relative;border:3px solid var(--ink);border-radius:var(--r-sm);
+    overflow:hidden;background:#0F1A12;box-shadow:var(--hard);
+  }
+  .simstage::before{content:'';position:absolute;top:8px;left:8px;width:24px;height:24px;border-top:3px solid var(--point);border-left:3px solid var(--point);border-radius:3px 0 0 0;z-index:2;pointer-events:none}
+  .simstage::after{content:'';position:absolute;top:8px;right:8px;width:24px;height:24px;border-top:3px solid var(--point);border-right:3px solid var(--point);border-radius:0 3px 0 0;z-index:2;pointer-events:none}
+  .simstage svg{display:block;width:100%;height:auto}
+  .simbox{opacity:0}
+  .simbox.show{opacity:1;animation:boxin .35s ease-out}
+  @keyframes boxin{0%{opacity:0;transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+  .simreason{
+    background:var(--amber-soft);border:2.5px solid var(--ink);border-radius:var(--r-sm);
+    padding:8px 14px;font-size:14px;font-weight:700;margin-bottom:12px;box-shadow:var(--hard-sm);
+  }
+
+  /* obs */
+  .obs{display:flex;gap:12px;align-items:flex-start;background:var(--ink);color:var(--paper);
+    border-radius:var(--r);padding:18px 20px;font-size:14px;font-weight:600;margin:26px 0;line-height:1.55}
+  .obs svg{flex-shrink:0;margin-top:2px}
+  .obs b{color:var(--amber);font-weight:900}
+
+  footer{text-align:center;margin-top:34px}
+  footer a{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font-weight:900;color:var(--ink);
+    background:var(--surface);border:2.5px solid var(--ink);border-radius:999px;padding:11px 22px;
+    box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
+  footer a:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  footer a:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+
+  @media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
-<header>
-  <span class="chip">AI 탐험대 · 23 객체 탐지</span>
-  <h1>📦 찰칵! 네모 박스 탐험</h1>
-  <p class="sub">AI가 물건을 찾아 <b>위치를 네모 박스로</b> 짚어 줘요. 책상 위에 컵, 책, 가위 같은 물건을 1~3개 놓아 봐요.</p>
-  <img class="hero-art" src="../assets/art/23_desk.png" alt="" aria-hidden="true">
-</header>
-<p class="safe">🛡️ 화면은 저장되지 않아요. 사람 얼굴은 비추지 않아요 — 책상 위 물건만 비춰요.</p>
 
-<!-- 실시간 카메라 체험 -->
-<div class="card" id="liveCard">
-  <div class="stage" id="stage">
-    <span class="vf-br" aria-hidden="true"></span>
-    <span class="vf-bl" aria-hidden="true"></span>
-    <video id="video" autoplay muted playsinline></video>
-    <canvas id="canvas"></canvas>
-    <div class="counter" id="counter" role="status" aria-live="polite" aria-label="발견한 사물 수: 0">발견한 사물<b>0</b></div>
-    <div class="toast" id="toast">🙅 얼굴은 비추지 않기로 해요! 카메라를 물건 쪽으로 돌려요.</div>
-    <div class="overlay-msg" id="overlayMsg">📷 아래 버튼을 누르면 카메라가 켜져요</div>
-  </div>
-  <p class="caption">🔢 엔트리 사물 인식처럼 <b>한 번에 3개까지만</b> 찾아요.</p>
-  <p class="stateline" id="stateline">준비되면 시작 버튼을 눌러요</p>
-  <div class="btnrow">
-    <button class="btn" id="btnStart">📷 카메라 켜고 찾기 시작</button>
-  </div>
-  <button class="linkbtn" id="btnSim">카메라가 없나요? 그림으로 연습하기</button>
-</div>
+  <nav class="nav">
+    <a class="back" href="../">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      전체 목록
+    </a>
+    <span class="lesson-tag">23강 · 객체 탐지</span>
+  </nav>
 
-<!-- 연습 모드(폴백): 인라인 SVG 책상 장면 -->
-<div class="card" id="simCard">
-  <p class="simreason" id="simReason" style="display:none"></p>
-  <h2>🖼️ 연습 모드 — 그림에서 찾아 봐요</h2>
-  <p class="desc">카메라 대신 그림 속 물건을 AI가 찾는 모습을 보여 줄게요. 진짜 객체 탐지도 이렇게 <b>네모 박스</b>로 위치를 짚어요.</p>
-  <div class="simstage">
-    <span class="vf-br" aria-hidden="true"></span>
-    <span class="vf-bl" aria-hidden="true"></span>
-    <svg viewBox="0 0 640 400" role="img" aria-label="컵, 책, 가방이 놓인 책상 그림">
-      <rect width="640" height="400" fill="#EBF3FF"/>
-      <rect y="258" width="640" height="142" fill="#D9B38C"/>
-      <rect y="258" width="640" height="10" fill="#C49A6C"/>
-      <!-- 컵 -->
-      <ellipse cx="120" cy="262" rx="58" ry="9" fill="rgba(0,0,0,.12)"/>
-      <path d="M78 192 h84 v56 a14 14 0 0 1 -14 14 h-56 a14 14 0 0 1 -14 -14 z" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="3"/>
-      <rect x="78" y="212" width="84" height="16" fill="#34D399" opacity=".85"/>
-      <path d="M162 205 a24 24 0 0 1 0 44" fill="none" stroke="#CBD5E1" stroke-width="9"/>
-      <!-- 책 -->
-      <ellipse cx="330" cy="266" rx="95" ry="9" fill="rgba(0,0,0,.12)"/>
-      <rect x="248" y="212" width="164" height="40" rx="5" fill="#F87171"/>
-      <rect x="252" y="248" width="156" height="12" rx="3" fill="#FFF7ED"/>
-      <rect x="266" y="226" width="86" height="9" rx="4" fill="#FFFFFF" opacity=".9"/>
-      <!-- 가방 -->
-      <ellipse cx="512" cy="272" rx="80" ry="10" fill="rgba(0,0,0,.14)"/>
-      <rect x="446" y="128" width="132" height="146" rx="26" fill="#FBBF24"/>
-      <path d="M480 128 v-16 a32 32 0 0 1 64 0 v16" fill="none" stroke="#B45309" stroke-width="9"/>
-      <rect x="470" y="202" width="84" height="58" rx="14" fill="#F59E0B"/>
-      <rect x="446" y="168" width="132" height="14" fill="#F59E0B" opacity=".7"/>
-      <!-- AI 정답 박스(처음엔 숨김) -->
-      <g id="simBoxes">
-        <g class="simbox">
-          <rect x="62" y="176" width="128" height="98" fill="none" stroke="#34D399" stroke-width="4" rx="6"/>
-          <rect x="62" y="150" width="86" height="26" rx="6" fill="#34D399"/>
-          <text x="70" y="169" font-size="17" font-weight="700" fill="#fff">컵 91%</text>
+  <header>
+    <span class="kicker">AI의 눈으로 찾는 물건</span>
+    <h1>찰칵! 네모 박스 탐험</h1>
+    <p class="lead">AI가 물건을 찾아 <b>위치를 네모 박스로</b> 짚어 줘요. 책상 위에 컵, 책, 가위 같은 물건을 1~3개 놓아 봐요.</p>
+    <img class="hero-art" src="../assets/art/23_desk.png" alt="" aria-hidden="true">
+  </header>
+
+  <div class="safe">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6l-8-4Z" fill="var(--amber)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/></svg>
+    <span>화면은 저장되지 않아요. 사람 얼굴은 비추지 않아요 — 책상 위 물건만 비춰요.</span>
+  </div>
+
+  <!-- 실시간 카메라 체험 -->
+  <div class="card" id="liveCard">
+    <div class="stage" id="stage">
+      <span class="vf-br" aria-hidden="true"></span>
+      <span class="vf-bl" aria-hidden="true"></span>
+      <video id="video" autoplay muted playsinline></video>
+      <canvas id="canvas"></canvas>
+      <div class="counter" id="counter" role="status" aria-live="polite" aria-label="발견한 사물 수: 0">발견한 사물<b>0</b></div>
+      <div class="toast" id="toast">얼굴은 비추지 않기로 해요! 카메라를 물건 쪽으로 돌려요.</div>
+      <div class="overlay-msg" id="overlayMsg">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="3" stroke="var(--point)" stroke-width="2.2"/><circle cx="12" cy="12" r="3.5" stroke="var(--point)" stroke-width="2.2"/><path d="M9 5V3M15 5V3" stroke="var(--point)" stroke-width="2" stroke-linecap="round"/></svg>
+        아래 버튼을 누르면 카메라가 켜져요
+      </div>
+    </div>
+    <p class="caption">엔트리 사물 인식처럼 <b>한 번에 3개까지만</b> 찾아요.</p>
+    <p class="stateline" id="stateline">준비되면 시작 버튼을 눌러요</p>
+    <div class="btnrow">
+      <button class="btn" id="btnStart">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="3" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="2.2"/></svg>
+        카메라 켜고 찾기 시작
+      </button>
+    </div>
+    <button class="linkbtn" id="btnSim">카메라가 없나요? 그림으로 연습하기</button>
+  </div>
+
+  <!-- 연습 모드(폴백): 인라인 SVG 책상 장면 -->
+  <div class="card" id="simCard" style="margin-top:16px">
+    <p class="simreason" id="simReason" style="display:none"></p>
+    <h2>연습 모드 — 그림에서 찾아 봐요</h2>
+    <p class="desc">카메라 대신 그림 속 물건을 AI가 찾는 모습을 보여 줄게요. 진짜 객체 탐지도 이렇게 <b>네모 박스</b>로 위치를 짚어요.</p>
+    <div class="simstage">
+      <span class="vf-br" aria-hidden="true"></span>
+      <span class="vf-bl" aria-hidden="true"></span>
+      <svg viewBox="0 0 640 400" role="img" aria-label="컵, 책, 가방이 놓인 책상 그림">
+        <rect width="640" height="400" fill="#0F1A12"/>
+        <rect y="258" width="640" height="142" fill="#1A2E1A"/>
+        <rect y="258" width="640" height="6" fill="#12B76A" opacity=".4"/>
+        <!-- 컵 -->
+        <ellipse cx="120" cy="262" rx="58" ry="9" fill="rgba(0,0,0,.25)"/>
+        <path d="M78 192 h84 v56 a14 14 0 0 1 -14 14 h-56 a14 14 0 0 1 -14 -14 z" fill="#FFFFFF" stroke="#D6F5E6" stroke-width="2"/>
+        <rect x="78" y="212" width="84" height="16" fill="#12B76A" opacity=".85"/>
+        <path d="M162 205 a24 24 0 0 1 0 44" fill="none" stroke="#D6F5E6" stroke-width="9"/>
+        <!-- 책 -->
+        <ellipse cx="330" cy="266" rx="95" ry="9" fill="rgba(0,0,0,.25)"/>
+        <rect x="248" y="212" width="164" height="40" rx="5" fill="#FF5A5F"/>
+        <rect x="252" y="248" width="156" height="12" rx="3" fill="#FFF7ED"/>
+        <rect x="266" y="226" width="86" height="9" rx="4" fill="#FFFFFF" opacity=".9"/>
+        <!-- 가방 -->
+        <ellipse cx="512" cy="272" rx="80" ry="10" fill="rgba(0,0,0,.28)"/>
+        <rect x="446" y="128" width="132" height="146" rx="26" fill="#FFB800"/>
+        <path d="M480 128 v-16 a32 32 0 0 1 64 0 v16" fill="none" stroke="#8A5A00" stroke-width="9"/>
+        <rect x="470" y="202" width="84" height="58" rx="14" fill="#F59E0B"/>
+        <rect x="446" y="168" width="132" height="14" fill="#F59E0B" opacity=".7"/>
+        <!-- AI 정답 박스(처음엔 숨김) -->
+        <g id="simBoxes">
+          <g class="simbox">
+            <rect x="62" y="176" width="128" height="98" fill="none" stroke="#12B76A" stroke-width="3" rx="4"/>
+            <rect x="62" y="150" width="86" height="24" rx="4" fill="#12B76A"/>
+            <text x="70" y="167" font-size="15" font-weight="700" fill="#fff" font-family="'Courier New',Consolas,monospace">컵 91%</text>
+          </g>
+          <g class="simbox">
+            <rect x="238" y="202" width="184" height="66" fill="none" stroke="#12B76A" stroke-width="3" rx="4"/>
+            <rect x="238" y="176" width="86" height="24" rx="4" fill="#12B76A"/>
+            <text x="246" y="193" font-size="15" font-weight="700" fill="#fff" font-family="'Courier New',Consolas,monospace">책 87%</text>
+          </g>
+          <g class="simbox">
+            <rect x="436" y="102" width="152" height="176" fill="none" stroke="#12B76A" stroke-width="3" rx="4"/>
+            <rect x="436" y="76" width="100" height="24" rx="4" fill="#12B76A"/>
+            <text x="444" y="93" font-size="15" font-weight="700" fill="#fff" font-family="'Courier New',Consolas,monospace">가방 84%</text>
+          </g>
         </g>
-        <g class="simbox">
-          <rect x="238" y="202" width="184" height="66" fill="none" stroke="#34D399" stroke-width="4" rx="6"/>
-          <rect x="238" y="176" width="86" height="26" rx="6" fill="#34D399"/>
-          <text x="246" y="195" font-size="17" font-weight="700" fill="#fff">책 87%</text>
-        </g>
-        <g class="simbox">
-          <rect x="436" y="102" width="152" height="176" fill="none" stroke="#34D399" stroke-width="4" rx="6"/>
-          <rect x="436" y="76" width="100" height="26" rx="6" fill="#34D399"/>
-          <text x="444" y="95" font-size="17" font-weight="700" fill="#fff">가방 84%</text>
-        </g>
-      </g>
-    </svg>
-    <div class="counter" id="simCounter" role="status" aria-live="polite" aria-label="발견한 사물 수: 0">발견한 사물<b>0</b></div>
+      </svg>
+      <div class="counter" id="simCounter" role="status" aria-live="polite" aria-label="발견한 사물 수: 0">발견한 사물<b>0</b></div>
+    </div>
+    <p class="stateline" id="simState">버튼을 누르면 AI가 하나씩 찾아요</p>
+    <div class="btnrow">
+      <button class="btn" id="btnFind">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2.4"/><path d="m16 16 5 5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+        AI가 찾기
+      </button>
+    </div>
   </div>
-  <p class="stateline" id="simState">버튼을 누르면 AI가 하나씩 찾아요</p>
-  <div class="btnrow">
-    <button class="btn" id="btnFind">🔍 AI가 찾기</button>
+
+  <div class="obs">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--amber)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/></svg>
+    <span><b>관찰 포인트</b> — 물건을 <b>멀리</b> 두거나, <b>손으로 가리거나</b>, <b>불을 어둡게</b> 하면 박스가 사라지나요? AI가 언제 잘 못 찾는지 관찰해요.</span>
   </div>
-</div>
 
-<div class="obs">
-  🔍 <b>관찰 포인트</b> — 물건을 <b>멀리</b> 두거나, <b>손으로 가리거나</b>, <b>불을 어둡게</b> 하면 박스가 사라지나요? AI가 언제 잘 못 찾는지 관찰해요.
-</div>
+  <footer><a href="../">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    AI 탐험대 체험 전체 목록
+  </a></footer>
 
-<footer><a href="../">← AI 탐험대 체험 전체 목록</a></footer>
 </div>
 
 <script type="module">
@@ -224,7 +310,8 @@ $('btnStart').onclick = async function () {
   }
   overlay('');
   running = true; lastVideoTime = -1; lastRun = 0; lastCount = -1;
-  this.textContent = '⏹ 멈추기'; this.classList.add('stop');
+  this.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" stroke="currentColor" stroke-width="2.4"/></svg> 멈추기';
+  this.classList.add('stop');
   $('stateline').textContent = '물건을 비춰 봐요! 박스가 따라와요';
   raf = requestAnimationFrame(loop);
 };
@@ -234,10 +321,10 @@ function stopCam(msg) {
   releaseStream();
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   setCount(0);
-  $('btnStart').textContent = '📷 카메라 켜고 찾기 시작';
+  $('btnStart').innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="3" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="3.5" stroke="currentColor" stroke-width="2.2"/></svg> 카메라 켜고 찾기 시작';
   $('btnStart').classList.remove('stop');
   $('stateline').textContent = msg || '준비되면 시작 버튼을 눌러요';
-  overlay('📷 아래 버튼을 누르면 카메라가 켜져요');
+  overlay('<svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="3" stroke="var(--point)" stroke-width="2.2"/><circle cx="12" cy="12" r="3.5" stroke="var(--point)" stroke-width="2.2"/><path d="M9 5V3M15 5V3" stroke="var(--point)" stroke-width="2" stroke-linecap="round"/></svg> 아래 버튼을 누르면 카메라가 켜져요');
 }
 function releaseStream() {
   if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
@@ -304,7 +391,7 @@ function render(detections) {
 function drawBox(f) {
   const { originX: x, originY: y, width: w, height: h } = f.box;
   // 탐지 박스
-  ctx.strokeStyle = '#34D399'; ctx.lineWidth = 3;
+  ctx.strokeStyle = '#12B76A'; ctx.lineWidth = 3;
   ctx.strokeRect(x, y, w, h);
   // 네 모서리 브래킷 강조
   const bLen = Math.min(18, w * 0.18, h * 0.18);
@@ -319,8 +406,8 @@ function drawBox(f) {
   ctx.font = 'bold 14px "Courier New",Consolas,monospace';
   const tw = ctx.measureText(label).width + 12;
   const ly = Math.max(y - 22, 0);
-  ctx.fillStyle = 'rgba(15,23,42,0.82)'; ctx.fillRect(x, ly, tw, 22);
-  ctx.fillStyle = '#34D399'; ctx.fillText(label, x + 6, ly + 16);
+  ctx.fillStyle = 'rgba(15,26,18,0.88)'; ctx.fillRect(x, ly, tw, 22);
+  ctx.fillStyle = '#12B76A'; ctx.fillText(label, x + 6, ly + 16);
 }
 
 function setCount(n) {
@@ -345,7 +432,7 @@ function toSim(reason) {
   stopCam();
   $('liveCard').style.display = 'none';
   $('simCard').style.display = 'block';
-  if (reason) { const r = $('simReason'); r.textContent = '⚠️ ' + reason; r.style.display = 'block'; }
+  if (reason) { const r = $('simReason'); r.textContent = reason; r.style.display = 'block'; }
 }
 $('btnSim').onclick = () => toSim('');
 if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
@@ -369,7 +456,7 @@ $('btnFind').onclick = function () {
       if (i === boxes.length - 1) {
         simPlaying = false;
         $('simState').textContent = '3개 모두 찾았어요! 진짜 AI도 이렇게 위치까지 짚어요';
-        $('btnFind').textContent = '🔁 다시 찾기';
+        $('btnFind').innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M1 4v6h6M23 20v-6h-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 0 1 3.51 15" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg> 다시 찾기';
       }
     }, 600 * (i + 1));
   });

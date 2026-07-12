@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>창의성 조절 체험 · AI 탐험대 19</title>
+<style>
+  :root{
+    --ink:#141414; --paper:#FBF7EC; --surface:#FFFFFF;
+    --point:#7C3AED; --point-soft:#EDE7FF;
+    --amber:#FFB800; --green:#12B76A; --muted:#6B6B6B;
+    --r:20px; --r-sm:13px;
+    --hard:5px 5px 0 var(--ink); --hard-sm:3px 3px 0 var(--ink);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--paper);color:var(--ink);
+    font-size:17px;line-height:1.55;background-image:radial-gradient(var(--ink) .5px,transparent .5px);
+    background-size:22px 22px;background-position:-11px -11px}
+  .wrap{max-width:780px;margin:0 auto;padding:18px 18px 64px}
+
+  .nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+  .back{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink);font-weight:800;font-size:14px;
+    background:var(--surface);border:2.5px solid var(--ink);border-radius:999px;padding:8px 16px;box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
+  .back:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .back:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .lesson-tag{font-weight:900;font-size:15px;background:var(--point);color:#fff;border:2.5px solid var(--ink);border-radius:999px;padding:6px 16px;box-shadow:var(--hard-sm)}
+
+  .kicker{display:inline-block;font-weight:900;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
+    background:var(--amber);border:2.5px solid var(--ink);border-radius:8px;padding:4px 12px;box-shadow:var(--hard-sm);margin-bottom:16px}
+  h1{font-size:clamp(28px,6.5vw,46px);font-weight:900;letter-spacing:-.035em;line-height:1.05}
+  h1 .u{ -webkit-text-decoration:6px underline var(--point);text-decoration:6px underline var(--point);text-underline-offset:5px}
+  .lead{font-size:16px;color:var(--muted);margin-top:13px;font-weight:600;max-width:600px}
+  .lead b{color:var(--ink);font-weight:800}
+
+  .safe{display:flex;align-items:center;gap:10px;background:var(--surface);border:2.5px solid var(--ink);border-radius:var(--r-sm);
+    box-shadow:var(--hard-sm);padding:11px 16px;font-size:13.5px;font-weight:600;margin:22px 0 26px}
+  .safe svg{flex-shrink:0}
+
+  /* 슬라이더 패널 */
+  .dial{background:var(--ink);color:var(--paper);border-radius:var(--r);padding:22px 24px;box-shadow:var(--hard);margin-bottom:22px}
+  .dial .row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px}
+  .dial h2{font-size:18px;font-weight:900;letter-spacing:-.01em}
+  .dial .badge{font-family:'Courier New',monospace;font-weight:900;font-size:15px;background:var(--point);color:#fff;
+    border-radius:8px;padding:3px 12px}
+  .dial .ends{display:flex;justify-content:space-between;font-size:12px;font-weight:800;color:#C9C4B8;margin-top:8px}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:14px;border-radius:999px;
+    background:linear-gradient(90deg,#8FA0FF,var(--point) 55%,#FF7AB0);border:2.5px solid var(--paper);outline:none;margin-top:6px}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:34px;height:34px;border-radius:50%;background:var(--amber);
+    border:3px solid var(--ink);box-shadow:2px 2px 0 rgba(0,0,0,.4);cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:34px;height:34px;border-radius:50%;background:var(--amber);border:3px solid var(--ink);cursor:pointer}
+  input[type=range]:focus-visible{outline:3px solid var(--amber);outline-offset:4px}
+  .modecap{text-align:center;font-size:14px;font-weight:800;margin-top:14px;min-height:22px}
+
+  /* 질문 탭 */
+  .qtabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .qtab{cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:800;background:var(--surface);color:var(--ink);
+    border:2.5px solid var(--ink);border-radius:999px;padding:8px 15px;box-shadow:var(--hard-sm);transition:transform .1s}
+  .qtab[aria-pressed=true]{background:var(--point);color:#fff}
+  .qtab:active{transform:translate(2px,2px);box-shadow:none}
+  .qtab:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+
+  .qcard{background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:22px;margin-bottom:22px}
+  .qlabel{font-size:11.5px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .qtext{font-size:19px;font-weight:900;letter-spacing:-.02em;margin:4px 0 16px;line-height:1.35}
+  .answer{border:2.5px dashed var(--ink);border-radius:var(--r-sm);background:var(--point-soft);padding:16px;min-height:96px;
+    font-size:16px;font-weight:600;line-height:1.6;transition:background .25s}
+  .answer .cursor{display:inline-block;width:9px;height:19px;background:var(--ink);vertical-align:-3px;margin-left:2px;animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .atag{display:inline-block;font-size:11.5px;font-weight:900;border:2px solid var(--ink);border-radius:7px;padding:1px 9px;margin-bottom:10px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-family:inherit;font-size:15px;font-weight:900;
+    color:var(--ink);background:var(--amber);border:2.5px solid var(--ink);border-radius:13px;box-shadow:var(--hard-sm);padding:12px 20px;
+    margin-top:16px;transition:transform .1s,box-shadow .1s}
+  .btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .btn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+  .btn:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+
+  .obs{display:flex;gap:12px;align-items:flex-start;background:var(--ink);color:var(--paper);border-radius:var(--r);
+    padding:18px 20px;font-size:14px;font-weight:600;margin:8px 0 26px;line-height:1.55}
+  .obs svg{flex-shrink:0;margin-top:2px}
+  .obs b{color:var(--amber);font-weight:900}
+
+  .cmp-head{display:flex;align-items:center;gap:10px;margin:6px 0 14px}
+  .cmp-head h2{font-size:20px;font-weight:900;letter-spacing:-.02em}
+  .cmp-head .bar{height:3px;background:var(--ink);flex:1;border-radius:2px}
+  table{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;background:var(--surface);border:3px solid var(--ink);
+    border-radius:var(--r);overflow:hidden;box-shadow:var(--hard);font-weight:600}
+  thead th{background:var(--ink);color:var(--paper);font-weight:900;padding:12px}
+  tbody th{background:var(--paper);font-weight:800;font-size:13px;text-align:left;padding:12px 14px;width:26%;border-top:2px solid var(--ink);border-right:2px solid var(--ink)}
+  td{padding:12px 14px;text-align:center;border-top:2px solid var(--ink)}
+  td.lo{background:#fff}
+  td.hi{background:var(--point-soft);font-weight:800}
+  tr td:first-of-type{border-right:2px solid var(--ink)}
+
+  footer{text-align:center;margin-top:34px}
+  footer a{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font-weight:900;color:var(--ink);
+    background:var(--surface);border:2.5px solid var(--ink);border-radius:999px;padding:11px 22px;box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
+  footer a:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  footer a:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="nav">
+    <a class="back" href="../">← 전체 목록</a>
+    <span class="lesson-tag">19강 · 창의성 조절</span>
+  </nav>
+
+  <header>
+    <span class="kicker">같은 질문, 다른 온도</span>
+    <h1>창의성을 <span class="u">조절</span>하면<br>AI의 답이 달라져요</h1>
+    <p class="lead">같은 질문이라도 창의성(온도)을 <b>낮추면 안정적</b>, <b>높이면 새롭고 엉뚱</b>하게 답해요. 슬라이더를 움직이고 <b>답 받기</b>를 눌러 직접 비교해 봐요. <br><span style="font-size:13px">※ 미리 준비한 예시 답변으로 원리를 체험해요. 진짜 조절은 구글 AI 스튜디오에서 해봐요.</span></p>
+  </header>
+
+  <div class="safe">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6l-8-4Z" fill="var(--amber)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/></svg>
+    <span>개인정보는 입력하지 않아요. 이 체험은 미리 준비한 예시로만 동작하고 아무것도 저장하지 않아요.</span>
+  </div>
+
+  <div class="dial">
+    <div class="row"><h2>창의성(온도) 다이얼</h2><span class="badge" id="tval">0.7</span></div>
+    <input type="range" id="temp" min="0" max="100" value="45" aria-label="창의성 온도 조절" aria-describedby="modecap">
+    <div class="ends"><span>낮음 · 안정적</span><span>높음 · 새로움</span></div>
+    <p class="modecap" id="modecap">지금은 <b>보통</b> — 자연스럽고 살짝 색다른 답이 나와요</p>
+  </div>
+
+  <div class="qtabs" id="qtabs" role="group" aria-label="질문 고르기"></div>
+
+  <div class="qcard">
+    <div class="qlabel">질문 (프롬프트)</div>
+    <p class="qtext" id="qtext">—</p>
+    <span class="atag" id="atag" style="display:none"></span>
+    <div class="answer" id="answer"><span style="color:var(--muted);font-weight:600">슬라이더를 정하고 <b>답 받기</b>를 눌러요</span></div>
+    <button class="btn" id="ask">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h11M11 7l5 5-5 5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="20" cy="12" r="2" fill="currentColor"/></svg>
+      답 받기</button>
+  </div>
+
+  <div class="obs">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--amber)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/></svg>
+    <span><b>발견해 봐요</b> — 같은 창의성이어도 <b>답 받기</b>를 여러 번 누르면 조금씩 달라져요. 낮음은 매번 비슷하고, 높음은 매번 더 달라져요. 정확한 안내문은 낮게, 재밌는 이야기는 높게가 좋아요.</span>
+  </div>
+
+  <div class="cmp-head"><h2>한눈에 비교</h2><span class="bar" aria-hidden="true"></span></div>
+  <table>
+    <thead><tr><th>구분</th><th>낮은 창의성</th><th>높은 창의성</th></tr></thead>
+    <tbody>
+      <tr><th>말을 고르는 폭</th><td class="lo">익숙한 말 위주</td><td class="hi">덜 흔한 말까지 시도</td></tr>
+      <tr><th>답의 느낌</th><td class="lo">안정적·비슷함</td><td class="hi">새로움·엉뚱할 수도</td></tr>
+      <tr><th>어울리는 곳</th><td class="lo">안내문·설명</td><td class="hi">동화·아이디어</td></tr>
+    </tbody>
+  </table>
+
+  <footer><a href="../">← AI 탐험대 체험 전체 목록</a></footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+// 질문별로 미리 준비한 가상 답변 풀 (낮음/보통/높음). 같은 온도에서도 여러 개 중 랜덤 → '매번 조금 달라짐' 체험
+const QUESTIONS=[
+  { q:'“말하는 연필”이 처음 한 말을 한 문장으로 써 줘.',
+    low:['“안녕, 오늘도 공부할 준비 됐니?”','“이제 숙제를 시작해 볼까?”','“연필을 잡아 줘서 고마워.”'],
+    mid:['“드디어 나랑 이야기하게 됐구나!”','“오늘은 무슨 재미난 글을 써 볼까?”','“나를 깎지 말고 이야기부터 하자!”'],
+    high:['“이봐, 드디어 먼지 구덩이에서 나를 꺼내 줬구나!”','“나는 달빛으로 글씨를 쓰는 연필이야!”','“어젯밤 지우개랑 우주여행을 다녀왔어.”'] },
+  { q:'가을 하늘을 한 문장으로 표현해 줘.',
+    low:['맑고 파란 가을 하늘이 높게 펼쳐져 있다.','구름이 적고 파란 하늘이 시원하다.','높고 푸른 하늘에 바람이 선선하다.'],
+    mid:['파란 하늘에 얇은 구름이 붓질처럼 지나간다.','높은 하늘이 유리처럼 맑고 서늘하다.','바람을 따라 구름이 천천히 흘러간다.'],
+    high:['하늘이 파란 물감을 쏟은 듯 눈부시게 넘실댄다.','구름이 솜사탕 배를 타고 산 너머로 항해한다.','가을 하늘이 커다란 파란 사탕처럼 반짝인다.'] },
+  { q:'학교 도서관 이용 안내문을 한 문장으로 써 줘.',
+    low:['도서관은 오전 9시부터 오후 5시까지 이용할 수 있습니다.','책은 한 번에 3권까지, 2주 동안 빌릴 수 있습니다.','도서관에서는 조용히 하고 음식을 먹지 않습니다.'],
+    mid:['도서관은 9시부터 5시까지 열며, 책은 3권까지 2주간 빌릴 수 있습니다.','조용한 독서를 위해 음식과 큰 소리는 삼가 주세요.','반납일을 지키면 다음 친구도 책을 볼 수 있어요.'],
+    high:['지식의 숲으로 떠나는 문이 9시에 활짝 열립니다!','책 세 권을 품에 안고 2주간의 모험을 떠나 보세요!','속삭임조차 잠드는 이곳, 우리만의 비밀 서재입니다.'] }
+];
+let qi=0;
+
+// 탭 생성
+QUESTIONS.forEach((item,i)=>{
+  const b=document.createElement('button');
+  b.className='qtab'; b.textContent='질문 '+(i+1);
+  b.setAttribute('aria-pressed', i===0?'true':'false');
+  b.onclick=()=>{ qi=i; syncTabs(); showQ(); };
+  $('qtabs').appendChild(b);
+});
+function syncTabs(){ [...$('qtabs').children].forEach((b,i)=>b.setAttribute('aria-pressed', i===qi?'true':'false')); }
+function showQ(){
+  $('qtext').textContent=QUESTIONS[qi].q;
+  $('atag').style.display='none';
+  $('answer').innerHTML='<span style="color:var(--muted);font-weight:600">슬라이더를 정하고 <b>답 받기</b>를 눌러요</span>';
+}
+
+// 온도 라벨
+function band(){ const v=+$('temp').value; return v<34?'low':v<67?'mid':'high'; }
+function updateDial(){
+  const v=+$('temp').value;
+  $('tval').textContent=(v/100*1.9+0.1).toFixed(1);
+  const b=band();
+  $('modecap').innerHTML = b==='low' ? '지금은 <b>낮음</b> — 안정적이고 비슷한 답이 나와요'
+    : b==='mid' ? '지금은 <b>보통</b> — 자연스럽고 살짝 색다른 답이 나와요'
+    : '지금은 <b>높음</b> — 새롭지만 엉뚱할 수도 있는 답이 나와요';
+}
+$('temp').oninput=updateDial;
+
+// 답 받기 (타이핑 연출 + 풀에서 랜덤)
+let typing=null;
+$('ask').onclick=function(){
+  clearInterval(typing);
+  const b=band(), pool=QUESTIONS[qi][b];
+  const text=pool[Math.floor(Math.random()*pool.length)];
+  const tag=$('atag');
+  tag.style.display='inline-block';
+  if(b==='low'){ tag.textContent='낮은 창의성'; tag.style.background='#fff'; }
+  else if(b==='mid'){ tag.textContent='보통 창의성'; tag.style.background='var(--point-soft)'; }
+  else{ tag.textContent='높은 창의성'; tag.style.background='var(--amber)'; }
+  const ans=$('answer'); ans.textContent='';
+  let i=0;
+  const cur=document.createElement('span'); cur.className='cursor';
+  ans.appendChild(cur);
+  typing=setInterval(()=>{
+    if(i>=text.length){ clearInterval(typing); cur.remove(); return; }
+    cur.insertAdjacentText('beforebegin', text[i++]);
+  }, 32);
+};
+
+// reduced-motion: 타이핑 대신 즉시 표시
+if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  $('ask').onclick=function(){
+    const b=band(), pool=QUESTIONS[qi][b];
+    const text=pool[Math.floor(Math.random()*pool.length)];
+    const tag=$('atag'); tag.style.display='inline-block';
+    tag.textContent=(b==='low'?'낮은':b==='mid'?'보통':'높은')+' 창의성';
+    tag.style.background=(b==='low'?'#fff':b==='mid'?'var(--point-soft)':'var(--amber)');
+    $('answer').textContent=text;
+  };
+}
+
+updateDial(); showQ();
+</script>
+</body>
+</html>

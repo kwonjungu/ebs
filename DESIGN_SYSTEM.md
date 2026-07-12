@@ -1,54 +1,42 @@
-# EBS AI 탐험대 체험 웹 — 디자인 시스템 (레퍼런스: 25강 라이선스 앱)
+# EBS AI 탐험대 체험 웹 — 디자인 언어 v2 (뉴트로 팝 / MZ)
 
-모든 강(/15 ~ /25) 페이지는 **단일 index.html**(외부 프레임워크 없음, CDN 라이브러리만 허용)로 만들고 아래 시스템을 따른다.
+기준 구현: **/15/index.html** — 모든 강·허브가 이 디자인 언어를 따른다.
 
-## 1. 컬러 토큰 (:root — 25강 앱과 동일하게 복사)
+## 핵심 원칙 (AI 템플릿 룩 금지)
+- **이모지를 아이콘으로 쓰지 않는다.** 아이콘·그래픽은 인라인 SVG(먹색 아웃라인 스타일)로 직접 그린다. 본문 안 강조용 이모지 1~2개는 허용하되 UI 요소(버튼·헤더·배지)엔 금지.
+- **색을 절제한다.** 크림 베이스 + 먹색(잉크) + 강별 포인트 1색. 파스텔 다색 남발 금지. 보조색(성공 그린·경고 레드·강조 앰버)은 상태 표현에만.
+- **둥근 그림자 카드 반복 금지.** 모든 면은 먹색 아웃라인 + 하드 오프셋 섀도우.
+
+## 토큰 (:root, 전 페이지 공통)
 ```css
-:root {
-  --sky: #5B9CF6;      --sky-light: #EBF3FF;
-  --mint: #34D399;     --mint-light: #D1FAE5;
-  --amber: #FBBF24;    --amber-light: #FEF3C7;
-  --coral: #F87171;    --coral-light: #FEE2E2;
-  --purple: #A78BFA;   --purple-light: #EDE9FE;
-  --bg: #F0F7FF;  --card: #FFFFFF;
-  --text: #1E293B;  --text-muted: #64748B;  --border: #E2E8F0;
-  --radius: 20px;  --radius-sm: 12px;
-  --shadow: 0 4px 20px rgba(91,156,246,0.12);
-  --shadow-lg: 0 8px 40px rgba(91,156,246,0.2);
-}
+--ink:#141414; --paper:#FBF7EC; --surface:#FFFFFF;
+--amber:#FFB800; --amber-soft:#FFF0C7;
+--green:#12B76A; --red:#FF4D4D; --muted:#6B6B6B;
+--r:20px; --r-sm:13px;
+--hard:5px 5px 0 var(--ink); --hard-sm:3px 3px 0 var(--ink);
+/* 강별 포인트(--point, --point-soft)만 교체 */
 ```
-- 강별 포인트 컬러 1개를 정해 헤더·주요 버튼에 사용 (15강=sky, 16강=purple, 17강=mint, 18강=coral, 19강=purple, 20강=amber, 21강=sky, 22강=coral, 23강=mint, 24강=amber, 25강=기존).
+강별 포인트 컬러(비비드):
+15 코발트 `#3D5AFE`/`#E4E8FF` · 16 퍼플 `#7C3AED`/`#EDE7FF` · 17 그린 `#12B76A`/`#D6F5E6` ·
+18 코랄 `#FF5A5F`/`#FFE3E4` · 20 앰버 `#F59E0B`/`#FFF0C7` · 21 코발트 `#3D5AFE`/`#E4E8FF` ·
+22 코랄 `#FF5A5F`/`#FFE3E4` · 23 그린 `#12B76A`/`#D6F5E6` · 24 앰버 `#F59E0B`/`#FFF0C7` · 허브 코발트.
 
-## 2. 타이포·기본
-- `font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;` body 17px/1.6.
-- `* { box-sizing: border-box; margin:0; padding:0; }`
-- 제목은 짧고 큼직하게, 이모지 1개 허용.
+## 필수 요소 (모든 페이지)
+1. **배경**: `--paper` + 미세 도트 그리드 `radial-gradient(var(--ink) .5px, transparent .5px); background-size:22px 22px`.
+2. **상단 nav**: 왼쪽 `← 전체 목록`(아웃라인 pill), 오른쪽 강 배지(포인트색 pill). 둘 다 hover 시 `translate(-1px,-1px)`+섀도우 커짐, active 시 눌림.
+3. **히어로**: kicker(앰버 아웃라인 라벨, uppercase 트래킹) → H1 `clamp(30px,7vw,52px)` weight 900 자간 -0.035em → lead(muted, 600).
+4. **면(패널·카드·표·박스)**: `border:2.5~3px solid var(--ink)` + `box-shadow:var(--hard)` + radius. 흰/크림/포인트-soft 배경.
+5. **버튼**: 아웃라인 + `--hard-sm`, hover 뜸/active 눌림(`translate(3px,3px);box-shadow:0`). 주버튼 앰버 또는 포인트색. 녹음/진행 중 red `.rec`.
+6. **아이콘**: SVG, `stroke:var(--ink) stroke-width:2~3`, 채움은 포인트/앰버.
+7. **관찰 박스**: 먹색 배경(`--ink`) + 크림 텍스트 반전, 앰버 강조 `b`.
+8. **표**: 먹색 헤더 반전, 셀 먹색 구분선, 포인트-soft 강조열.
+9. **footer**: 아웃라인 pill `← AI 탐험대 체험 전체 목록`.
 
-## 3. 공통 레이아웃 패턴
-- **상단 진행 바(progress-bar)**: sticky, 흰 배경, 단계 칩(①②③④). 25강 앱의 `.progress-bar/.progress-step` 패턴 재사용.
-- **카드(.card)**: 흰 배경, `border-radius: var(--radius)`, `box-shadow: var(--shadow)`, padding 24px, max-width 720px 중앙 정렬.
-- **큰 실행 버튼**: 포인트 컬러 배경, 흰 글씨, radius-sm, :active scale(0.97).
-- **구조 원칙(저자 확정)**: 수업 흐름을 따라가는 코스형이 아니라 **기능 하나를 바로 체험하는 단일 화면 데모**. 진행 바·퀴즈·배지 없음. 구성 = [제목+한 줄 설명] → [체험 위젯(핵심)] → [관찰 포인트 1~2줄] → [안전 문구 한 줄]. 스크롤 1~2화면 이내.
-- 안전 문구는 체크박스 강제 없이 상단/하단 한 줄로.
+## 접근성 (유지)
+- 모든 애니메이션 `@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}`.
+- `:focus-visible{outline:3px solid var(--point);outline-offset:3px}`.
+- 진행바 role=progressbar/meter + aria-valuenow, 상호작용 요소 aria-label, 장식 aria-hidden. 터치 44px+.
 
-## 4. 어투 (하우영 톤)
-- 안내문 "~해요"체, 버튼은 명사형("시작하기", "다시 듣기").
-- 쿠션어·AI 번역투 금지("~을 통해", "다양한" 등).
-- 개인정보 안내 문구 필수: 카메라/마이크를 쓰는 강은 "화면에만 보이고 저장되지 않아요" + "이름·주소 같은 개인정보는 말하지/보여주지 않아요".
-
-## 5. 기술 규칙
-- 서버 없음(GitHub Pages 정적 호스팅). API 키 요구 금지.
-- 허용 CDN: MediaPipe Tasks Vision(jsdelivr), 그 외 금지. 나머지는 바닐라 JS.
-- 카메라·마이크 실패/미지원 시 **반드시 시뮬레이션 모드 폴백** 제공(체험이 끊기지 않게).
-- 모바일(태블릿) 우선: 터치 target 44px 이상, viewport meta 필수.
-- 마지막 단계에서 배지/완료 화면 (25강 앱의 배지 감성).
-
-## 6. 파일 구조
-```
-/            index.html   ← 통합 허브(전 강 목록)
-/15 ~ /24    index.html   ← 강별 체험(단일 파일)
-/25          index.html   ← 기존 라이선스 앱(이동 완료)
-/assets      공용 이미지(기존 배지·마루 등)
-/_설계       강별 설계서 md
-```
-- 각 강 페이지 하단에 「← 전체 목록」(../) 링크.
+## 절대 금지
+- 기능(JS 로직·카메라·마이크·MediaPipe)·안내 문구 의미 변경 금지. id·함수 시그니처 유지.
+- 버튼 라벨을 JS가 textContent로 바꾸는 경우, 그 문자열의 이모지도 함께 제거(SVG 아이콘은 버튼 텍스트 밖에 배치).
