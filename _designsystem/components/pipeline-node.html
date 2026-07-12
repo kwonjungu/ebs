@@ -1,0 +1,218 @@
+<!-- @dsCard group="Components" name="파이프라인 노드" subtitle="단계 진행 시각화" width="580" height="260" -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>파이프라인 노드 — 디자인 시스템 프리뷰</title>
+<style>
+:root {
+  --sky:#5B9CF6;--sky-light:#EBF3FF;
+  --mint:#34D399;--mint-light:#D1FAE5;
+  --amber:#FBBF24;--amber-light:#FEF3C7;
+  --coral:#F87171;--coral-light:#FEE2E2;
+  --purple:#A78BFA;--purple-light:#EDE9FE;
+  --bg:#F0F7FF;--card:#FFFFFF;
+  --text:#1E293B;--text-muted:#64748B;--border:#E2E8F0;
+  --radius:20px;--radius-sm:12px;
+  --shadow:0 4px 20px rgba(91,156,246,.12);
+  --shadow-lg:0 8px 40px rgba(91,156,246,.2);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:var(--bg);color:var(--text);font-size:15px;line-height:1.6;
+  padding:28px 24px 36px;
+}
+
+/* 프리뷰 레이블 */
+.ds-label{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text-muted);margin-bottom:18px;
+}
+.ds-label::before{
+  content:'';display:inline-block;width:8px;height:8px;
+  border-radius:50%;background:var(--sky);
+}
+
+/* 파이프라인 래퍼: 가로 흐름 */
+.pipeline{
+  display:flex;
+  align-items:stretch;
+  gap:0;
+}
+
+/* 개별 노드 + 화살표 쌍 */
+.pipe-step{
+  display:flex;
+  align-items:center;
+  gap:0;
+  flex:1;
+}
+
+/* 노드 카드 */
+.node{
+  flex:1;
+  background:var(--card);
+  border-radius:var(--radius-sm);
+  box-shadow:var(--shadow);
+  padding:14px 14px 12px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  text-align:center;
+  border-top:4px solid var(--node-color,var(--border));
+  position:relative;
+  min-width:0;
+}
+
+/* 번호 원 */
+.num-circle{
+  width:32px;height:32px;
+  border-radius:50%;
+  background:var(--node-color,var(--border));
+  color:white;
+  font-size:14px;font-weight:900;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  box-shadow:0 2px 8px rgba(0,0,0,.10);
+}
+
+/* 노드 텍스트 */
+.node-label{
+  font-size:12.5px;font-weight:700;color:var(--text);
+  line-height:1.35;
+  word-break:keep-all;
+}
+.node-status{
+  font-size:11px;font-weight:700;
+  padding:2px 8px;
+  border-radius:999px;
+  background:var(--status-bg,var(--border));
+  color:var(--status-text,var(--text-muted));
+  letter-spacing:.03em;
+}
+
+/* 화살표 연결선 */
+.arrow{
+  width:28px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--border);
+  font-size:18px;
+  position:relative;
+}
+.arrow::before{
+  content:'';
+  position:absolute;
+  left:2px;right:16px;
+  height:2px;
+  background:var(--border);
+  border-radius:1px;
+}
+.arrow::after{
+  content:'';
+  position:absolute;
+  right:4px;
+  border:6px solid transparent;
+  border-left:8px solid var(--border);
+}
+
+/* 상태별 색상 변수 */
+/* 기본(대기) */
+.node.default{--node-color:var(--border);}
+.node.default .node-status{background:#F1F5F9;color:var(--text-muted);}
+
+/* 진행 중 — sky */
+.node.active{--node-color:var(--sky);}
+.node.active .num-circle{animation:pulse-ring 1.4s ease infinite;}
+.node.active .node-status{background:var(--sky-light);color:var(--sky);}
+
+/* 완료 — mint */
+.node.done{--node-color:var(--mint);}
+.node.done .node-status{background:var(--mint-light);color:#059669;}
+
+/* 실패 — coral */
+.node.error{--node-color:var(--coral);}
+.node.error .node-status{background:var(--coral-light);color:#DC2626;}
+
+@keyframes pulse-ring{
+  0%  {box-shadow:0 0 0 0 rgba(91,156,246,.45);}
+  70% {box-shadow:0 0 0 8px rgba(91,156,246,0);}
+  100%{box-shadow:0 0 0 0 rgba(91,156,246,0);}
+}
+@media(prefers-reduced-motion:reduce){
+  .node.active .num-circle{animation:none;}
+}
+
+/* 범례 */
+.legend{
+  margin-top:18px;
+  display:flex;flex-wrap:wrap;gap:8px 16px;
+  font-size:12px;color:var(--text-muted);
+  background:white;border-radius:var(--radius-sm);
+  padding:10px 14px;box-shadow:var(--shadow);
+}
+.legend-item{display:flex;align-items:center;gap:5px;}
+.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<div class="ds-label">Components / 파이프라인 노드</div>
+
+<!-- 4개 노드: 기본 / 진행 / 완료 / 실패 -->
+<div class="pipeline">
+
+  <!-- 1. 기본(대기) -->
+  <div class="pipe-step">
+    <div class="node default">
+      <div class="num-circle">1</div>
+      <div class="node-label">데이터 수집</div>
+      <span class="node-status">대기 중</span>
+    </div>
+    <div class="arrow"></div>
+  </div>
+
+  <!-- 2. 진행 중 — sky -->
+  <div class="pipe-step">
+    <div class="node active">
+      <div class="num-circle">2</div>
+      <div class="node-label">AI 분석</div>
+      <span class="node-status">진행 중</span>
+    </div>
+    <div class="arrow"></div>
+  </div>
+
+  <!-- 3. 완료 — mint -->
+  <div class="pipe-step">
+    <div class="node done">
+      <div class="num-circle">✓</div>
+      <div class="node-label">결과 생성</div>
+      <span class="node-status">완료</span>
+    </div>
+    <div class="arrow"></div>
+  </div>
+
+  <!-- 4. 실패 — coral (화살표 없음, 마지막) -->
+  <div class="pipe-step" style="flex:1">
+    <div class="node error" style="flex:1">
+      <div class="num-circle">!</div>
+      <div class="node-label">출력 전송</div>
+      <span class="node-status">오류 발생</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- 범례 -->
+<div class="legend">
+  <span class="legend-item"><span class="dot" style="background:var(--border)"></span>기본(대기) — --border</span>
+  <span class="legend-item"><span class="dot" style="background:var(--sky)"></span>진행 중 — --sky + 맥박 애니메이션</span>
+  <span class="legend-item"><span class="dot" style="background:var(--mint)"></span>완료 — --mint</span>
+  <span class="legend-item"><span class="dot" style="background:var(--coral)"></span>실패 — --coral</span>
+</div>
+
+</body>
+</html>

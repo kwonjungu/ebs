@@ -1,0 +1,168 @@
+<!-- @dsCard group="Foundations" name="토큰" subtitle="radius·shadow" width="600" height="300" -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>토큰 — AI 탐험대 디자인 시스템</title>
+<style>
+  :root {
+    --sky:#5B9CF6; --sky-light:#EBF3FF;
+    --mint:#34D399; --mint-light:#D1FAE5;
+    --amber:#FBBF24; --amber-light:#FEF3C7;
+    --coral:#F87171; --coral-light:#FEE2E2;
+    --purple:#A78BFA; --purple-light:#EDE9FE;
+    --bg:#F0F7FF; --card:#FFFFFF;
+    --text:#1E293B; --text-muted:#64748B; --border:#E2E8F0;
+    --radius:20px; --radius-sm:12px;
+    --shadow:0 4px 20px rgba(91,156,246,.12);
+    --shadow-lg:0 8px 40px rgba(91,156,246,.2);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 24px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .section-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .token-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+  .token-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .demo-box {
+    width: 100%;
+    height: 88px;
+    background: var(--card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .demo-box.radius-lg { border-radius: var(--radius); box-shadow: var(--shadow); }
+  .demo-box.radius-sm { border-radius: var(--radius-sm); box-shadow: var(--shadow); }
+  .demo-box.shadow-lg-box { border-radius: var(--radius); box-shadow: var(--shadow-lg); }
+  .demo-box-inner {
+    width: 44px;
+    height: 44px;
+    background: var(--sky-light);
+    border-radius: 8px;
+  }
+  .token-info {
+    text-align: center;
+  }
+  .token-name {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text);
+    display: block;
+    margin-bottom: 3px;
+  }
+  .token-var {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--sky);
+    background: var(--sky-light);
+    padding: 2px 7px;
+    border-radius: 5px;
+    display: inline-block;
+    margin-bottom: 3px;
+  }
+  .token-val {
+    font-size: 11px;
+    color: var(--text-muted);
+    display: block;
+  }
+
+  /* 보더 섹션 */
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+  .border-row {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+  .border-demo {
+    flex: 1;
+    height: 44px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .border-demo span {
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+</style>
+</head>
+<body>
+<p class="section-title">디자인 토큰 — Radius · Shadow</p>
+
+<div class="token-grid">
+  <div class="token-item">
+    <div class="demo-box radius-lg">
+      <div class="demo-box-inner"></div>
+    </div>
+    <div class="token-info">
+      <span class="token-name">카드 모서리</span>
+      <span class="token-var">--radius</span>
+      <span class="token-val">20px</span>
+    </div>
+  </div>
+
+  <div class="token-item">
+    <div class="demo-box radius-sm">
+      <div class="demo-box-inner"></div>
+    </div>
+    <div class="token-info">
+      <span class="token-name">작은 모서리</span>
+      <span class="token-var">--radius-sm</span>
+      <span class="token-val">12px</span>
+    </div>
+  </div>
+
+  <div class="token-item">
+    <div class="demo-box shadow-lg-box">
+      <div class="demo-box-inner"></div>
+    </div>
+    <div class="token-info">
+      <span class="token-name">강조 그림자</span>
+      <span class="token-var">--shadow-lg</span>
+      <span class="token-val">0 8px 40px rgba(sky,.2)</span>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="border-row">
+  <div class="border-demo">
+    <span>--border: #E2E8F0</span>
+  </div>
+  <div class="border-demo" style="background:var(--sky-light); border-color:var(--sky);">
+    <span style="color:var(--sky);">--sky-light + sky border</span>
+  </div>
+  <div class="border-demo" style="background:var(--amber-light); border-color:var(--amber);">
+    <span style="color:#92400E;">--amber-light + amber border</span>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!-- @dsCard group="Components" name="카드" subtitle="기본 .card 컴포넌트" width="600" height="320" -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>카드 — AI 탐험대 디자인 시스템</title>
+<style>
+  :root {
+    --sky:#5B9CF6; --sky-light:#EBF3FF;
+    --mint:#34D399; --mint-light:#D1FAE5;
+    --amber:#FBBF24; --amber-light:#FEF3C7;
+    --coral:#F87171; --coral-light:#FEE2E2;
+    --purple:#A78BFA; --purple-light:#EDE9FE;
+    --bg:#F0F7FF; --card:#FFFFFF;
+    --text:#1E293B; --text-muted:#64748B; --border:#E2E8F0;
+    --radius:20px; --radius-sm:12px;
+    --shadow:0 4px 20px rgba(91,156,246,.12);
+    --shadow-lg:0 8px 40px rgba(91,156,246,.2);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 24px;
+    font-size: 17px;
+    line-height: 1.6;
+  }
+  .section-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .duo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  /* 실제 앱 .card 스타일 그대로 */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+    overflow: hidden;
+    position: relative;
+  }
+  .card h2 {
+    font-size: 17px;
+    font-weight: 800;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+  .card .desc {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    min-height: 42px;
+  }
+
+  /* 강조 카드 — shadow-lg */
+  .card.elevated {
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* 유색 상단 라인 악센트 */
+  .card.accent-sky::before {
+    content: '';
+    display: block;
+    height: 4px;
+    background: var(--sky);
+    border-radius: 4px 4px 0 0;
+    position: absolute;
+    top: 0; left: 0; right: 0;
+  }
+  .card.accent-mint::before {
+    content: '';
+    display: block;
+    height: 4px;
+    background: var(--mint);
+    border-radius: 4px 4px 0 0;
+    position: absolute;
+    top: 0; left: 0; right: 0;
+  }
+
+  .placeholder-bar {
+    height: 10px;
+    background: var(--border);
+    border-radius: 999px;
+    margin: 6px 0;
+  }
+  .placeholder-bar.short { width: 60%; }
+  .placeholder-bar.mid { width: 80%; }
+
+  /* 아나토미 레이블 */
+  .anatomy {
+    position: relative;
+    margin-top: 20px;
+  }
+  .anno {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--sky);
+    background: var(--sky-light);
+    padding: 1px 7px;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 4px;
+  }
+</style>
+</head>
+<body>
+<p class="section-title">컴포넌트 — 카드</p>
+
+<div class="duo">
+  <!-- 기본 카드 -->
+  <div>
+    <span class="anno">기본 .card</span>
+    <div class="card">
+      <h2>Ⓐ 소리 크기 반응</h2>
+      <p class="desc">센서처럼 <b>소리의 크기</b>만 재요. 무슨 말인지는 몰라요.</p>
+      <div style="margin-top:12px;">
+        <div class="placeholder-bar mid"></div>
+        <div class="placeholder-bar short"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 강조 카드 (elevated + accent) -->
+  <div>
+    <span class="anno">elevated + accent-mint</span>
+    <div class="card elevated accent-mint" style="padding-top:24px;">
+      <h2>Ⓑ 음성 인식 (STT)</h2>
+      <p class="desc">학습된 AI가 <b>말의 내용</b>을 글자로 바꿔요.</p>
+      <div style="margin-top:12px;">
+        <div class="placeholder-bar mid"></div>
+        <div class="placeholder-bar short"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="anatomy" style="margin-top:18px;">
+  <div class="card" style="padding:16px 20px; display:flex; gap:14px; align-items:center;">
+    <div style="flex:1;">
+      <div style="font-size:12px; font-weight:700; color:var(--text-muted); margin-bottom:3px;">
+        background: <code style="color:var(--sky);">var(--card)</code> &nbsp;·&nbsp;
+        radius: <code style="color:var(--sky);">var(--radius)</code> &nbsp;·&nbsp;
+        shadow: <code style="color:var(--sky);">var(--shadow)</code>
+      </div>
+      <div style="font-size:12px; color:var(--text-muted);">padding: 20px &nbsp;·&nbsp; overflow: hidden</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

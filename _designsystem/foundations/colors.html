@@ -1,0 +1,123 @@
+<!-- @dsCard group="Foundations" name="팔레트" subtitle="5색+라이트" width="600" height="300" -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>팔레트 — AI 탐험대 디자인 시스템</title>
+<style>
+  :root {
+    --sky:#5B9CF6; --sky-light:#EBF3FF;
+    --mint:#34D399; --mint-light:#D1FAE5;
+    --amber:#FBBF24; --amber-light:#FEF3C7;
+    --coral:#F87171; --coral-light:#FEE2E2;
+    --purple:#A78BFA; --purple-light:#EDE9FE;
+    --bg:#F0F7FF; --card:#FFFFFF;
+    --text:#1E293B; --text-muted:#64748B; --border:#E2E8F0;
+    --radius:20px; --radius-sm:12px;
+    --shadow:0 4px 20px rgba(91,156,246,.12);
+    --shadow-lg:0 8px 40px rgba(91,156,246,.2);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 24px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  h1 {
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 14px;
+  }
+  .swatch-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .swatch {
+    height: 72px;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: flex-end;
+    padding: 8px;
+  }
+  .swatch span {
+    font-size: 11px;
+    font-weight: 700;
+    color: white;
+    background: rgba(0,0,0,.22);
+    padding: 2px 6px;
+    border-radius: 6px;
+    letter-spacing: .02em;
+  }
+  .swatch-light {
+    height: 32px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 8px;
+  }
+  .swatch-light span {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: .01em;
+  }
+  .label {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text);
+    margin-top: 2px;
+    text-align: center;
+    letter-spacing: .01em;
+  }
+</style>
+</head>
+<body>
+<h1>🎨 컬러 팔레트</h1>
+<div class="palette-grid">
+  <!-- 스카이 -->
+  <div class="swatch-group">
+    <div class="swatch" style="background:var(--sky)"><span>#5B9CF6</span></div>
+    <div class="swatch-light" style="background:var(--sky-light)"><span>#EBF3FF</span></div>
+    <div class="label">Sky</div>
+  </div>
+  <!-- 민트 -->
+  <div class="swatch-group">
+    <div class="swatch" style="background:var(--mint)"><span>#34D399</span></div>
+    <div class="swatch-light" style="background:var(--mint-light)"><span>#D1FAE5</span></div>
+    <div class="label">Mint</div>
+  </div>
+  <!-- 앰버 -->
+  <div class="swatch-group">
+    <div class="swatch" style="background:var(--amber)"><span>#FBBF24</span></div>
+    <div class="swatch-light" style="background:var(--amber-light)"><span>#FEF3C7</span></div>
+    <div class="label">Amber</div>
+  </div>
+  <!-- 코럴 -->
+  <div class="swatch-group">
+    <div class="swatch" style="background:var(--coral)"><span>#F87171</span></div>
+    <div class="swatch-light" style="background:var(--coral-light)"><span>#FEE2E2</span></div>
+    <div class="label">Coral</div>
+  </div>
+  <!-- 퍼플 -->
+  <div class="swatch-group">
+    <div class="swatch" style="background:var(--purple)"><span>#A78BFA</span></div>
+    <div class="swatch-light" style="background:var(--purple-light)"><span>#EDE9FE</span></div>
+    <div class="label">Purple</div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!-- @dsCard group="Foundations" name="타이포그래피" subtitle="H1·H2·본문·캡션·HUD" width="600" height="380" -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>타이포그래피 — AI 탐험대 디자인 시스템</title>
+<style>
+  :root {
+    --sky:#5B9CF6; --sky-light:#EBF3FF;
+    --mint:#34D399; --mint-light:#D1FAE5;
+    --amber:#FBBF24; --amber-light:#FEF3C7;
+    --coral:#F87171; --coral-light:#FEE2E2;
+    --purple:#A78BFA; --purple-light:#EDE9FE;
+    --bg:#F0F7FF; --card:#FFFFFF;
+    --text:#1E293B; --text-muted:#64748B; --border:#E2E8F0;
+    --radius:20px; --radius-sm:12px;
+    --shadow:0 4px 20px rgba(91,156,246,.12);
+    --shadow-lg:0 8px 40px rgba(91,156,246,.2);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 24px;
+    font-size: 17px;
+    line-height: 1.6;
+  }
+  .section-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .type-row {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .type-row:last-child { border-bottom: none; }
+  .type-meta {
+    flex: 0 0 140px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: .03em;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .type-meta .token {
+    font-family: 'Courier New', monospace;
+    font-size: 10.5px;
+    color: var(--sky);
+    background: var(--sky-light);
+    padding: 1px 5px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  .h1-sample {
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    color: var(--text);
+  }
+  .h2-sample {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+    color: var(--text);
+  }
+  .body-sample {
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--text);
+  }
+  .caption-sample {
+    font-size: 13.5px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+  .hud-sample {
+    font-family: 'Courier New', 'SF Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--sky);
+    background: var(--sky-light);
+    padding: 4px 10px;
+    border-radius: 6px;
+    letter-spacing: .04em;
+  }
+  .chip-sample {
+    display: inline-block;
+    background: var(--sky);
+    color: white;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 5px 16px;
+    border-radius: 999px;
+    letter-spacing: .03em;
+  }
+</style>
+</head>
+<body>
+<p class="section-title">타이포그래피 스케일</p>
+
+<div class="type-row">
+  <div class="type-meta">
+    <span>H1 — 페이지 제목</span>
+    <span class="token">26px / 900 / -0.02em</span>
+  </div>
+  <span class="h1-sample">소리 크기 반응 VS 음성 인식</span>
+</div>
+
+<div class="type-row">
+  <div class="type-meta">
+    <span>H2 — 카드 제목</span>
+    <span class="token">17–18px / 800 / -0.01em</span>
+  </div>
+  <span class="h2-sample">Ⓐ 소리 크기 반응</span>
+</div>
+
+<div class="type-row">
+  <div class="type-meta">
+    <span>본문</span>
+    <span class="token">17px / 400 / 1.6lh</span>
+  </div>
+  <span class="body-sample">센서처럼 소리의 크기만 재요. 무슨 말인지는 몰라요.</span>
+</div>
+
+<div class="type-row">
+  <div class="type-meta">
+    <span>캡션 / 설명</span>
+    <span class="token">13–14px / 400 / muted</span>
+  </div>
+  <span class="caption-sample">빨간 선(기준)을 넘으면 켜져요</span>
+</div>
+
+<div class="type-row">
+  <div class="type-meta">
+    <span>HUD 모노스페이스</span>
+    <span class="token">Courier / 700 / sky</span>
+  </div>
+  <span class="hud-sample">볼륨: 87 dB</span>
+</div>
+
+<div class="type-row">
+  <div class="type-meta">
+    <span>강 배지 칩</span>
+    <span class="token">13px / 800 / sky bg</span>
+  </div>
+  <span class="chip-sample">AI 탐험대 · 15 음성 명령 AI</span>
+</div>
+</body>
+</html>

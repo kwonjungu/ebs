@@ -1,0 +1,134 @@
+<!-- @dsCard group="Signatures" name="15강 · 파형" subtitle="소리 듣는 중 파형 막대 9개" width="560" height="280" -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>15강 · 파형 시그니처</title>
+<style>
+:root {
+  --sky:#5B9CF6; --sky-light:#EBF3FF;
+  --mint:#34D399; --mint-light:#D1FAE5;
+  --amber:#FBBF24; --amber-light:#FEF3C7;
+  --coral:#F87171; --coral-light:#FEE2E2;
+  --purple:#A78BFA; --purple-light:#EDE9FE;
+  --bg:#F0F7FF; --card:#FFFFFF;
+  --text:#1E293B; --text-muted:#64748B; --border:#E2E8F0;
+  --radius:20px; --radius-sm:12px;
+  --shadow:0 4px 20px rgba(91,156,246,.12);
+  --shadow-lg:0 8px 40px rgba(91,156,246,.2);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 36px 48px;
+  text-align: center;
+  max-width: 480px;
+  width: 100%;
+}
+.chip {
+  display: inline-block;
+  background: var(--sky);
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 4px 14px;
+  border-radius: 999px;
+  margin-bottom: 20px;
+  letter-spacing: .04em;
+}
+
+/* 파형 */
+.waveform {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 64px;
+  margin-bottom: 20px;
+}
+.waveform span {
+  display: inline-block;
+  width: 6px;
+  border-radius: 3px;
+  background: var(--sky);
+}
+
+/* 각 막대 높이·딜레이 — 듣는 중처럼 */
+.waveform span:nth-child(1) { --h: 18px; animation-delay: 0s; }
+.waveform span:nth-child(2) { --h: 36px; animation-delay: .10s; }
+.waveform span:nth-child(3) { --h: 54px; animation-delay: .18s; }
+.waveform span:nth-child(4) { --h: 42px; animation-delay: .08s; }
+.waveform span:nth-child(5) { --h: 60px; animation-delay: .22s; }
+.waveform span:nth-child(6) { --h: 38px; animation-delay: .04s; }
+.waveform span:nth-child(7) { --h: 50px; animation-delay: .15s; }
+.waveform span:nth-child(8) { --h: 28px; animation-delay: .06s; }
+.waveform span:nth-child(9) { --h: 22px; animation-delay: .20s; }
+
+.waveform span {
+  height: 8px;
+  opacity: .75;
+  animation: waverise .7s ease-in-out infinite alternate;
+}
+@keyframes waverise {
+  from { height: 6px; opacity: .4; }
+  to   { height: var(--h, 24px); opacity: 1; }
+}
+
+.label {
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: -.02em;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.sub {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* 전구 */
+.bulb {
+  font-size: 48px;
+  filter: none;
+  text-shadow: 0 0 18px #FBBF24, 0 0 42px rgba(251,191,36,.55);
+  animation: glowpulse 1.6s ease-in-out infinite;
+  margin-top: 16px;
+  display: inline-block;
+}
+@keyframes glowpulse {
+  0%,100% { text-shadow: 0 0 18px #FBBF24, 0 0 42px rgba(251,191,36,.55), 0 0 80px rgba(251,191,36,.25); }
+  50%      { text-shadow: 0 0 28px #FBBF24, 0 0 60px rgba(251,191,36,.7),  0 0 110px rgba(251,191,36,.35); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .waveform span { animation: none; height: 20px; opacity: .7; }
+  .bulb { animation: none; text-shadow: none; }
+}
+</style>
+</head>
+<body>
+<div class="card">
+  <span class="chip">AI 탐험대 · 15강 · 음성 명령 AI</span>
+  <div class="waveform" aria-label="소리 파형 애니메이션">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span>
+  </div>
+  <p class="label">🎤 듣는 중…</p>
+  <p class="sub">소리 크기를 막대로, 음성 인식은 글자로</p>
+  <div class="bulb" aria-label="전구 켜짐">💡</div>
+</div>
+</body>
+</html>

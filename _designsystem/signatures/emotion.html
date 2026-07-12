@@ -1,0 +1,164 @@
+<!-- @dsCard group="Signatures" name="18강 · 감정 하이라이트" subtitle="형광펜 mark + 감정 4색 막대" width="560" height="280" -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>18강 · 감정 하이라이트 시그니처</title>
+<style>
+:root {
+  --sky:#5B9CF6; --sky-light:#EBF3FF;
+  --mint:#34D399; --mint-light:#D1FAE5;
+  --amber:#FBBF24; --amber-light:#FEF3C7;
+  --coral:#F87171; --coral-light:#FEE2E2;
+  --purple:#A78BFA; --purple-light:#EDE9FE;
+  --bg:#F0F7FF; --card:#FFFFFF;
+  --text:#1E293B; --text-muted:#64748B; --border:#E2E8F0;
+  --radius:20px; --radius-sm:12px;
+  --shadow:0 4px 20px rgba(91,156,246,.12);
+  --shadow-lg:0 8px 40px rgba(91,156,246,.2);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 32px 40px;
+  max-width: 500px;
+  width: 100%;
+}
+.chip {
+  display: inline-block;
+  background: var(--coral);
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 4px 14px;
+  border-radius: 999px;
+  margin-bottom: 16px;
+  letter-spacing: .04em;
+}
+
+/* 손글씨 형광펜 mark */
+.diarybox {
+  background: #F8FAFC;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 15.5px;
+  line-height: 1.75;
+  margin-bottom: 20px;
+}
+mark {
+  border-radius: 3px;
+  padding: 1px 4px;
+  font-weight: 800;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transform: rotate(-1.2deg);
+  display: inline-block;
+  background-clip: padding-box;
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,.08);
+}
+.m-joy   { background: #FDE68A; color: #78350F; }
+.m-sad   { background: #BAE6FD; color: #1E3A5F; }
+.m-angry { background: #FECACA; color: #B91C1C; }
+.m-anx   { background: #DDD6FE; color: #4C1D95; }
+
+/* 감정 막대 */
+.bars { display: flex; flex-direction: column; gap: 8px; }
+.brow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+.brow .bl {
+  width: 80px;
+  flex-shrink: 0;
+  font-weight: 700;
+  font-size: 13.5px;
+}
+.btrack {
+  flex: 1;
+  background: #F1F5F9;
+  border-radius: 999px;
+  height: 20px;
+  overflow: hidden;
+}
+.bfill {
+  height: 100%;
+  border-radius: 999px;
+  width: 0%;
+}
+.bnum {
+  width: 36px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+/* 각 감정 막대 색 + 애니메이션 */
+.f-joy   { background: var(--amber); animation: bar1 .8s ease-out forwards .2s; }
+.f-sad   { background: var(--sky);   animation: bar2 .8s ease-out forwards .35s; }
+.f-angry { background: var(--coral); animation: bar3 .8s ease-out forwards .5s; }
+.f-anx   { background: var(--purple);animation: bar4 .8s ease-out forwards .65s; }
+
+@keyframes bar1 { from { width: 0%; } to { width: 100%; } }
+@keyframes bar2 { from { width: 0%; } to { width: 45%; } }
+@keyframes bar3 { from { width: 0%; } to { width: 60%; } }
+@keyframes bar4 { from { width: 0%; } to { width: 25%; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .bfill { animation: none !important; }
+  .f-joy   { width: 100%; }
+  .f-sad   { width: 45%; }
+  .f-angry { width: 60%; }
+  .f-anx   { width: 25%; }
+}
+</style>
+</head>
+<body>
+<div class="card">
+  <span class="chip">AI 탐험대 · 18강 · 감정 분석</span>
+  <div class="diarybox">
+    시험을 잘 봐서 <mark class="m-joy">뿌듯했다</mark>.
+    친구들이 박수를 쳐줘서 정말 <mark class="m-joy">신났다</mark>.
+    근데 발표 때 좀 <mark class="m-anx">떨려서</mark> 아쉬웠어.
+  </div>
+  <div class="bars" aria-label="감정 분석 막대 그래프">
+    <div class="brow">
+      <span class="bl">😊 기쁨</span>
+      <div class="btrack"><div class="bfill f-joy"></div></div>
+      <span class="bnum">2개</span>
+    </div>
+    <div class="brow">
+      <span class="bl">😢 슬픔</span>
+      <div class="btrack"><div class="bfill f-sad"></div></div>
+      <span class="bnum">0개</span>
+    </div>
+    <div class="brow">
+      <span class="bl">😠 화남</span>
+      <div class="btrack"><div class="bfill f-angry"></div></div>
+      <span class="bnum">0개</span>
+    </div>
+    <div class="brow">
+      <span class="bl">😰 불안</span>
+      <div class="btrack"><div class="bfill f-anx"></div></div>
+      <span class="bnum">1개</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!-- @dsCard group="Hub" name="강별 카드 그리드" subtitle="포인트 컬러 상단 보더" width="600" height="340" -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>강별 카드 그리드 — 디자인 시스템 프리뷰</title>
+<style>
+:root {
+  --sky:#5B9CF6;--sky-light:#EBF3FF;
+  --mint:#34D399;--mint-light:#D1FAE5;
+  --amber:#FBBF24;--amber-light:#FEF3C7;
+  --coral:#F87171;--coral-light:#FEE2E2;
+  --purple:#A78BFA;--purple-light:#EDE9FE;
+  --bg:#F0F7FF;--card:#FFFFFF;
+  --text:#1E293B;--text-muted:#64748B;--border:#E2E8F0;
+  --radius:20px;--radius-sm:12px;
+  --shadow:0 4px 20px rgba(91,156,246,.12);
+  --shadow-lg:0 8px 40px rgba(91,156,246,.2);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:var(--bg);color:var(--text);font-size:16px;line-height:1.6;
+  padding:28px 24px 36px;
+}
+
+/* 프리뷰 레이블 */
+.ds-label{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text-muted);margin-bottom:14px;
+}
+.ds-label::before{
+  content:'';display:inline-block;width:8px;height:8px;
+  border-radius:50%;background:var(--sky);
+}
+
+/* 카드 그리드 */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+}
+
+/* 카드 공통 */
+a.card{
+  display:block;
+  background:var(--card);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:18px 18px 16px;
+  text-decoration:none;color:var(--text);
+  border-top:5px solid var(--accent,var(--sky));
+  position:relative;
+  transition:transform .18s ease,box-shadow .18s ease;
+}
+a.card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);}
+a.card:hover .emoji{transform:rotate(12deg);}
+a.card:focus-visible{outline:3px solid var(--accent,var(--sky));outline-offset:3px;}
+
+/* 강 배지 */
+.num{
+  font-size:11.5px;font-weight:800;
+  color:var(--accent,var(--sky));
+  letter-spacing:.06em;text-transform:uppercase;
+}
+
+/* 카드 제목 */
+.card h2{font-size:15.5px;font-weight:800;margin:3px 0 5px;line-height:1.35;letter-spacing:-.01em;}
+.card p{font-size:13px;color:var(--text-muted);line-height:1.5;}
+
+/* 이모지 우상단 */
+.emoji{
+  font-size:28px;
+  float:right;margin-left:8px;
+  display:inline-block;
+  transition:transform .18s ease;
+}
+
+/* 아나토미 주석 */
+.annotation{
+  margin-top:20px;
+  background:white;border-radius:var(--radius-sm);
+  box-shadow:var(--shadow);
+  padding:14px 16px;
+  font-size:13px;color:var(--text-muted);
+  display:flex;flex-wrap:wrap;gap:10px 18px;
+}
+.annotation span{display:flex;align-items:center;gap:6px;}
+.dot{
+  width:10px;height:10px;border-radius:50%;flex-shrink:0;
+}
+.border-line{
+  width:22px;height:4px;border-radius:2px;flex-shrink:0;
+}
+
+@media(prefers-reduced-motion:reduce){
+  a.card,a.card:hover .emoji{transition:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="ds-label">Hub / 강별 카드 그리드</div>
+
+<div class="grid">
+  <!-- 15강 sky -->
+  <a class="card" href="#" style="--accent:var(--sky)">
+    <span class="emoji">🎤</span>
+    <span class="num">15강</span>
+    <h2>소리 크기 반응 VS 음성 인식</h2>
+    <p>소리의 크기만 재는 것과 말의 내용을 알아듣는 것(STT)을 비교해요.</p>
+  </a>
+
+  <!-- 16강 purple -->
+  <a class="card" href="#" style="--accent:var(--purple)">
+    <span class="emoji">🐱</span>
+    <span class="num">16강</span>
+    <h2>얼굴 탐지 — 고양이 귀 AR</h2>
+    <p>얼굴 위치(X·Y 좌표)를 찾아 스티커가 따라다녀요. 탐지 vs 식별도 비교해요.</p>
+  </a>
+
+  <!-- 17강 mint -->
+  <a class="card" href="#" style="--accent:var(--mint)">
+    <span class="emoji">🚪</span>
+    <span class="num">17강</span>
+    <h2>얼굴 인식 문지기</h2>
+    <p>가상 얼굴 카드의 특징값을 비교해 유사도와 기준값으로 문을 열어요.</p>
+  </a>
+
+  <!-- 18강 coral -->
+  <a class="card" href="#" style="--accent:var(--coral)">
+    <span class="emoji">🎧</span>
+    <span class="num">18강</span>
+    <h2>감정 분석 AI DJ</h2>
+    <p>일기 속 감정 단서를 찾아 분류하고 음악 분위기를 추천받아요.</p>
+  </a>
+</div>
+
+<!-- 아나토미 범례 -->
+<div class="annotation">
+  <span><span class="border-line" style="background:var(--sky)"></span>상단 보더 5px — 강별 포인트 컬러</span>
+  <span><span class="dot" style="background:var(--sky)"></span>강 배지 — 포인트 컬러 텍스트</span>
+  <span><span class="dot" style="background:var(--text-muted)"></span>설명 — --text-muted</span>
+  <span><span class="dot" style="background:#e2e8f0;border:1px solid #ccc"></span>카드 배경 — --card (#FFFFFF)</span>
+</div>
+
+</body>
+</html>
