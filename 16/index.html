@@ -21,7 +21,7 @@
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.6; }
   .wrap { max-width: 860px; margin: 0 auto; padding: 24px 16px 50px; }
   header { text-align: center; margin-bottom: 18px; }
-  .chip { display: inline-block; background: var(--purple); color: white; font-size: 13px; font-weight: 700; padding: 4px 14px; border-radius: 999px; margin-bottom: 8px; }
+  .chip { display: inline-block; background: var(--purple); color: white; font-size: 13px; font-weight: 800; padding: 4px 14px; border-radius: 999px; margin-bottom: 8px; letter-spacing: .03em; }
   h1 { font-size: 28px; font-weight: 900; line-height: 1.25; letter-spacing: -0.02em; }
   .sub { color: var(--text-muted); font-size: 15px; margin-top: 4px; }
   .safe { background: var(--amber-light); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 13.5px; text-align: center; margin: 12px 0; }
@@ -30,7 +30,7 @@
 
   /* 모드 토글 */
   .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background: var(--purple-light); border-radius: 999px; padding: 5px; margin-bottom: 14px; }
-  .seg button { border: 0; background: transparent; font-family: inherit; font-size: 15px; font-weight: 700; color: var(--text-muted); padding: 10px 6px; min-height: 44px; border-radius: 999px; cursor: pointer; }
+  .seg button { border: 0; background: transparent; font-family: inherit; font-size: 15px; font-weight: 700; color: var(--text-muted); padding: 10px 6px; min-height: 44px; min-width: 44px; border-radius: 999px; cursor: pointer; }
   .seg button.on { background: var(--purple); color: white; box-shadow: var(--shadow); }
 
   /* 무대 */
@@ -46,11 +46,11 @@
       linear-gradient(rgba(167,139,250,0.13) 1px, transparent 1px),
       linear-gradient(90deg, rgba(167,139,250,0.13) 1px, transparent 1px);
     background-size: 20% 25%; }
-  .hud-corner { position: absolute; width: 18px; height: 18px; border-color: rgba(167,139,250,0.7); border-style: solid; z-index: 3; }
-  .hud-tl { top: 6px; left: 6px; border-width: 2px 0 0 2px; }
-  .hud-tr { top: 6px; right: 6px; border-width: 2px 2px 0 0; }
-  .hud-bl { bottom: 6px; left: 6px; border-width: 0 0 2px 2px; }
-  .hud-br { bottom: 6px; right: 6px; border-width: 0 2px 2px 0; }
+  .hud-corner { position: absolute; width: 18px; height: 18px; border-color: rgba(167,139,250,0.7); border-style: solid; z-index: 3; border-radius: 3px 0 0 0; }
+  .hud-tl { top: 6px; left: 6px; border-width: 2px 0 0 2px; border-radius: 3px 0 0 0; }
+  .hud-tr { top: 6px; right: 6px; border-width: 2px 2px 0 0; border-radius: 0 3px 0 0; }
+  .hud-bl { bottom: 6px; left: 6px; border-width: 0 0 2px 2px; border-radius: 0 0 0 3px; }
+  .hud-br { bottom: 6px; right: 6px; border-width: 0 2px 2px 0; border-radius: 0 0 3px 0; }
 
   /* 좌표 패널 */
   .coords { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 4px; transition: opacity .2s; }
@@ -63,7 +63,7 @@
   .stateline b { color: var(--text); }
 
   .btnrow { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .btn { border: 0; cursor: pointer; font-family: inherit; font-size: 15.5px; font-weight: 700; color: white; background: var(--purple); padding: 12px 10px; border-radius: var(--radius-sm); min-height: 48px; }
+  .btn { border: 0; cursor: pointer; font-family: inherit; font-size: 15.5px; font-weight: 700; color: white; background: var(--purple); padding: 12px 10px; border-radius: var(--radius-sm); min-height: 48px; min-width: 44px; }
   .btn:active { transform: scale(.97); }
   .btn.coral { background: var(--coral); }
   .btn.ghost { background: white; color: var(--text-muted); border: 1.5px solid var(--border); }
@@ -102,26 +102,26 @@
   <span class="chip">AI 탐험대 · 16 얼굴 인식 AI</span>
   <h1>🐱 얼굴 따라 척척! 고양이 귀 AR</h1>
   <p class="sub">AI가 얼굴의 <b>위치</b>를 찾아 X·Y 좌표 숫자로 바꾸면, 고양이 귀가 그 숫자를 따라 움직여요.</p>
-  <img class="hero-art" src="../assets/art/16_catears.png" alt="">
+  <img class="hero-art" src="../assets/art/16_ar.png" alt="" aria-hidden="true">
 </header>
 <p class="safe">🛡️ 내 얼굴은 화면에만 보이고 저장되지 않아요. 친구 얼굴을 함부로 비추지 않아요.</p>
 
 <div class="card">
-  <div class="seg">
-    <button id="mDetect" class="on">🔍 탐지 모드</button>
-    <button id="mIdent">🪪 식별 모드</button>
+  <div class="seg" role="group" aria-label="모드 선택">
+    <button id="mDetect" class="on" aria-pressed="true">🔍 탐지 모드</button>
+    <button id="mIdent" aria-pressed="false">🪪 식별 모드</button>
   </div>
 
-  <div class="stage" id="stage">
-    <span class="lock">🔒 화면에만 보여요 · 저장 안 해요</span>
-    <video id="video" playsinline muted></video>
-    <canvas id="canvas"></canvas>
-    <div class="grid-overlay"></div>
-    <div class="hud-corner hud-tl"></div>
-    <div class="hud-corner hud-tr"></div>
-    <div class="hud-corner hud-bl"></div>
-    <div class="hud-corner hud-br"></div>
-    <div class="idle" id="idle"><span class="big">🐱</span>아래 [카메라 시작] 버튼을 눌러요.<br>카메라가 없으면 연습 모드로 체험해요.</div>
+  <div class="stage" id="stage" role="img" aria-label="카메라 뷰파인더 HUD">
+    <span class="lock" aria-hidden="true">🔒 화면에만 보여요 · 저장 안 해요</span>
+    <video id="video" playsinline muted aria-hidden="true"></video>
+    <canvas id="canvas" aria-hidden="true"></canvas>
+    <div class="grid-overlay" aria-hidden="true"></div>
+    <div class="hud-corner hud-tl" aria-hidden="true"></div>
+    <div class="hud-corner hud-tr" aria-hidden="true"></div>
+    <div class="hud-corner hud-bl" aria-hidden="true"></div>
+    <div class="hud-corner hud-br" aria-hidden="true"></div>
+    <div class="idle" id="idle"><span class="big" aria-hidden="true">🐱</span>아래 [카메라 시작] 버튼을 눌러요.<br>카메라가 없으면 연습 모드로 체험해요.</div>
   </div>
 
   <div class="coords" id="coords">
@@ -131,8 +131,8 @@
   <p class="stateline" id="state">버튼을 누르면 카메라가 켜져요</p>
 
   <div class="btnrow">
-    <button class="btn" id="btnStart">📷 카메라 시작</button>
-    <button class="btn ghost" id="btnSim">🖱️ 연습 모드로 하기</button>
+    <button class="btn" id="btnStart" aria-label="카메라 시작">📷 카메라 시작</button>
+    <button class="btn ghost" id="btnSim" aria-label="연습 모드로 하기">🖱️ 연습 모드로 하기</button>
   </div>
 
   <div class="idpanel" id="idpanel">
@@ -180,6 +180,8 @@ function setMode(m){
   mode = m;
   $('mDetect').classList.toggle('on', m === 'detect');
   $('mIdent').classList.toggle('on', m === 'ident');
+  $('mDetect').setAttribute('aria-pressed', m === 'detect' ? 'true' : 'false');
+  $('mIdent').setAttribute('aria-pressed', m === 'ident' ? 'true' : 'false');
   $('idpanel').classList.toggle('show', m === 'ident');
   $('coords').classList.toggle('dim', m === 'ident');
   if(running) $('state').innerHTML = m === 'detect'

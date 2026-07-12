@@ -65,7 +65,7 @@
 
   .btn { display: inline-block; width: 100%; border: 0; cursor: pointer; font-family: inherit; font-size: 15.5px; font-weight: 700; color: white; background: var(--sky); padding: 12px 10px; border-radius: var(--radius-sm); min-height: 46px; min-width: 44px; }
   .btn:active { transform: scale(.97); }
-  .btn:focus-visible { outline: 3px solid var(--sky); outline-offset: 3px; }
+  .btn:focus-visible { outline: 3px solid var(--sky); outline-offset: 3px; border-radius: var(--radius-sm); }
   .btn.rec { background: var(--coral); animation: pulse 1s infinite; }
   .btn.mint { background: var(--mint); }
   @keyframes pulse { 0%{box-shadow: 0 0 0 0 rgba(248,113,113,.45);} 100%{box-shadow: 0 0 0 16px rgba(248,113,113,0);} }
@@ -103,25 +103,25 @@
 <div class="duo">
   <!-- A. 소리 크기 반응 -->
   <div class="card">
-    <div class="waveform" id="waveA"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="waveform" id="waveA" aria-label="소리 파형 애니메이션" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
     <h2>Ⓐ 소리 크기 반응</h2>
     <p class="desc">센서처럼 <b>소리의 크기</b>만 재요. <b>무슨 말인지는 몰라요.</b> 박수를 치거나 아무 말이나 크게 하면 불이 켜져요.</p>
-    <div class="bulb" id="bulbA">💡</div>
-    <div class="volwrap"><div class="volbar" id="volbar"></div><div class="volmark"></div></div>
+    <div class="bulb" id="bulbA" aria-hidden="true">💡</div>
+    <div class="volwrap" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="소리 크기 측정값"><div class="volbar" id="volbar"></div><div class="volmark" aria-hidden="true"></div></div>
     <p class="vollabel">빨간 선(기준)을 넘으면 켜져요</p>
     <p class="stateline" id="stateA">버튼을 누르고 소리를 내 봐요</p>
-    <button class="btn" id="btnA">소리 크기 재기 시작</button>
+    <button class="btn" id="btnA" aria-label="소리 크기 재기 시작">소리 크기 재기 시작</button>
   </div>
 
   <!-- B. 음성 인식 -->
   <div class="card">
-    <div class="waveform" id="waveB"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="waveform" id="waveB" aria-label="소리 파형 애니메이션" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
     <h2>Ⓑ 음성 인식 (STT)</h2>
     <p class="desc">학습된 AI가 <b>말의 내용</b>을 글자로 바꿔요. 등록된 명령어 <span class="cmd">불 켜 줘</span><span class="cmd">불 꺼 줘</span> 와 맞을 때만 실행돼요.</p>
-    <div class="bulb" id="bulbB">💡</div>
+    <div class="bulb" id="bulbB" aria-hidden="true">💡</div>
     <div class="sttbox" id="sttout"><span class="dim">내 말이 글자로 나타나요</span></div>
     <p class="stateline" id="stateB">버튼을 누르고 명령을 말해요</p>
-    <button class="btn" id="btnB">🎤 음성 인식 시작</button>
+    <button class="btn" id="btnB" aria-label="음성 인식 시작">🎤 음성 인식 시작</button>
   </div>
 </div>
 
@@ -176,6 +176,7 @@ function loopVol(){
   const rms=Math.sqrt(sum/data.length);
   const pct=Math.min(100, Math.round(rms*300));
   $('volbar').style.width=pct+'%';
+  $('volbar').parentElement.setAttribute('aria-valuenow', pct);
   if(pct>=65){
     $('bulbA').classList.add('on');
     $('stateA').innerHTML='큰 소리 감지! → <b>불 켜짐</b> (무슨 말인지는 모른 채로요)';

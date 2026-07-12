@@ -21,7 +21,7 @@
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.6; }
   .wrap { max-width: 720px; margin: 0 auto; padding: 24px 16px 50px; }
   header { text-align: center; margin-bottom: 14px; }
-  .chip { display: inline-block; background: var(--coral); color: white; font-size: 13px; font-weight: 700; padding: 4px 14px; border-radius: 999px; margin-bottom: 8px; }
+  .chip { display: inline-block; background: var(--coral); color: white; font-size: 13px; font-weight: 800; padding: 4px 14px; border-radius: 999px; margin-bottom: 8px; }
   h1 { font-size: 28px; font-weight: 900; line-height: 1.25; letter-spacing: -0.02em; }
   .sub { color: var(--text-muted); font-size: 15px; margin-top: 4px; }
   .safe { background: var(--amber-light); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 13.5px; text-align: center; margin: 12px 0; }
@@ -68,10 +68,10 @@
   .playbtn { border: 0; cursor: pointer; font-family: inherit; font-size: 15px; font-weight: 700; color: white; background: var(--coral); padding: 10px 20px; border-radius: 999px; min-height: 44px; }
   .playbtn:active { transform: scale(.97); }
   .playbtn.on { background: var(--text); }
-  .dislike { display: inline-block; border: 1.5px solid var(--border); background: white; cursor: pointer; font-family: inherit; font-size: 13.5px; color: var(--text-muted); padding: 8px 14px; border-radius: 999px; margin-top: 10px; min-height: 40px; }
+  .dislike { display: inline-block; border: 1.5px solid var(--border); background: white; cursor: pointer; font-family: inherit; font-size: 13.5px; color: var(--text-muted); padding: 8px 14px; border-radius: 999px; margin-top: 10px; min-height: 44px; }
   .fbnote { display: none; background: white; border-radius: var(--radius-sm); padding: 10px 12px; font-size: 14px; margin-top: 10px; text-align: center; }
   .moodpick { display: none; gap: 6px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
-  .moodpick button { border: 1.5px solid var(--border); background: white; border-radius: 999px; padding: 8px 12px; font-family: inherit; font-size: 13.5px; cursor: pointer; min-height: 40px; }
+  .moodpick button { border: 1.5px solid var(--border); background: white; border-radius: 999px; padding: 8px 12px; font-family: inherit; font-size: 13.5px; cursor: pointer; min-height: 44px; }
   .moodpick button:active { transform: scale(.95); }
 
   .obs { background: white; border-radius: var(--radius-sm); box-shadow: var(--shadow); padding: 12px 16px; font-size: 14.5px; margin-top: 2px; }
@@ -105,7 +105,7 @@
   <h2>② AI DJ의 분석 결과</h2>
   <div class="diarybox" id="hl"></div>
   <div class="nohit" id="nohit">🤔 감정 단서를 찾지 못했어요 — AI는 표현이 없으면 알기 어려워요. "뿌듯했다", "속상했다" 같은 단어를 넣어 볼까요?</div>
-  <div class="bars" id="bars"></div>
+  <div class="bars" id="bars" role="group" aria-label="감정 분석 막대 그래프"></div>
   <div class="reco" id="reco">
     <div class="big" id="recoEmo"></div>
     <div class="mood" id="recoMood"></div>
@@ -192,9 +192,9 @@ function analyze() {
   for (const cat in LEX) {
     const n = scores[cat] || 0;
     if (top === null || n > (scores[top] || 0)) top = n > 0 ? cat : top;
-    $('bars').innerHTML += '<div class="brow"><span class="bl">' + LEX[cat].emo + ' ' + LEX[cat].label +
-      '</span><div class="btrack"><div class="bfill ' + LEX[cat].fill + '" data-w="' + Math.round(n / max * 100) +
-      '"></div></div><span class="bnum">' + n + '개</span></div>';
+    $('bars').innerHTML += '<div class="brow" role="img" aria-label="' + LEX[cat].label + ' ' + n + '개"><span class="bl" aria-hidden="true">' + LEX[cat].emo + ' ' + LEX[cat].label +
+      '</span><div class="btrack" aria-hidden="true"><div class="bfill ' + LEX[cat].fill + '" data-w="' + Math.round(n / max * 100) +
+      '"></div></div><span class="bnum" aria-hidden="true">' + n + '개</span></div>';
   }
   $('result').style.display = 'block';
   requestAnimationFrame(() => requestAnimationFrame(() =>

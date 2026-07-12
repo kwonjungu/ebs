@@ -90,15 +90,17 @@
     border-radius: 8px;
     letter-spacing: -0.01em;
     transform-origin: center;
+    border: 3px solid white;
+    box-shadow: 0 4px 16px rgba(0,0,0,.15);
     animation: stamp .45s cubic-bezier(.25,1.6,.5,1) both;
   }
   @keyframes stamp {
-    from { opacity: 0; transform: rotate(-6deg) scale(1.4); }
-    to   { opacity: 1; transform: rotate(-2deg) scale(1); }
+    from { opacity: 0; transform: scale(1.4); }
+    to   { opacity: 1; }
   }
-  .v-ok { background: var(--mint); color: white; border: 2.5px solid #059669; }
-  .v-no { background: var(--coral); color: white; border: 2.5px solid #DC2626; }
-  .v-half { background: var(--amber); color: white; border: 2.5px solid #D97706; }
+  .v-ok   { background: var(--mint);  color: white; outline: 2.5px solid #059669; outline-offset: -1px; transform: rotate(-2.5deg); }
+  .v-no   { background: var(--coral); color: white; outline: 2.5px solid #DC2626; outline-offset: -1px; transform: rotate(1.8deg); }
+  .v-half { background: var(--amber); color: white; outline: 2.5px solid #D97706; outline-offset: -1px; transform: rotate(-1.2deg); }
   .why { font-size: 14.5px; margin-top: 6px; }
   .fixline { background: var(--mint-light); border-radius: var(--radius-sm); padding: 7px 12px; font-size: 14px; font-weight: 700; margin-top: 8px; }
   .gcheck { font-size: 14px; margin-top: 8px; color: var(--text-muted); font-weight: 700; }
@@ -115,7 +117,10 @@
 
   .gbtn:focus-visible, .btn:focus-visible { outline: 3px solid var(--coral); outline-offset: 2px; }
   @media (prefers-reduced-motion: reduce) {
-    .vbadge { animation: none !important; transform: rotate(-2deg) !important; }
+    .vbadge { animation: none !important; }
+    .v-ok   { transform: rotate(-2.5deg) !important; }
+    .v-no   { transform: rotate(1.8deg) !important; }
+    .v-half { transform: rotate(-1.2deg) !important; }
     .evi { animation: none !important; }
     * { transition-duration: 0.01ms !important; }
   }
@@ -130,7 +135,7 @@
   <span class="chip">AI 탐험대 · 22 팩트체크 탐정</span>
   <h1>🕵️ 팩트체크 탐정 체험</h1>
   <p class="sub">AI가 자신 있게 말한 상식 5가지 — 먼저 예상하고, 근거 자료를 열어 확인해요.</p>
-  <img class="hero-art" src="../assets/art/22_stamp.png" alt="">
+  <img class="hero-art" src="../assets/art/22_stamp.png" alt="" aria-hidden="true">
 </header>
 <p class="safe">🛡️ 이 체험의 AI 답변은 학습용으로 만든 예시예요. 입력하거나 저장되는 정보는 없어요.</p>
 
@@ -252,7 +257,7 @@ function openEvi(){
   $('evitxt').textContent=c.evi;
   $('evi').style.display='block';
   const [label,cls]=VLABEL[c.verdict];
-  $('vbadge').textContent=label; $('vbadge').className='vbadge '+cls;
+  $('vbadge').textContent=label; $('vbadge').className='vbadge '+cls; $('vbadge').setAttribute('aria-label','판정: '+label);
   $('why').textContent=c.why;
   $('fixline').style.display=c.fixed?'block':'none';
   if(c.fixed) $('fixline').textContent='✏️ 바르게 고치면: '+c.fixed;

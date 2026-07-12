@@ -116,7 +116,7 @@
   <span class="chip">AI 탐험대 · 24 AI 편향 탐정</span>
   <h1>⚖️ 점수 하나에 숨은 비밀</h1>
   <p class="sub">전체 점수가 좋아 보이는 AI, 정말 모두에게 공정할까요? 직접 파헤쳐 봐요.</p>
-  <img class="hero-art" src="../assets/art/24_scale.png" alt="">
+  <img class="hero-art" src="../assets/art/24_scale.png" alt="" aria-hidden="true">
 </header>
 <p class="safe">🧪 이 체험의 점수는 전부 수업용 가상 데이터예요. 입력하거나 저장되는 정보는 없어요.</p>
 
@@ -125,8 +125,8 @@
   <h2>🎤 우리 학교 음성 인식 AI</h2>
   <p class="desc">AI 회사가 자랑하는 전체 점수예요.</p>
   <div class="donutbox">
-    <div class="donut">
-      <svg width="150" height="150" viewBox="0 0 120 120">
+    <div class="donut" role="meter" aria-label="전체 정확도" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="donutMeter">
+      <svg width="150" height="150" viewBox="0 0 120 120" aria-hidden="true">
         <circle class="track" cx="60" cy="60" r="54"></circle>
         <circle class="val" id="donutVal" cx="60" cy="60" r="54"></circle>
       </svg>
@@ -152,9 +152,9 @@
   <h2>🕵️ 왜 이런 일이 생겼을까요?</h2>
   <p class="desc">원인이라고 생각하는 카드를 골라 봐요.</p>
   <div class="causes">
-    <button class="cause" data-k="blame">🗣️ 도윤이 말투 탓이에요</button>
-    <button class="cause" data-k="data">📉 데이터가 부족하고 치우쳤어요</button>
-    <button class="cause" data-k="hate">😠 AI가 미워해서요</button>
+    <button class="cause" data-k="blame" aria-label="원인 선택: 도윤이 말투 탓이에요">🗣️ 도윤이 말투 탓이에요</button>
+    <button class="cause" data-k="data" aria-label="원인 선택: 데이터가 부족하고 치우쳤어요">📉 데이터가 부족하고 치우쳤어요</button>
+    <button class="cause" data-k="hate" aria-label="원인 선택: AI가 미워해서요">😠 AI가 미워해서요</button>
   </div>
   <p class="feedback" id="causeFb"></p>
 </div>
@@ -206,6 +206,7 @@ function setDonut(v){
     const p = Math.min(1,(t-t0)/700);
     shownNum = Math.round(from+(v-from)*p);
     $('donutNum').textContent = shownNum+'%';
+    $('donutMeter').setAttribute('aria-valuenow', shownNum);
     if(p<1) requestAnimationFrame(tick);
   })(t0);
 }
@@ -215,10 +216,10 @@ setTimeout(()=>setDonut(overall()), 300);
 function barClass(a){ return a>=85 ? 'mint' : a>=60 ? '' : 'coral'; }
 function buildChart(){
   $('chart').innerHTML = SITS.map(s=>
-    `<div class="row${s.acc<60?' low':''}" id="row-${s.key}">
+    `<div class="row${s.acc<60?' low':''}" id="row-${s.key}" role="group" aria-label="${s.label} ${s.acc}%">
        <span class="lab">${s.label}</span>
-       <div class="track2"><div class="fill ${barClass(s.acc)}" id="fill-${s.key}"></div></div>
-       <span class="pct" id="pct-${s.key}">${s.acc}%</span>
+       <div class="track2" aria-hidden="true"><div class="fill ${barClass(s.acc)}" id="fill-${s.key}"></div></div>
+       <span class="pct" id="pct-${s.key}" aria-hidden="true">${s.acc}%</span>
      </div>`).join('');
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
     SITS.forEach(s=>{ $('fill-'+s.key).style.width = s.acc+'%'; });
@@ -230,7 +231,9 @@ function updateChart(){
     f.style.width = s.acc+'%';
     f.className = 'fill '+barClass(s.acc);
     $('pct-'+s.key).textContent = s.acc+'%';
-    $('row-'+s.key).classList.toggle('low', s.acc<60);
+    const row = $('row-'+s.key);
+    row.classList.toggle('low', s.acc<60);
+    row.setAttribute('aria-label', s.label+' '+s.acc+'%');
   });
 }
 

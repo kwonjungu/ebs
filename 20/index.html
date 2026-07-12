@@ -21,7 +21,7 @@
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 17px; line-height: 1.6; }
   .wrap { max-width: 860px; margin: 0 auto; padding: 24px 16px 50px; }
   header { text-align: center; margin-bottom: 8px; }
-  .chip { display: inline-block; background: var(--amber); color: white; font-size: 13px; font-weight: 700; padding: 4px 14px; border-radius: 999px; margin-bottom: 8px; }
+  .chip { display: inline-block; background: var(--amber); color: #78350F; font-size: 13px; font-weight: 800; padding: 4px 14px; border-radius: 999px; margin-bottom: 8px; }
   h1 { font-size: 28px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.3; }
   .sub { color: var(--text-muted); font-size: 15px; margin-top: 4px; }
   .safe { background: var(--amber-light); border-radius: var(--radius-sm); padding: 8px 14px; font-size: 13.5px; text-align: center; margin: 12px 0; }
@@ -83,6 +83,7 @@
   .opt:active { transform: scale(.96); }
   .opt.on { border-color: var(--amber); background: var(--amber-light); }
 
+  :focus-visible { outline: 3px solid var(--amber); outline-offset: 3px; border-radius: 4px; }
   .opt:focus-visible, .btnVague:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
   .btnVague { display: block; width: 100%; border: 0; cursor: pointer; font-family: inherit; font-size: 15.5px; font-weight: 800; color: white; background: var(--coral); padding: 13px; border-radius: var(--radius-sm); min-height: 48px; margin-top: 16px; }
   .btnVague:active { transform: scale(.97); }
@@ -94,6 +95,9 @@
   @media (prefers-reduced-motion: reduce) {
     .promptBand .flash, .opt { animation: none !important; transition: none !important; }
   }
+
+  .hero-art{display:block;margin:6px auto 0;height:96px;max-width:92%;object-fit:contain;border-radius:14px}
+  @media(max-width:640px){.hero-art{height:auto;max-height:80px}}
 </style>
 </head>
 <body>
@@ -102,6 +106,7 @@
   <span class="chip">AI 탐험대 · 20 프롬프트 마스코트</span>
   <h1>🎨 프롬프트로 마스코트를 그려요</h1>
   <p class="sub">AI는 내 머릿속이 아니라 <b>내가 쓴 글(프롬프트)</b>을 읽고 그려요. 칩을 골라 봐요.</p>
+  <img class="hero-art" src="../assets/art/20_mascot.png" alt="" aria-hidden="true">
 </header>
 <p class="safe">🛡️ 진짜 AI 그림 도구를 쓸 때도 친구 얼굴 사진·유명 캐릭터·이름·학교 같은 개인정보는 넣지 않아요.</p>
 
@@ -167,6 +172,7 @@ for (const cat in CATS){
     const b = document.createElement('button');
     b.className = 'opt'; b.textContent = o.name;
     b.dataset.cat = cat; b.dataset.id = o.id;
+    b.setAttribute('aria-pressed', 'false');
     b.onclick = () => { sel[cat] = o.id; lastChanged = cat; isVague = false; render(); };
     box.appendChild(b);
   });
@@ -305,7 +311,11 @@ function render(){
   $('aiTag').style.display = isVague ? 'block' : 'none';
 
   // 칩 활성 표시
-  document.querySelectorAll('.opt').forEach(b => b.classList.toggle('on', sel[b.dataset.cat] === b.dataset.id));
+  document.querySelectorAll('.opt').forEach(b => {
+    const active = sel[b.dataset.cat] === b.dataset.id;
+    b.classList.toggle('on', active);
+    b.setAttribute('aria-pressed', active ? 'true' : 'false');
+  });
 
   const svg = $('canvas');
   if (!sel.subject && !isVague){

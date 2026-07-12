@@ -103,7 +103,7 @@
   <span class="chip">AI 탐험대 · 23 객체 탐지</span>
   <h1>📦 찰칵! 네모 박스 탐험</h1>
   <p class="sub">AI가 물건을 찾아 <b>위치를 네모 박스로</b> 짚어 줘요. 책상 위에 컵, 책, 가위 같은 물건을 1~3개 놓아 봐요.</p>
-  <img class="hero-art" src="../assets/art/23_desk.png" alt="">
+  <img class="hero-art" src="../assets/art/23_desk.png" alt="" aria-hidden="true">
 </header>
 <p class="safe">🛡️ 화면은 저장되지 않아요. 사람 얼굴은 비추지 않아요 — 책상 위 물건만 비춰요.</p>
 
@@ -114,7 +114,7 @@
     <span class="vf-bl" aria-hidden="true"></span>
     <video id="video" autoplay muted playsinline></video>
     <canvas id="canvas"></canvas>
-    <div class="counter" id="counter">발견한 사물<b>0</b></div>
+    <div class="counter" id="counter" role="status" aria-live="polite" aria-label="발견한 사물 수: 0">발견한 사물<b>0</b></div>
     <div class="toast" id="toast">🙅 얼굴은 비추지 않기로 해요! 카메라를 물건 쪽으로 돌려요.</div>
     <div class="overlay-msg" id="overlayMsg">📷 아래 버튼을 누르면 카메라가 켜져요</div>
   </div>
@@ -173,7 +173,7 @@
         </g>
       </g>
     </svg>
-    <div class="counter" id="simCounter">발견한 사물<b>0</b></div>
+    <div class="counter" id="simCounter" role="status" aria-live="polite" aria-label="발견한 사물 수: 0">발견한 사물<b>0</b></div>
   </div>
   <p class="stateline" id="simState">버튼을 누르면 AI가 하나씩 찾아요</p>
   <div class="btnrow">
@@ -328,6 +328,7 @@ function setCount(n) {
   lastCount = n;
   const el = $('counter');
   el.innerHTML = '발견한 사물<b>' + n + '</b>';
+  el.setAttribute('aria-label', '발견한 사물 수: ' + n);
   el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
 }
 
