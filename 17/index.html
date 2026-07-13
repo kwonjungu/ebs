@@ -174,6 +174,44 @@
   .ql .arw{margin-left:auto;font-weight:900}
   .ql svg{flex-shrink:0;color:var(--point)}
 
+  /* 탐지 vs 인식 비교 섹션 */
+  .vs{margin-top:26px;background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:22px}
+  .vs h2{font-size:18px;font-weight:900;letter-spacing:-.02em;margin-bottom:6px}
+  .vs .sub{font-size:13.5px;color:var(--muted);font-weight:600;margin-bottom:14px}
+  .tbl-scroll{overflow-x:auto;margin-bottom:22px}
+  .vstable{width:100%;border-collapse:collapse;font-size:13.5px;min-width:520px}
+  .vstable th,.vstable td{border:2.5px solid var(--ink);padding:10px 12px;text-align:left;vertical-align:top;line-height:1.5}
+  .vstable thead th{font-size:14.5px;font-weight:900;text-align:center}
+  .vstable thead th:nth-child(2){background:var(--amber-soft)}
+  .vstable thead th:nth-child(3){background:var(--point-soft)}
+  .vstable tbody th{background:var(--paper);font-weight:900;white-space:nowrap;width:110px}
+  .vstable td b{font-weight:900}
+  .vstable .q{font-weight:900;font-size:14px}
+
+  .vs h3{font-size:15.5px;font-weight:900;margin:4px 0 10px}
+  .cam-controls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+  .cbtn{display:inline-flex;align-items:center;gap:7px;cursor:pointer;font-family:inherit;font-size:14px;font-weight:800;
+    color:var(--ink);background:var(--paper);border:2.5px solid var(--ink);border-radius:12px;box-shadow:var(--hard-sm);
+    padding:10px 16px;min-height:46px;transition:transform .1s,box-shadow .1s}
+  .cbtn:hover:not(:disabled){transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .cbtn:active:not(:disabled){transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+  .cbtn:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .cbtn:disabled{opacity:.4;cursor:not-allowed}
+  .cbtn.on{background:var(--point);color:#fff}
+  .cbtn.mode-det.on{background:var(--amber);color:var(--ink)}
+  .cbtn.stop{background:#FFE0E0}
+  .cam-wrap{position:relative;max-width:560px;margin:0 auto;border:3px solid var(--ink);border-radius:var(--r-sm);
+    overflow:hidden;background:#181818;aspect-ratio:4/3;box-shadow:var(--hard-sm)}
+  .cam-wrap video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+  .cam-wrap canvas{position:absolute;inset:0;width:100%;height:100%}
+  .cam-empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:8px;color:#EDE7D9;font-size:14px;font-weight:700;text-align:center;padding:20px}
+  .cam-empty .big{font-size:42px}
+  .vs-status{margin:12px auto 0;max-width:560px;text-align:center;font-size:14px;font-weight:700;min-height:48px;
+    border:2.5px solid var(--ink);border-radius:var(--r-sm);box-shadow:var(--hard-sm);padding:10px 14px;background:var(--paper);color:var(--muted)}
+  .vs-status.det{background:var(--amber-soft);color:#7A5200}
+  .vs-status.rec{background:var(--point-soft);color:#067A57}
+
   .entdl{margin-top:18px}
   .dl{display:flex;align-items:center;gap:10px;width:100%;text-decoration:none;cursor:pointer;font-family:inherit;
     font-size:15.5px;font-weight:900;color:#fff;background:var(--point);border:2.5px solid var(--ink);border-radius:14px;
@@ -254,6 +292,50 @@
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--amber)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/></svg>
     <span><b>관찰 포인트</b> — 기준값을 높이면 마루도 거부되고, 낮추면 지훈이도 통과해요 — 직접 확인해 봐요.</span>
   </div>
+
+  <!-- 얼굴 탐지 vs 얼굴 인식 -->
+  <section class="vs" aria-labelledby="vsTitle">
+    <h2 id="vsTitle">👀 얼굴 탐지 vs 🔑 얼굴 인식 — 뭐가 다를까?</h2>
+    <p class="sub">둘 다 "얼굴"을 다루지만, AI에게 시키는 일이 달라요. 표로 먼저 비교해 봐요.</p>
+
+    <div class="tbl-scroll">
+      <table class="vstable">
+        <thead>
+          <tr><th scope="col" style="background:var(--paper)">비교 항목</th><th scope="col">👀 얼굴 탐지<br><span style="font-weight:600;font-size:12px">(Face Detection)</span></th><th scope="col">🔑 얼굴 인식<br><span style="font-weight:600;font-size:12px">(Face Recognition)</span></th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">묻는 질문</th><td class="q">"얼굴이 어디에, 몇 개 있지?"</td><td class="q">"이 얼굴이 누구지?"</td></tr>
+          <tr><th scope="row">결과</th><td>얼굴 위치에 <b>네모 상자</b>를 그리고 개수를 세요. 누구인지는 몰라요.</td><td>등록된 얼굴과 특징값을 비교해 <b>유사도</b>를 재고, <b>이름</b>을 알아내요.</td></tr>
+          <tr><th scope="row">미리 필요한 것</th><td>없어요 — 아무 사진에서나 바로 얼굴을 찾아요.</td><td><b>등록된 얼굴 정보</b>가 먼저 있어야 해요. 등록이 없으면 "모르는 사람"이에요.</td></tr>
+          <tr><th scope="row">개인정보</th><td>덜 민감해요 — "여기 얼굴이 있다"까지만 알아요.</td><td><b>매우 민감</b>해요 — "이 사람이 누구다"까지 알아내니까 함부로 쓰면 안 돼요.</td></tr>
+          <tr><th scope="row">생활 속 예시</th><td>카메라 자동 초점, 사진 앱의 인물 모드, 단체 사진 얼굴 개수 세기</td><td>스마트폰 얼굴 잠금 해제, 출입문 문지기, 사진 앱의 "같은 사람 모아 보기"</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>📷 진짜 카메라로 직접 비교해 봐요 <span style="font-weight:600;font-size:12.5px;color:var(--muted)">(선택 체험)</span></h3>
+    <div class="safe" style="margin:0 0 14px">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6l-8-4Z" fill="var(--amber)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/></svg>
+      <span>영상과 얼굴 정보는 <b>내 컴퓨터 안에서만</b> 계산되고, 어디에도 저장·전송되지 않아요. 등록한 얼굴 값도 새로고침하면 사라져요. 체험이 끝나면 카메라를 꼭 꺼요.</span>
+    </div>
+
+    <div class="cam-controls" role="group" aria-label="카메라 조작">
+      <button class="cbtn" id="camOn">📷 카메라 켜기</button>
+      <button class="cbtn stop" id="camOff" disabled>⏹ 카메라 끄기</button>
+      <span style="flex:1"></span>
+      <button class="cbtn mode-det" id="mDet" disabled>① 탐지 모드</button>
+      <button class="cbtn" id="mRec" disabled>② 인식 모드</button>
+      <button class="cbtn" id="regMe" disabled>➕ 내 얼굴 등록</button>
+    </div>
+
+    <div class="cam-wrap">
+      <video id="cam" autoplay muted playsinline></video>
+      <canvas id="ov"></canvas>
+      <div class="cam-empty" id="camEmpty"><span class="big">📷</span><span>"카메라 켜기"를 누르면 여기에 화면이 나와요.<br>카메라가 없으면 위의 얼굴 카드 실험으로 체험해요.</span></div>
+    </div>
+    <p class="vs-status" id="vsStatus" role="status" aria-live="polite">카메라를 켜고 ① 탐지 모드와 ② 인식 모드를 번갈아 눌러 보세요.</p>
+  </section>
+
   <div class="entdl">
     <a class="dl" href="../assets/entry/face-door.ent" download="(중급17차시)출입문 얼굴인식.ent"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 19h16" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>엔트리 파일 내려받기 (출입문 얼굴인식)<span class="arw" aria-hidden="true">↓</span></a>
   </div>
@@ -352,6 +434,137 @@ function drawThr() {
 }
 $('thr').addEventListener('input', drawThr);
 drawThr();
+
+/* ===== 얼굴 탐지 vs 인식 — 실제 카메라 체험 (face-api.js, 브라우저 안에서만 처리) ===== */
+(function () {
+  const FA_CDN = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/dist/face-api.js';
+  const FA_MODELS = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/model';
+  const MATCH_DIST = 0.55; // 이 거리보다 가까우면 같은 사람으로 판정
+
+  const video = $('cam'), canvas = $('ov'), status = $('vsStatus');
+  let stream = null, mode = 'det', running = false, registered = null, modelsReady = false;
+
+  function say(msg, cls) { status.textContent = msg; status.className = 'vs-status' + (cls ? ' ' + cls : ''); }
+  function setBtns() {
+    const on = !!stream;
+    $('camOn').disabled = on; $('camOff').disabled = !on;
+    $('mDet').disabled = !on; $('mRec').disabled = !on;
+    $('regMe').disabled = !(on && mode === 'rec');
+    $('mDet').classList.toggle('on', on && mode === 'det');
+    $('mRec').classList.toggle('on', on && mode === 'rec');
+  }
+
+  function loadScript(src) {
+    return new Promise((ok, fail) => {
+      const s = document.createElement('script');
+      s.src = src; s.onload = ok; s.onerror = () => fail(new Error('script'));
+      document.head.appendChild(s);
+    });
+  }
+  async function ensureModels() {
+    if (modelsReady) return;
+    if (typeof faceapi === 'undefined') { say('AI 도구를 내려받는 중이에요…'); await loadScript(FA_CDN); }
+    say('얼굴 AI 모델을 내려받는 중이에요… (처음 한 번만, 잠시 걸려요)');
+    await Promise.all([
+      faceapi.nets.tinyFaceDetector.loadFromUri(FA_MODELS),
+      faceapi.nets.faceLandmark68Net.loadFromUri(FA_MODELS),
+      faceapi.nets.faceRecognitionNet.loadFromUri(FA_MODELS),
+    ]);
+    modelsReady = true;
+  }
+
+  $('camOn').onclick = async () => {
+    try {
+      await ensureModels();
+      say('카메라를 켜는 중이에요…');
+      stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 }, audio: false });
+      video.srcObject = stream;
+      await new Promise(r => { video.onloadedmetadata = r; });
+      canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+      $('camEmpty').style.display = 'none';
+      running = true; setBtns(); loop();
+      say('① 탐지 모드 — 화면 속 모든 얼굴을 찾아 상자를 그려요. 누구인지는 몰라요!', 'det');
+    } catch (e) {
+      stream = null; setBtns();
+      say('카메라를 켤 수 없어요 (없거나 사용을 거부했어요). 위의 얼굴 카드 실험으로 체험해요!');
+    }
+  };
+  $('camOff').onclick = () => {
+    running = false;
+    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+    video.srcObject = null; registered = null;
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+    $('camEmpty').style.display = '';
+    setBtns(); say('카메라를 껐어요. 등록했던 얼굴 값도 지웠어요.');
+  };
+  $('mDet').onclick = () => { mode = 'det'; setBtns(); say('① 탐지 모드 — 화면 속 모든 얼굴을 찾아 상자를 그려요. 누구인지는 몰라요!', 'det'); };
+  $('mRec').onclick = () => {
+    mode = 'rec'; setBtns();
+    say(registered ? '② 인식 모드 — 등록된 얼굴과 비교해 누구인지 알아내요.' :
+      '② 인식 모드 — 아직 등록된 얼굴이 없어요. "내 얼굴 등록"을 눌러야 알아볼 수 있어요!', 'rec');
+  };
+  $('regMe').onclick = async () => {
+    say('얼굴 특징값을 재는 중이에요…', 'rec');
+    const det = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 320 }))
+      .withFaceLandmarks().withFaceDescriptor();
+    if (!det) { say('얼굴을 찾지 못했어요. 카메라를 정면으로 바라보고 다시 눌러 보세요.', 'rec'); return; }
+    registered = det.descriptor;
+    say('등록 완료! 이제 인식 모드가 "나"를 알아봐요. 친구와 번갈아 서 보세요.', 'rec');
+  };
+
+  function chip(ctx, x, y, txt, bg) {
+    ctx.font = '900 16px sans-serif';
+    const w = ctx.measureText(txt).width + 14;
+    ctx.fillStyle = bg; ctx.fillRect(x, Math.max(0, y - 24), w, 24);
+    ctx.strokeStyle = '#141414'; ctx.lineWidth = 2; ctx.strokeRect(x, Math.max(0, y - 24), w, 24);
+    ctx.fillStyle = '#141414'; ctx.fillText(txt, x + 7, Math.max(17, y - 7));
+  }
+  // 영상이 좌우 반전(거울)이라 상자 x좌표도 반전해서 그린다
+  const flipX = b => canvas.width - b.x - b.width;
+
+  async function loop() {
+    const ctx = canvas.getContext('2d');
+    const opts = new faceapi.TinyFaceDetectorOptions({ inputSize: 320, scoreThreshold: 0.5 });
+    while (running) {
+      try {
+        if (mode === 'det') {
+          const dets = await faceapi.detectAllFaces(video, opts);
+          if (!running) break;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          dets.forEach((d, i) => {
+            const b = d.box, x = flipX(b);
+            ctx.strokeStyle = '#FFB800'; ctx.lineWidth = 4;
+            ctx.strokeRect(x, b.y, b.width, b.height);
+            chip(ctx, x, b.y, '얼굴 ' + (i + 1) + ' · ' + Math.round(d.score * 100) + '%', '#FFF0C7');
+          });
+          say('① 탐지 모드 — 찾은 얼굴: ' + dets.length + '개. 위치와 개수만 알고, 누구인지는 몰라요!', 'det');
+        } else {
+          const dets = await faceapi.detectAllFaces(video, opts).withFaceLandmarks().withFaceDescriptors();
+          if (!running) break;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          let found = false;
+          dets.forEach(d => {
+            const b = d.detection.box, x = flipX(b);
+            let label = '등록 필요', color = '#FF4D4D', bg = '#FFE0E0';
+            if (registered) {
+              const dist = faceapi.euclideanDistance(registered, d.descriptor);
+              const simPct = Math.max(0, Math.round((1 - dist) * 100));
+              if (dist < MATCH_DIST) { label = '나! 유사도 ' + simPct; color = '#12B76A'; bg = '#D6F5E6'; found = true; }
+              else { label = '모르는 얼굴 · 유사도 ' + simPct; }
+            }
+            ctx.strokeStyle = color; ctx.lineWidth = 4;
+            ctx.strokeRect(x, b.y, b.width, b.height);
+            chip(ctx, x, b.y, label, bg);
+          });
+          if (!registered) say('② 인식 모드 — 등록된 얼굴이 없어서 모두 "모르는 사람"이에요. "내 얼굴 등록"을 눌러요!', 'rec');
+          else say('② 인식 모드 — 등록된 얼굴과 비교 중… ' + (found ? '등록한 사람을 찾았어요!' : (dets.length ? '등록한 사람이 아니에요.' : '얼굴을 찾는 중…')), 'rec');
+        }
+      } catch (e) { /* 프레임 하나 실패는 무시하고 계속 */ }
+      await new Promise(r => setTimeout(r, 120));
+    }
+  }
+  setBtns();
+})();
 </script>
 </body>
 </html>
