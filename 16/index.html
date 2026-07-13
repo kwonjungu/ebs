@@ -162,6 +162,21 @@
   .ql.tool{background:var(--point-soft)}
   .ql .arw{margin-left:auto;font-weight:900}
   .ql svg{flex-shrink:0;color:var(--point)}
+
+  /* 특징점 토글 + 좌표 목록 */
+  .ptbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:10px 0 2px;cursor:pointer;
+    font-family:inherit;font-size:14px;font-weight:800;color:var(--ink);background:var(--surface);
+    border:2.5px solid var(--ink);border-radius:12px;box-shadow:var(--hard-sm);padding:11px;min-height:48px;transition:transform .1s}
+  .ptbtn[aria-pressed=true]{background:var(--point);color:#fff}
+  .ptbtn:active{transform:translate(2px,2px);box-shadow:none}
+  .ptbtn:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .ptbtn .dot{width:12px;height:12px;border-radius:50%;background:var(--point);border:2px solid var(--ink)}
+  .ptbtn[aria-pressed=true] .dot{background:#fff}
+  .ptlist{display:none;flex-wrap:wrap;gap:6px;margin:8px 0 2px}
+  .ptlist.show{display:flex}
+  .ptlist .pt{font-family:'Courier New',monospace;font-size:12px;font-weight:800;background:var(--ink);
+    color:var(--point-soft);border:2px solid var(--ink);border-radius:8px;padding:3px 9px}
+  .ptlist .pt b{color:#fff;font-weight:900}
 </style>
 </head>
 <body>
@@ -221,6 +236,10 @@
         <span class="val" id="vy">—</span>
       </div>
     </div>
+    <button class="ptbtn" id="mPts" aria-pressed="false" aria-label="특징점 보기 켜기">
+      <span class="dot" aria-hidden="true"></span> 특징점 보기 (눈·코·입 좌표 표시)
+    </button>
+    <div class="ptlist" id="ptlist" aria-live="polite"></div>
     <p class="stateline" id="state">버튼을 누르면 카메라가 켜져요</p>
 
     <div class="btnrow">
@@ -280,6 +299,7 @@ const MODEL = '../assets/mediapipe/face_landmarker.task';
 let mode = 'detect';          // 'detect' | 'ident'
 let running = false, simMode = false;
 let stream = null, landmarker = null;
+let showPts = false;
 let lastVT = -1, lastFace = null, frame = 0, raf = 0;
 let simPos = null;
 
@@ -426,11 +446,13 @@ function loop(){
       drawBox(face.box, '#22C55E', false);
       drawLabel(face.box, 'X:' + Math.round(face.cx) + '  Y:' + Math.round(face.cy), '#22C55E');
       drawEars(face);
+      if(showPts) drawLandmarks(face);
       if(frame % 5 === 0 || simMode){ $('vx').textContent = Math.round(face.cx); $('vy').textContent = Math.round(face.cy); }
       if(!simMode) $('state').innerHTML = '얼굴 <b>탐지</b> 중! 고개를 움직여 좌표를 관찰해요';
     } else {
       drawBox(face.box, '#94A3B8', true);
       drawLabel(face.box, '누구인지는 몰라요 (식별 안 함)', '#94A3B8');
+      if(showPts) drawLandmarks(face);
       if(frame % 5 === 0 || simMode){ $('vx').textContent = Math.round(face.cx); $('vy').textContent = Math.round(face.cy); }
     }
   } else if(!simMode){
@@ -477,6 +499,72 @@ function ear(x, y, s, tilt){
   ctx.fillStyle = '#F9A8D4';
   ctx.beginPath(); ctx.moveTo(0, -s * 0.5); ctx.lineTo(-s * 0.32, s * 0.28); ctx.lineTo(s * 0.32, s * 0.28); ctx.closePath(); ctx.fill();
   ctx.restore();
+}
+
+// ── 특징점 보기 토글 ──
+$('mPts').onclick = function(){
+  showPts = !showPts;
+  this.setAttribute('aria-pressed', showPts ? 'true' : 'false');
+  this.setAttribute('aria-label', showPts ? '특징점 보기 끄기' : '특징점 보기 켜기');
+  const list = $('ptlist');
+  list.classList.toggle('show', showPts);
+  if(!showPts) list.innerHTML = '';
+};
+
+// 주요 특징점(미러 좌표 기준): [MediaPipe 인덱스, 이름]
+const KEYPTS = [[33,'눈'],[263,'눈'],[1,'코'],[61,'입'],[291,'입'],[152,'턱'],[10,'이마']];
+
+function drawLandmarks(face){
+  const W = canvas.width, H = canvas.height;
+  ctx.save();
+  if(simMode || !lastFace){
+    // 연습 모드: 이모지 얼굴 기준 대표 점 배치
+    const cx = face.cx, cy = face.cy, fw = face.fw;
+    const pts = [
+      ['눈', cx - fw*0.20, cy - fw*0.10], ['눈', cx + fw*0.20, cy - fw*0.10],
+      ['코', cx, cy + fw*0.02], ['입', cx - fw*0.16, cy + fw*0.24],
+      ['입', cx + fw*0.16, cy + fw*0.24], ['턱', cx, cy + fw*0.46], ['이마', cx, cy - fw*0.34],
+    ];
+    // 잔점(장식)
+    ctx.fillStyle = 'rgba(139,92,246,0.35)';
+    for(let k=0;k<40;k++){ const a=k/40*6.283, r=fw*(0.28+0.16*Math.sin(k*1.7));
+      ctx.beginPath(); ctx.arc(cx+Math.cos(a)*r, cy+Math.sin(a)*r*1.1, 1.6, 0, 6.29); ctx.fill(); }
+    drawKeyPts(pts, W, H);
+  } else {
+    // 실제: 478개 점 전부 옅게 + 주요 점 강조
+    ctx.fillStyle = 'rgba(52,211,153,0.55)';
+    for(const lm of lastFace){ const x = W - lm.x*W, y = lm.y*H;
+      ctx.beginPath(); ctx.arc(x, y, Math.max(1, W/520), 0, 6.29); ctx.fill(); }
+    const pts = KEYPTS.map(([i,nm]) => [nm, W - lastFace[i].x*W, lastFace[i].y*H]);
+    drawKeyPts(pts, W, H);
+  }
+  ctx.restore();
+}
+
+function drawKeyPts(pts, W, H){
+  const fs = Math.max(11, W/48);
+  ctx.font = '800 ' + fs + 'px "Courier New", monospace';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+  const rows = [];
+  for(const [nm, x, y] of pts){
+    // 점
+    ctx.beginPath(); ctx.arc(x, y, Math.max(3.5, W/150), 0, 6.29);
+    ctx.fillStyle = '#FBBF24'; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = '#141414'; ctx.stroke();
+    // 좌표 라벨
+    const label = nm + ' ' + Math.round(x) + ',' + Math.round(y);
+    const tw = ctx.measureText(label).width + 10;
+    let lx = x + 6, ly = y - 6;
+    if(lx + tw > W) lx = x - tw - 6; if(ly < fs + 6) ly = y + fs + 10;
+    ctx.fillStyle = 'rgba(20,20,20,0.82)'; roundRect(lx, ly - fs - 6, tw, fs + 8, 5); ctx.fill();
+    ctx.fillStyle = '#FFF0C7'; ctx.fillText(label, lx + 5, ly - 2);
+    rows.push([nm, Math.round(x), Math.round(y)]);
+  }
+  // 하단 좌표 목록 갱신 (프레임 스로틀)
+  if(frame % 6 === 0 || simMode){
+    $('ptlist').innerHTML = rows.map(([nm,x,y]) =>
+      '<span class="pt">'+nm+' <b>'+x+','+y+'</b></span>').join('');
+  }
 }
 </script>
 </body>
