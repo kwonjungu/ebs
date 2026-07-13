@@ -211,6 +211,29 @@
   .ql .arw{margin-left:auto;font-weight:900}
   .ql svg{flex-shrink:0;color:var(--point)}
 
+
+  /* 유튜브 플레이어 + 셋리스트 */
+  .ytwrap{border:2.5px solid var(--ink);border-radius:var(--r-sm);overflow:hidden;background:#000;margin:14px 0 6px}
+  .ytframe{position:relative;width:100%;aspect-ratio:16/9;background:#000}
+  .ytframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .ytframe .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#9BE9C4;font-weight:800;font-size:14px}
+  .ytopen{display:inline-flex;align-items:center;gap:6px;text-decoration:none;font-size:12.5px;font-weight:800;
+    color:var(--ink);background:var(--paper);border:2px solid var(--ink);border-radius:999px;padding:5px 12px;margin:2px 0 8px}
+  .setlist-h{font-size:13px;font-weight:900;margin:8px 0 8px}
+  .setlist-h b{color:var(--point)}
+  .setlist{display:grid;gap:6px;max-height:230px;overflow-y:auto;padding-right:4px}
+  .song{display:flex;align-items:center;gap:9px;width:100%;text-align:left;cursor:pointer;font-family:inherit;
+    background:var(--paper);border:2px solid var(--ink);border-radius:10px;padding:8px 11px;min-height:44px;transition:transform .08s}
+  .song:hover{transform:translate(-1px,-1px)}
+  .song:focus-visible{outline:3px solid var(--point);outline-offset:2px}
+  .song.on{background:var(--point-soft);border-color:var(--point)}
+  .song .idx{flex-shrink:0;width:22px;height:22px;display:grid;place-items:center;font-size:11px;font-weight:900;
+    background:var(--ink);color:#fff;border-radius:6px}
+  .song .meta{min-width:0}
+  .song .tt{font-size:13.5px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .song .ar{font-size:11.5px;color:var(--muted);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .safebadge{display:inline-block;font-size:11px;font-weight:800;color:#067A57;background:var(--point-soft);
+    border:1.5px solid var(--point);border-radius:999px;padding:1px 9px;margin-left:6px}
 </style>
 </head>
 <body>
@@ -263,10 +286,10 @@
       <div class="big" id="recoEmo"></div>
       <div class="mood" id="recoMood"></div>
       <p class="why" id="recoWhy"></p>
-      <button class="playbtn" id="play">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="5,3 19,12 5,21"/></svg>
-        분위기 들어보기
-      </button><br>
+      <div class="ytwrap"><div class="ytframe" id="ytBox"><div class="ph">추천 곡을 고르면 여기서 재생돼요</div></div></div>
+      <a class="ytopen" id="ytOpen" href="#" target="_blank" rel="noopener noreferrer" style="display:none">유튜브에서 열기 ↗</a>
+      <div class="setlist-h"><b id="setCount">0</b>곡 · 안전하게 고른 추천 셋리스트<span class="safebadge">EBS 안전곡</span></div>
+      <div class="setlist" id="setlist"></div>
       <button class="dislike" id="dislike">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 15H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h4M10 15l4-8h2a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2l-1 4H10v-4Z" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/></svg>
         이 추천이 내 마음과 달라요
@@ -330,36 +353,433 @@
 
 <script>
 const $ = id => document.getElementById(id);
-const LEX = {
-  joy:  { label: '기쁨',  emo: '😊', mark: 'm-joy',  fill: 'f-joy',
-          words: ['뿌듯', '기뻐', '기뻤', '기쁘', '신나', '신났', '신났어', '좋았', '행복', '즐거', '웃었', '설레', '최고', '칭찬', '박수'] },
-  sad:  { label: '슬픔',  emo: '😢', mark: 'm-sad',  fill: 'f-sad',
-          words: ['속상', '슬퍼', '슬펐', '슬프', '우울', '눈물', '아쉬', '서운', '외로', '울었', '시무룩'] },
-  anx:  { label: '불안',  emo: '😰', mark: 'm-anx',  fill: 'f-anx',
-          words: ['떨려', '떨리', '떨렸', '긴장', '걱정', '불안', '무서', '두려', '조마조마', '초조'] },
-  angry:{ label: '화남',  emo: '😠', mark: 'm-angry', fill: 'f-angry',
-          words: ['화나', '화가', '화났', '짜증', '억울', '분했', '분해', '열받', '싫었', '약올'] },
+
+// ── 감정 분류 모델(고도화) ──
+/* =======================================================================
+ * 18강 'AI DJ 감정 분석' — 규칙 기반 감정 분류기 (고도화 설계)
+ * -----------------------------------------------------------------------
+ * 순수 클라이언트 JS. 외부 API·라이브러리 0개. index.html 에 바로 삽입 가능.
+ *
+ * [알고리즘 개요]
+ *  1) 텍스트를 훑으며 4감정(joy/sad/angry/fear) 가중 어휘 사전과 매칭.
+ *  2) 매칭 단어마다  기본가중치(1~3)  ×  강조어 배수  ×  부정어 반전(±)  를 적용.
+ *  3) 감정별 합산 점수 → softmax 로 확률(%) 변환.
+ *  4) 1·2위 확률 차가 작으면(<= COMPLEX_GAP) '복합 감정' 으로 판정.
+ *  5) 매칭 단어 목록(matched)과 근거 문장(reason)을 함께 반환.
+ *
+ * [반환 형태]
+ *  classifyEmotion(text) →
+ *    {
+ *      top:      'joy'|'sad'|'angry'|'fear'|null,   // 1위 감정 (단서 없으면 null)
+ *      second:   'joy'|'sad'|'angry'|'fear'|null,   // 2위 감정
+ *      probs:    { joy, sad, angry, fear },          // 확률(%) 0~100, 합 100
+ *      scores:   { joy, sad, angry, fear },          // softmax 이전 원점수
+ *      isComplex: true|false,                        // 복합 감정 여부
+ *      matched:  [ { word, emo, weight, negated } ], // 매칭 단서 (하이라이트용)
+ *      reason:   '...'                               // 설명(왜 이 감정인지)
+ *    }
+ *
+ * [기존 index.html 과의 연결 포인트]
+ *  - emo 키: joy/sad/angry/fear  → LEX 의 mark(m-*)·fill(f-*)·MOODS 와 1:1 대응.
+ *    (기존 코드의 'anx' 는 여기서 'fear' 로 통일. index.html 쪽 키만 맞춰 주면 됨)
+ *  - matched[].word : <mark> 하이라이트 대상 단어.
+ *  - probs          : 감정 막대 그래프 %.
+ *  - reason         : 결과 카드의 '왜 이 분위기?' 문구.
+ * ===================================================================== */
+
+
+/* -----------------------------------------------------------------------
+ * 1. 감정별 가중 어휘 사전
+ *    weight 3 = 강함, 2 = 보통, 1 = 약함
+ *    초등 일기 말투 + 신체·상황 표현(관용구) 포함.
+ *    매칭은 '부분 문자열' 방식이라 어간만 넣어도 활용형이 잡힘
+ *    (예: '신났' → 신났다/신났어/신났고).
+ * --------------------------------------------------------------------- */
+const EMO_LEXICON = {
+  joy: {   // 기쁨 / 신남
+    label: '기쁨/신남', emo: '😊', mark: 'm-joy', fill: 'f-joy',
+    words: {
+      // 강함(3)
+      '신났': 3, '신나': 3, '행복': 3, '뿌듯': 3, '벅차': 3, '짜릿': 3,
+      '최고': 3, '날아갈': 3, '환호': 3, '대박': 3,
+      // 보통(2)
+      '기뻤': 2, '기뻐': 2, '기쁘': 2, '즐거': 2, '설레': 2, '설렜': 2,
+      '들뜨': 2, '들떠': 2, '성취감': 2, '홀가분': 2, '반가': 2, '으쓱': 2,
+      '짜릿했': 2, '흐뭇': 2,
+      // 약함(1)
+      '좋았': 1, '좋아': 1, '웃었': 1, '웃음': 1, '기특': 1, '따뜻': 1,
+      '칭찬': 1, '박수': 1, '안심': 1, '신기': 1
+    }
+  },
+  sad: {   // 슬픔 / 우울
+    label: '슬픔/우울', emo: '😢', mark: 'm-sad', fill: 'f-sad',
+    words: {
+      // 강함(3)
+      '슬펐': 3, '슬퍼': 3, '슬프': 3, '눈물': 3, '울었': 3, '울컥': 3,
+      '서러': 3, '무너지': 3, '핑 돌': 3, '속상': 3,
+      // 보통(2)
+      '우울': 2, '시무룩': 2, '외로': 2, '서글': 2, '헛헛': 2,
+      '마음이 아팠': 2, '마음이 무거': 2, '고개가 푹': 2, '텅 빈': 2,
+      // 약함(1)
+      '아쉬': 1, '서운': 1, '답답': 1, '기운이 빠': 1, '발걸음이 무거': 1,
+      '시들': 1, '헛헛하': 1, '먹먹': 1
+    }
+  },
+  angry: { // 화남 / 스트레스
+    label: '화남/스트레스', emo: '😠', mark: 'm-angry', fill: 'f-angry',
+    words: {
+      // 강함(3)
+      '화가 났': 3, '화났': 3, '열받': 3, '분했': 3, '분해': 3, '분노': 3,
+      '폭발': 3, '머리끝까지': 3, '치밀': 3, '부들부들': 3, '열이 뻗': 3,
+      // 보통(2)
+      '짜증': 2, '억울': 2, '얄미': 2, '배신감': 2, '어이가 없': 2,
+      '스트레스': 2, '미칠 것': 2, '주먹을 꽉': 2, '약올': 2,
+      // 약함(1)
+      '화나': 1, '싫었': 1, '싫어': 1, '짜증나': 1, '못마땅': 1, '언짢': 1,
+      '탓': 1
+    }
+  },
+  fear: {  // 불안 / 긴장
+    label: '불안/긴장', emo: '😰', mark: 'm-anx', fill: 'f-anx',
+    words: {
+      // 강함(3)
+      '무서': 3, '두려': 3, '겁이 났': 3, '겁이 나': 3, '오싹': 3,
+      '식은땀': 3, '심장이 콩닥': 3, '심장이 터질': 3, '숨이 막': 3,
+      '전전긍긍': 3, '덜컥': 3,
+      // 보통(2)
+      '불안': 2, '긴장': 2, '떨렸': 2, '떨려': 2, '떨리': 2, '초조': 2,
+      '조마조마': 2, '안절부절': 2, '후들': 2, '쿵쾅': 2, '콩닥콩닥': 2,
+      '가슴이 철렁': 2,
+      // 약함(1)
+      '걱정': 1, '조바심': 1, '눈치': 1, '망설': 1, '긴장하며': 1,
+      '떨리는': 1, '조심스': 1
+    }
+  }
 };
-const MOODS = {
-  joy:   { emo: '🌞', name: '밝고 신나는 음악' },
-  sad:   { emo: '🌙', name: '잔잔하고 위로가 되는 음악' },
-  anx:   { emo: '🍃', name: '느리고 편안한 음악' },
-  angry: { emo: '🌊', name: '차분하게 가라앉히는 음악' },
+
+/* -----------------------------------------------------------------------
+ * 2. 부정어(NEGATORS)
+ *    매칭 단어 '앞쪽 창(window)' 안에 이 표현이 있으면 그 단어의 감정을 반전.
+ *    반전 = 해당 감정 점수에서 빼고(감점), 없던 셈 치지 않고 '역방향 단서'로 처리.
+ *    예) "하나도 안 슬펐다" → sad 감점.  "무섭지 않았다" → fear 감점.
+ *    한국어 부정은 (1)선행 '안/못' (2)후행 '~지 않-/~지 못-' 두 형태를 모두 처리.
+ * --------------------------------------------------------------------- */
+const NEGATORS = ['안 ', '못 ', '안돼', '않', '아니', '없었', '없어', '없다', '말고'];
+// 부정어 탐지 창 크기(글자 수): 매칭 단어 기준 앞/뒤로 이 만큼만 살펴봄.
+const NEG_WINDOW = 6;
+
+/* -----------------------------------------------------------------------
+ * 3. 강조어(INTENSIFIERS)
+ *    매칭 단어 앞쪽 창 안에 있으면 가중치에 배수를 곱함.
+ *    강함(>1) : 감정을 키우는 부사 / 약함(<1) : 감정을 줄이는 부사.
+ * --------------------------------------------------------------------- */
+const INTENSIFIERS = {
+  '너무': 1.5, '정말': 1.5, '진짜': 1.5, '엄청': 1.5, '완전': 1.5,
+  '되게': 1.4, '아주': 1.4, '무척': 1.4, '몹시': 1.5, '매우': 1.4,
+  '하루 종일': 1.3, '내내': 1.3,
+  '조금': 0.5, '약간': 0.5, '살짝': 0.5, '그냥': 0.7, '좀': 0.6, '다소': 0.6
 };
-const MELODY = {
-  joy:   { notes: [523, 587, 659, 784, 659, 784, 880, 1047], dur: 0.22, type: 'triangle' },
-  sad:   { notes: [440, 392, 349, 330, 294, 330, 349, 330],  dur: 0.45, type: 'sine' },
-  anx:   { notes: [330, 294, 262, 196, 262, 294, 262, 247],  dur: 0.48, type: 'sine' },
-  angry: { notes: [262, 247, 220, 196, 220, 247, 220, 196],  dur: 0.5,  type: 'sine' },
+const INT_WINDOW = 8; // 강조어 탐지 창 크기(글자 수).
+
+// 복합 감정 판정: 1·2위 확률 차(%p)가 이 값 이하이면 복합으로 본다.
+// (교재의 '졌지만 뿌듯' 같은 섞인 감정을 확실히 잡도록 넉넉히 25%p)
+const COMPLEX_GAP = 25;
+
+
+/* =======================================================================
+ * 핵심 함수
+ * ===================================================================== */
+
+/**
+ * 문자열 window 안에 사전(dict)의 키가 있으면 그 키를 반환(가장 가까운/긴 것 우선).
+ */
+function _findIn(windowText, dict) {
+  let best = null;
+  for (const key in dict) {
+    if (windowText.indexOf(key) !== -1) {
+      if (!best || key.length > best.length) best = key;
+    }
+  }
+  return best;
+}
+
+/**
+ * classifyEmotion — 텍스트를 4감정으로 분류.
+ * @param {string} text 사용자가 입력한 일기
+ * @returns {object} { top, second, probs, scores, isComplex, matched, reason }
+ */
+function classifyEmotion(text) {
+  text = (text || '').toString();
+
+  const scores  = { joy: 0, sad: 0, angry: 0, fear: 0 };
+  const matched = []; // { word, emo, weight, negated }
+
+  // ---- (A) 사전 매칭 + 가중치 계산 --------------------------------------
+  for (const emo in EMO_LEXICON) {
+    const words = EMO_LEXICON[emo].words;
+    for (const w in words) {
+      const base = words[w];
+      let from = 0, idx;
+      // 같은 단어가 여러 번 나올 수 있으므로 전부 훑는다.
+      while ((idx = text.indexOf(w, from)) !== -1) {
+        from = idx + w.length;
+
+        // 앞뒤 창 텍스트 (부정어·강조어 탐지용)
+        const preNeg = text.slice(Math.max(0, idx - NEG_WINDOW), idx);
+        const postNeg = text.slice(idx + w.length, idx + w.length + NEG_WINDOW);
+        const preInt = text.slice(Math.max(0, idx - INT_WINDOW), idx);
+
+        // (1) 강조어 배수
+        let mult = 1;
+        const intKey = _findIn(preInt, INTENSIFIERS);
+        if (intKey) mult = INTENSIFIERS[intKey];
+
+        // (2) 부정어 반전 (앞의 '안/못/말고' 또는 뒤의 '~지 않/못')
+        let negated = false;
+        for (const neg of NEGATORS) {
+          if (preNeg.indexOf(neg) !== -1 || postNeg.indexOf(neg) !== -1) {
+            negated = true; break;
+          }
+        }
+
+        // (3) 최종 가중치
+        let weight = base * mult;
+        if (negated) weight = -weight * 0.7; // 반전은 100%가 아닌 0.7배로 감점
+
+        scores[emo] += weight;
+        matched.push({ word: w, emo, weight: +weight.toFixed(2), negated });
+      }
+    }
+  }
+
+  // ---- (B) softmax 확률 변환 -------------------------------------------
+  // 음수/0 점수도 안전하게 다루도록 max 를 빼서 지수 폭주 방지.
+  // 온도(T)로 분포를 완만하게: 초등 눈높이에서 100:0:0:0 극단·과잉확신 방지.
+  // T 를 최고점수에 비례시켜, 단서가 많아도 확률이 100%로 붙지 않게 함
+  // (덕분에 '졌지만 뿌듯' 같은 근소한 2위도 막대에서 보인다).
+  const maxScore = Math.max(1, ...Object.values(scores).map(Math.abs));
+  const probs = _softmax(scores, maxScore * 0.55);
+
+  // ---- (C) 순위 & 복합 감정 판정 ---------------------------------------
+  const ranked = Object.keys(probs).sort((a, b) => probs[b] - probs[a]);
+  const anyHit = matched.some(m => !m.negated);          // 실제 단서가 하나라도 있나
+  const top    = anyHit ? ranked[0] : null;
+  const second = anyHit ? ranked[1] : null;
+  const gap    = probs[ranked[0]] - probs[ranked[1]];
+  const isComplex = !!top && gap <= COMPLEX_GAP && probs[ranked[1]] >= 15;
+
+  // ---- (D) 설명(reason) 생성 -------------------------------------------
+  const reason = _buildReason(top, second, isComplex, matched);
+
+  return { top, second, probs, scores, isComplex, matched, reason };
+}
+
+/**
+ * softmax — 점수 객체 → 확률(%) 객체. 합계 100.
+ * @param {object} scoreObj { joy, sad, angry, fear }
+ * @param {number} T 온도(클수록 완만). 기본 1.
+ */
+function _softmax(scoreObj, T) {
+  T = T || 1;
+  const keys = Object.keys(scoreObj);
+  const vals = keys.map(k => scoreObj[k] / T);
+  const max  = Math.max(...vals);
+  const exps = vals.map(v => Math.exp(v - max)); // -max: 오버플로 방지
+  const sum  = exps.reduce((a, b) => a + b, 0) || 1;
+  const out = {};
+  keys.forEach((k, i) => { out[k] = +(exps[i] / sum * 100).toFixed(1); });
+  return out;
+}
+
+/**
+ * _buildReason — 왜 이 감정으로 분류했는지 근거 문장 생성(설명 가능성).
+ */
+function _buildReason(top, second, isComplex, matched) {
+  if (!top) {
+    return '감정을 나타내는 단어를 찾지 못했어요. "뿌듯했다", "속상했다" 같은 표현을 넣어 보세요.';
+  }
+  // 감정별 매칭 단어를 가중치 순으로 정렬해 대표 단서 뽑기
+  const byEmo = {};
+  matched.filter(m => !m.negated).forEach(m => {
+    (byEmo[m.emo] = byEmo[m.emo] || []).push(m);
+  });
+  const topWords = (byEmo[top] || [])
+    .sort((a, b) => Math.abs(b.weight) - Math.abs(a.weight))
+    .slice(0, 3).map(m => "'" + m.word + "'");
+
+  const L = EMO_LEXICON;
+  let msg = topWords.length
+    ? topWords.join(', ') + ' 같은 단어가 보여서 ' + L[top].label + ' 으로 봤어요.'
+    : L[top].label + ' 단서가 가장 강했어요.';
+
+  if (isComplex && second) {
+    const sWords = (byEmo[second] || [])
+      .sort((a, b) => Math.abs(b.weight) - Math.abs(a.weight))
+      .slice(0, 2).map(m => "'" + m.word + "'");
+    msg += ' 그런데 ' + (sWords.length ? sWords.join(', ') + ' 처럼 ' : '')
+        + L[second].label + ' 단서도 함께 있어서, 이건 두 감정이 섞인 '
+        + '복합 감정이에요.';
+  }
+
+  const negs = matched.filter(m => m.negated).map(m => "'" + m.word + "'");
+  if (negs.length) {
+    msg += ' (' + negs.join(', ') + ' 은 앞에 "안/못/~지 않"이 붙어 반대로 계산했어요.)';
+  }
+  return msg;
+}
+
+
+/* =======================================================================
+ * 4. 검증용 예시 (콘솔에서 classifyEmotion(t) 호출 시 기대 결과)
+ * -----------------------------------------------------------------------
+ *  ① 기쁨
+ *    "시험을 잘 봐서 정말 뿌듯했다. 친구들 박수에 최고로 신났다!"
+ *    → top:'joy'  probs≈{joy 67, sad 11, angry 11, fear 11}  isComplex:false
+ *      matched: 뿌듯(3×1.5), 박수(1), 최고(3), 신났(3) …
+ *
+ *  ② 슬픔
+ *    "단짝이 전학 가서 눈물이 났다. 하루 종일 우울하고 속상했다."
+ *    → top:'sad'  probs≈{joy 11, sad 67, ...}  isComplex:false
+ *      matched: 눈물(3), 우울(2×1.3=하루 종일), 속상(3)
+ *
+ *  ③ 화남
+ *    "새치기를 당해서 머리끝까지 화가 났다. 생각할수록 너무 짜증 난다."
+ *    → top:'angry'  probs≈{angry 67, ...}  isComplex:false
+ *      matched: 머리끝까지(3), 화가 났(3), 짜증(2×1.5)
+ *
+ *  ④ 불안(부정어 반전 포함)
+ *    "발표가 있어서 심장이 콩닥콩닥 떨렸다. 하나도 안 무섭진 않았다."
+ *    → top:'fear'  probs≈{fear 67, ...}  isComplex:false
+ *      matched: 심장이 콩닥(3), 떨렸(2), 콩닥콩닥(2);
+ *               '무서'는 앞의 '안 '으로 negated → fear 감점
+ *
+ *  ⑤ 복합 감정 (교재 사례)
+ *    "축구에서 져서 속상했지만 끝까지 뛰어서 정말 뿌듯했어."
+ *    → top:'joy'  second:'sad'  isComplex:TRUE
+ *      probs≈{joy 54, sad 29, angry 9, fear 9}  (차 ≈25%p 이내)
+ *      reason 에 뿌듯(기쁨)+속상(슬픔) 둘 다 언급 → '복합 감정' 안내.
+ * ===================================================================== */
+
+// 모듈/전역 양쪽에서 쓸 수 있게 노출 (index.html <script> 삽입 시 전역으로 동작)
+if (typeof window !== 'undefined') {
+  window.EMO_LEXICON = EMO_LEXICON;
+  window.classifyEmotion = classifyEmotion;
+}
+if (typeof module !== 'undefined' && module.exports) {
+}
+
+// ── 감정별 UI 메타 (불안은 기존 m-anx/f-anx CSS 재사용) ──
+const EMO = {
+  joy:   { label:'기쁨', emo:'😊', mark:'m-joy',   fill:'f-joy',   mood:'🌞 밝고 신나는 음악' },
+  sad:   { label:'슬픔', emo:'😢', mark:'m-sad',   fill:'f-sad',   mood:'🌙 잔잔하고 위로가 되는 음악' },
+  angry: { label:'화남', emo:'😠', mark:'m-angry', fill:'f-angry', mood:'🌊 스트레스를 시원하게 날리는 음악' },
+  fear:  { label:'불안', emo:'😰', mark:'m-anx',   fill:'f-anx',   mood:'🍃 마음을 차분하게 가라앉히는 음악' },
 };
+
+// ── 감정별 추천 곡(안전·임베드 검증 완료) ──
+// EBS 초등 18강 'AI DJ' - 감정 클래스별 추천 곡 셋리스트 (후보)
+// 모든 YouTube id는 WebSearch로 실제 영상 URL을 확보한 뒤 YouTube oEmbed(HTTP 200)로 실존 검증 완료.
+// 초등 교재 필터: 선정성·폭력·욕설·자극 요소 없는 곡만 선별.
+// 생성일: 2026-07-11
+
+const SONGS = {
+  // 기쁨/신남(joy) — 밝고 신나는 곡 (동요·밝은 클래식·순한 OST·건전 K-pop) : 20곡
+  joy: [
+    {title:'핑크퐁과 노래해요 신나는 인기 동요 파티', artist:'핑크퐁 인기동요', id:'ZS7og1Rz2YI'},
+    {title:'핑크퐁 봄 동요 모음집', artist:'핑크퐁 인기동요', id:'X7jmN8P7XyE'},
+    {title:'핑크퐁 BEST 모음 80분', artist:'핑크퐁 인기동요', id:'dBD54EZIrZo'},
+    {title:'아기상어 (상어가족)', artist:'핑크퐁 인기동요', id:'761ae_KDg_Q'},
+    {title:'If Sharks are Happy (Happy Baby Shark Song)', artist:'Pinkfong Official', id:'1eOY_oOaxzQ'},
+    {title:'Baby Shark More and More', artist:'Pinkfong Official', id:'eXTW3t6dy6k'},
+    {title:'라데츠키 행진곡 (Live)', artist:'Danish National Symphony Orchestra', id:'jzPYpXCIYAI'},
+    {title:'비발디 사계 중 봄', artist:'English Chamber Orchestra', id:'v4HJgWvK_u0'},
+    {title:'비발디 사계 중 봄 (4K)', artist:'베르사유 궁전 왕립 오페라 오케스트라', id:'j5My1SnYXjY'},
+    {title:'모차르트 터키 행진곡 (피아노)', artist:'Mozart', id:'MscO89GFPck'},
+    {title:'Peaches (Official Lyric Video)', artist:'The Super Mario Bros. Movie', id:'_iDUQ6m21wM'},
+    {title:'Peaches (Official Music Video)', artist:'Jack Black / Super Mario Bros. Movie', id:'49M3oGCxtFM'},
+    {title:'Let It Go (from Frozen)', artist:'Idina Menzel', id:'YVVTZgwYwVo'},
+    {title:'좋은 날 (Good Day)', artist:'아이유 IU', id:'jeqdYqsrsA0'},
+    {title:'How Sweet', artist:'뉴진스 NewJeans', id:'Q3K0TOvTOno'},
+    {title:'Bubble Gum', artist:'뉴진스 NewJeans', id:'ft70sAYrFyY'},
+    {title:'New Jeans', artist:'뉴진스 NewJeans', id:'kcelgrGY1h8'},
+    {title:'Cheer Up', artist:'트와이스 TWICE', id:'c7rCyll5AeY'},
+    {title:'Happy', artist:'Pharrell Williams', id:'ZbZSe6N_BXs'},
+    {title:'Uptown Funk', artist:'Mark Ronson ft. Bruno Mars', id:'OPf0YbXqDm0'},
+  ],
+
+  // 슬픔/우울(sad) — 위로되는 잔잔한 곡 (피아노·클래식 느린 곡·뉴에이지·순한 OST) : 17곡
+  sad: [
+    {title:'River Flows in You', artist:'Yiruma (이루마)', id:'7maJOI3QMu0'},
+    {title:'Kiss the Rain', artist:'Yiruma (이루마)', id:'vgCOWzf5k6Y'},
+    {title:'When The Love Falls', artist:'Yiruma (이루마)', id:'IVeD9b8cgow'},
+    {title:'Love Me', artist:'Yiruma (이루마)', id:'uqun5cA1bvg'},
+    {title:"It's Your Day", artist:'Yiruma (이루마)', id:'Wt_Qla5UC5g'},
+    {title:'Chaconne (샤콘느)', artist:'Yiruma (이루마)', id:'PSpEeKn2kBE'},
+    {title:'Clair de Lune (달빛)', artist:'Debussy / Rousseau', id:'WNcsUNKlAKw'},
+    {title:'Clair de Lune (Suite bergamasque)', artist:'Debussy / Lang Lang', id:'fZrm9h3JRGs'},
+    {title:'Gymnopédie No.1 (짐노페디)', artist:'Erik Satie / Khatia Buniatishvili', id:'TL0xzp4zzBE'},
+    {title:'Canon in D (캐논)', artist:'Pachelbel / Paul Barton', id:'ZHCjU_rcQno'},
+    {title:'Nocturne Op.9 No.2', artist:'Chopin / Arthur Rubinstein', id:'c2beUDDsgws'},
+    {title:"Comptine d'un autre été (Amélie)", artist:'Yann Tiersen / Rousseau', id:'PaXKf0JEzEA'},
+    {title:'Nuvole Bianche', artist:'Ludovico Einaudi', id:'CQ8zglIXZi8'},
+    {title:'On The Nature Of Daylight', artist:'Max Richter', id:'InyT9Gyoz_o'},
+    {title:"One Summer's Day (센과 치히로 OST)", artist:'Joe Hisaishi', id:'TK1Ij_-mank'},
+    {title:'Gymnopédie No.1 (짐노페디)', artist:'Erik Satie / DistantMirrors', id:'S-Xm7s9eGxU'},
+    {title:'Kiss the Rain (10주년 Ver.)', artist:'Yiruma (이루마)', id:'imGaOIm5HOk'},
+  ],
+
+  // 화남/스트레스(angry) — 시원·신나는 곡 (건전 파워풀 K-pop·밴드·응원곡·신나는 클래식) : 16곡
+  angry: [
+    {title:'Sugar Rush Ride', artist:'TXT (HYBE LABELS)', id:'P9tKTxbgdkk'},
+    {title:'CHEER UP', artist:'TWICE (JYP Entertainment)', id:'c7rCyll5AeY'},
+    {title:'VERY NICE (아주 NICE)', artist:'SEVENTEEN (1theK)', id:'J-wFp43XOrA'},
+    {title:'Power Up', artist:'Red Velvet (SMTOWN)', id:'aiHSVQy9xN8'},
+    {title:'William Tell Overture: Finale', artist:'Rossini', id:'cQSmCmpukZY'},
+    {title:'Kitsch', artist:'IVE (STARSHIP)', id:'pG6iaOMV46I'},
+    {title:'Zombie', artist:'DAY6 (JYP Entertainment)', id:'k8gx-C7GCGU'},
+    {title:'Hello Future', artist:'NCT DREAM (SMTOWN)', id:'QPUjV7epJqE'},
+    {title:'Beautiful Beautiful', artist:'ONF (ONF OFFICIAL)', id:'0pwBFTUJBzQ'},
+    {title:"God's Menu (神메뉴)", artist:'Stray Kids (JYP Entertainment)', id:'TQTlCHxyuu8'},
+    {title:'WE GO', artist:'fromis_9 (Official fromis_9)', id:'HM6UpQZvbhY'},
+    {title:"Rollin' (롤린)", artist:'Brave Girls (Brave Entertainment)', id:'aIl0pRlx_M4'},
+    {title:'Super Shy', artist:'NewJeans (HYBE LABELS)', id:'ArmDp-zijuc'},
+    {title:'손오공 (Super)', artist:'SEVENTEEN (HYBE LABELS)', id:'-GQg25oP0S4'},
+    {title:'%% (응응 / Eung Eung)', artist:'Apink (1theK)', id:'499YUeNoYVE'},
+    {title:'WANNABE', artist:'ITZY (JYP Entertainment)', id:'fE2h3lGlOsk'},
+  ],
+
+  // 불안/긴장(fear) — 마음을 가라앉히는 차분한 곡 (명상·호흡·자연소리·잔잔한 클래식·국악) : 18곡
+  fear: [
+    {title:'Rainstorm Sounds for Relaxing, Focus or Deep Sleep', artist:'Calm', id:'yIQd2Ya0Ziw'},
+    {title:'8 Hours of Gentle Real Rain on a Car', artist:'Moodscapezzz', id:'ERBTvxS3clw'},
+    {title:'Rain on Window - Gentle Rain Sounds', artist:'LunaraHush', id:'gk0GP4Tuet8'},
+    {title:'Deep Sleep Ocean Waves', artist:'Relaxing White Noise', id:'Xtf4seUACG8'},
+    {title:'Rolling Ocean Waves for Deep Sleeping', artist:'Naturaleza Viva - Ocean Sounds', id:'bn9F19Hi1Lk'},
+    {title:'Forest Birdsong - Relaxing Nature Sounds', artist:'TheSilentWatcher', id:'Qm846KdZN_c'},
+    {title:'Pachelbel - Canon in D (1 Hour)', artist:'Music & Movie Moments', id:'Q96M3zGeNlg'},
+    {title:'Pachelbel - Canon in D Major (Original Version)', artist:'Just Classical', id:'9nX_ReyaetE'},
+    {title:'Canon in D - Cello & Piano', artist:'Brooklyn Duo', id:'Ptk_1Dc2iPY'},
+    {title:'Bach - Air on the G String (Best Version)', artist:'Classical Milky Way', id:'yzZpy2A9ddg'},
+    {title:'Bach - Air in G String (10 Hours)', artist:'CLASSICAL MUSIC', id:'jo0qfXv7MiY'},
+    {title:'Debussy - Clair de Lune (2 Hours)', artist:'HALIDONMUSIC', id:'nP92-d6cc9c'},
+    {title:'Satie - Gymnopédie No.1 (for Meditation)', artist:'Canale25', id:'1xyfI6EjZKs'},
+    {title:"Satie - Gymnopédie No.1", artist:"Marisa's Music Studio", id:'NeAHzKBr8W0'},
+    {title:"One Summer's Day (Spirited Away)", artist:'Joe Hisaishi', id:'QR3lp0ptpy8'},
+    {title:"Marconi Union - Weightless (World's Most Relaxing Song)", artist:'Soothing Lyrics', id:'LIbLxu7ogp4'},
+    {title:'528 Hz Deep Healing Meditation Music', artist:'Guided Meditation', id:'vbi7t38HB7o'},
+    {title:'달빛 아래 가야금 - 한국 전통 힐링 음악', artist:'소리장인', id:'LPt7KTkU0Dg'},
+  ],
+};
+
+// (선택) 모듈 사용 환경 대비
+if (typeof module !== 'undefined' && module.exports) module.exports = { SONGS };
+
 const SAMPLES = [
   { t: '속상한 날', d: '비가 와서 축구를 못 하게 되어 속상했다. 눈물이 날 뻔했다.' },
   { t: '신나는 날', d: '시험을 잘 봐서 뿌듯했다. 친구들이 박수를 쳐 줘서 정말 신났다. 최고의 하루!' },
   { t: '긴장되는 날', d: '내일 발표가 있어서 너무 떨려. 실수할까 봐 걱정되고 마음이 불안하다.' },
-  { t: '화나는 날', d: '급식 줄에서 새치기를 당해서 화가 났다. 생각할수록 짜증이 난다.' },
+  { t: '복합 감정', d: '축구에서 져서 속상했지만 끝까지 뛰어서 뿌듯했어.' },
 ];
-
-// 예시 일기 버튼
 SAMPLES.forEach(s => {
   const b = document.createElement('button');
   b.className = 'sample';
@@ -370,52 +790,55 @@ SAMPLES.forEach(s => {
 
 const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
+function highlight(text, matched){
+  // matched: [{word, emo, ...}] → 텍스트에서 찾아 형광펜
+  const spans = [];
+  for (const m of matched) {
+    let i = -1;
+    while ((i = text.indexOf(m.word, i + 1)) !== -1) spans.push({ s:i, e:i+m.word.length, emo:m.emo });
+  }
+  spans.sort((a,b)=> a.s-b.s || b.e-a.e);
+  let html='', pos=0;
+  for (const sp of spans) {
+    if (sp.s < pos) continue;
+    const mk = (EMO[sp.emo]||EMO.joy).mark;
+    html += esc(text.slice(pos, sp.s)) + '<mark class="'+mk+'">' + esc(text.slice(sp.s, sp.e)) + '</mark>';
+    pos = sp.e;
+  }
+  html += esc(text.slice(pos));
+  return html;
+}
+
 function analyze() {
   const text = $('diary').value.trim();
   if (!text) { $('diary').focus(); return; }
-  // 단서 찾기
-  const hits = [];
-  for (const cat in LEX) for (const w of LEX[cat].words) {
-    let i = -1;
-    while ((i = text.indexOf(w, i + 1)) !== -1) hits.push({ cat, start: i, end: i + w.length });
-  }
-  hits.sort((a, b) => a.start - b.start || b.end - a.end);
-  // 겹침 제거 + 하이라이트 HTML
-  let html = '', pos = 0;
-  const kept = [];
-  for (const h of hits) {
-    if (h.start < pos) continue;
-    html += esc(text.slice(pos, h.start)) + '<mark class="' + LEX[h.cat].mark + '">' + esc(text.slice(h.start, h.end)) + '</mark>';
-    pos = h.end; kept.push(h);
-  }
-  html += esc(text.slice(pos));
-  $('hl').innerHTML = html;
-  // 점수 막대
-  const scores = {}; kept.forEach(h => scores[h.cat] = (scores[h.cat] || 0) + 1);
-  const max = Math.max(1, ...Object.values(scores));
-  let top = null;
+  const r = classifyEmotion(text);
+  $('hl').innerHTML = highlight(text, r.matched || []);
+  // 확률 막대 4개
+  const order = ['joy','sad','angry','fear'];
   $('bars').innerHTML = '';
-  for (const cat in LEX) {
-    const n = scores[cat] || 0;
-    if (top === null || n > (scores[top] || 0)) top = n > 0 ? cat : top;
-    $('bars').innerHTML += '<div class="brow" role="img" aria-label="' + LEX[cat].label + ' ' + n + '개"><span class="bl" aria-hidden="true">' + LEX[cat].emo + ' ' + LEX[cat].label +
-      '</span><div class="btrack" aria-hidden="true"><div class="bfill ' + LEX[cat].fill + '" data-w="' + Math.round(n / max * 100) +
-      '"></div></div><span class="bnum" aria-hidden="true">' + n + '개</span></div>';
-  }
+  order.forEach(k => {
+    const p = Math.round((r.probs && r.probs[k]) || 0);
+    $('bars').innerHTML += '<div class="brow" role="img" aria-label="'+EMO[k].label+' '+p+'퍼센트"><span class="bl" aria-hidden="true">'+
+      EMO[k].emo+' '+EMO[k].label+'</span><div class="btrack" aria-hidden="true"><div class="bfill '+EMO[k].fill+
+      '" data-w="'+p+'"></div></div><span class="bnum" aria-hidden="true">'+p+'%</span></div>';
+  });
   $('result').style.display = 'block';
-  requestAnimationFrame(() => requestAnimationFrame(() =>
-    document.querySelectorAll('.bfill').forEach(el => el.style.width = el.dataset.w + '%')));
-  // 추천 or 단서 없음
-  stopMelody();
-  $('fbnote').style.display = 'none'; $('moodpick').style.display = 'none';
-  if (!top) {
-    $('nohit').style.display = 'block'; $('reco').style.display = 'none';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>
+    document.querySelectorAll('.bfill').forEach(el=>el.style.width = el.dataset.w+'%')));
+  $('fbnote').style.display='none'; $('moodpick').style.display='none';
+  const hasClue = (r.matched && r.matched.length>0);
+  if (!hasClue || !r.top) {
+    $('nohit').style.display='block'; $('reco').style.display='none';
   } else {
-    $('nohit').style.display = 'none';
-    const word = text.slice(kept[0].start, kept[0].end);
-    showReco(top, "'" + word + "' 같은 단어가 보여서 이 분위기를 골랐어요.");
+    $('nohit').style.display='none';
+    let why = r.reason || '';
+    if (r.isComplex && r.second) {
+      why = '두 가지 감정이 함께 보여요 — ' + EMO[r.top].label + '과(와) ' + EMO[r.second].label + '. 대표 감정으로 골랐어요. ' + why;
+    }
+    showReco(r.top, why);
   }
-  $('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  $('result').scrollIntoView({ behavior:'smooth', block:'nearest' });
 }
 $('go').onclick = analyze;
 
@@ -423,63 +846,51 @@ let curMood = null;
 function showReco(mood, why) {
   curMood = mood;
   $('reco').style.display = 'block';
-  $('recoEmo').textContent = MOODS[mood].emo;
-  $('recoMood').textContent = MOODS[mood].name;
+  $('recoEmo').textContent = EMO[mood].emo;
+  $('recoMood').textContent = EMO[mood].mood;
   $('recoWhy').textContent = why;
-  stopMelody();
+  loadSetlist(mood);
+}
+
+// ── 유튜브 셋리스트/플레이어 ──
+function loadSetlist(mood) {
+  const list = (SONGS[mood] || []);
+  $('setCount').textContent = list.length;
+  const box = $('setlist'); box.innerHTML = '';
+  list.forEach((song, i) => {
+    const b = document.createElement('button');
+    b.className = 'song'; b.setAttribute('data-i', i);
+    b.innerHTML = '<span class="idx" aria-hidden="true">'+(i+1)+'</span><span class="meta"><span class="tt">'+
+      esc(song.title)+'</span><span class="ar">'+esc(song.artist||'')+'</span></span>';
+    b.onclick = () => selectSong(mood, i);
+    box.appendChild(b);
+  });
+  // 첫 곡 준비(자동재생 안 함)
+  $('ytBox').innerHTML = '<div class="ph">추천 곡을 고르면 여기서 재생돼요</div>';
+  $('ytOpen').style.display = 'none';
+}
+function selectSong(mood, i) {
+  const song = SONGS[mood][i]; if (!song) return;
+  document.querySelectorAll('.song').forEach(el=>el.classList.toggle('on', +el.getAttribute('data-i')===i));
+  $('ytBox').innerHTML = '<iframe src="https://www.youtube.com/embed/'+song.id+
+    '" title="'+esc(song.title)+'" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe>';
+  const url = 'https://www.youtube.com/watch?v='+song.id;
+  const o = $('ytOpen'); o.href = url; o.style.display = 'inline-flex';
+  o.textContent = '유튜브에서 열기 ↗';
 }
 
 // 피드백 → 다른 분위기 직접 고르기
 $('dislike').onclick = () => {
   $('fbnote').style.display = 'block';
-  const mp = $('moodpick');
-  mp.style.display = 'flex'; mp.innerHTML = '';
-  for (const m in MOODS) {
+  const mp = $('moodpick'); mp.style.display='flex'; mp.innerHTML='';
+  for (const m of ['joy','sad','angry','fear']) {
     if (m === curMood) continue;
     const b = document.createElement('button');
-    b.textContent = MOODS[m].emo + ' ' + MOODS[m].name;
-    b.onclick = () => {
-      showReco(m, '내가 직접 고른 분위기예요. 피드백 고마워요!');
-      $('fbnote').style.display = 'none'; mp.style.display = 'none';
-    };
+    b.textContent = EMO[m].emo + ' ' + EMO[m].mood;
+    b.onclick = () => { showReco(m, '내가 직접 고른 분위기예요. 피드백 고마워요!'); $('fbnote').style.display='none'; mp.style.display='none'; };
     mp.appendChild(b);
   }
 };
-
-// Web Audio 멜로디
-let audioCtx = null, playing = false, noteTimers = [];
-$('play').onclick = async function () {
-  if (playing) { stopMelody(); return; }
-  try {
-    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state === 'suspended') await audioCtx.resume();
-  } catch (e) { this.textContent = '소리 없이 카드로 즐겨요'; return; }
-  playing = true;
-  this.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> 멈추기';
-  this.classList.add('on');
-  const m = MELODY[curMood] || MELODY.joy;
-  let t = 0;
-  for (let rep = 0; rep < 2; rep++) m.notes.forEach(f => {
-    noteTimers.push(setTimeout(() => beep(f, m.dur, m.type), t * 1000));
-    t += m.dur;
-  });
-  noteTimers.push(setTimeout(stopMelody, t * 1000 + 200));
-};
-function beep(freq, dur, type) {
-  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
-  o.type = type; o.frequency.value = freq;
-  g.gain.setValueAtTime(0.0001, audioCtx.currentTime);
-  g.gain.exponentialRampToValueAtTime(0.25, audioCtx.currentTime + 0.03);
-  g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur * 0.95);
-  o.connect(g).connect(audioCtx.destination);
-  o.start(); o.stop(audioCtx.currentTime + dur);
-}
-function stopMelody() {
-  noteTimers.forEach(clearTimeout); noteTimers = [];
-  playing = false;
-  $('play').innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="5,3 19,12 5,21"/></svg> 분위기 들어보기';
-  $('play').classList.remove('on');
-}
 </script>
 
 <script>
