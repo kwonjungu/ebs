@@ -199,6 +199,53 @@
   .limitrow .lbtn:focus-visible{outline:3px solid var(--paper);outline-offset:2px}
   .limithint{font-size:12.5px;color:#C9C4B8;font-weight:600;margin-top:12px;line-height:1.55}
   .limitsaved{font-size:14px;font-weight:800;color:#7CF0B8;margin-top:12px;min-height:20px}
+
+  /* 모드 토글 */
+  .modetoggle{display:flex;gap:8px;margin-bottom:14px}
+  .modetoggle button{flex:1;cursor:pointer;font-family:inherit;font-size:14.5px;font-weight:900;color:var(--ink);
+    background:var(--surface);border:2.5px solid var(--ink);border-radius:12px;box-shadow:var(--hard-sm);padding:12px;min-height:48px;transition:transform .1s}
+  .modetoggle button[aria-pressed=true]{background:var(--point);color:#fff}
+  .modetoggle button:active{transform:translate(2px,2px);box-shadow:none}
+  .modetoggle button:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  /* 게임 HUD */
+  .ghud-top{display:none;position:absolute;top:10px;left:10px;right:10px;z-index:6;align-items:center;justify-content:space-between;gap:8px;pointer-events:none}
+  .ghud-top .rnd{font-weight:900;font-size:13px;color:#fff;background:rgba(11,15,13,.82);border:2px solid #fff;border-radius:999px;padding:4px 12px}
+  .ghud-top .tmr{font-family:'Courier New',monospace;font-weight:900;font-size:15px;color:#fff;background:rgba(11,15,13,.82);border:2px solid #fff;border-radius:999px;padding:4px 12px}
+  .ghud-top .tmr.warn{background:#FF4D4D;animation:tpulse .7s infinite}
+  @keyframes tpulse{50%{transform:scale(1.08)}}
+  .ghud-bottom{display:none;position:absolute;bottom:10px;left:10px;right:10px;z-index:6}
+  .gtarget{display:flex;align-items:center;gap:10px;background:rgba(11,15,13,.85);border:2.5px solid #fff;border-radius:14px;padding:9px 13px;margin-bottom:8px}
+  .gtarget .emo{font-size:26px}
+  .gtarget .txt{color:#fff;font-weight:900;font-size:16px}
+  .gtarget .txt small{display:block;font-size:11px;font-weight:700;color:#9BE9C4}
+  .ggauge{position:relative;height:20px;background:rgba(11,15,13,.7);border:2.5px solid #fff;border-radius:999px;overflow:hidden}
+  .ggauge .fill{height:100%;width:0%;background:repeating-linear-gradient(45deg,#12B76A,#12B76A 8px,#0ea05a 8px,#0ea05a 16px);transition:width .12s}
+  .ggauge .num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Courier New',monospace;font-weight:900;font-size:12px;color:#fff}
+  .gflash{display:none;position:absolute;inset:0;z-index:8;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:rgba(11,15,13,.55)}
+  .gflash-emo{font-size:64px;animation:gpop .4s cubic-bezier(.34,1.56,.64,1)}
+  @keyframes gpop{from{transform:scale(.3)}to{transform:scale(1)}}
+  .gflash-t{color:#fff;font-weight:900;font-size:17px;background:var(--ink);border:2.5px solid #fff;border-radius:12px;padding:8px 16px}
+  .gflash.ok .gflash-t b{color:#7CF0B8} .gflash.no .gflash-t b{color:#FFC7C7}
+  /* 게임 패널 */
+  .gscreen{background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:20px;margin-top:14px}
+  .gscreen h2{font-size:18px;font-weight:900;letter-spacing:-.02em;margin-bottom:4px}
+  .gscreen .sub{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:14px}
+  .themebtns{display:flex;gap:10px;margin-bottom:14px}
+  .themebtns button{flex:1;cursor:pointer;font-family:inherit;font-weight:900;color:var(--ink);background:var(--paper);
+    border:2.5px solid var(--ink);border-radius:var(--r-sm);box-shadow:var(--hard-sm);padding:16px 10px;min-height:76px;font-size:15px;transition:transform .1s}
+  .themebtns button .te{display:block;font-size:30px;margin-bottom:4px}
+  .themebtns button[aria-pressed=true]{background:var(--point);color:#fff}
+  .themebtns button:active{transform:translate(2px,2px);box-shadow:none}
+  .themebtns button:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .gbig{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;cursor:pointer;font-family:inherit;font-size:16px;font-weight:900;
+    color:#fff;background:var(--point);border:2.5px solid var(--ink);border-radius:14px;box-shadow:var(--hard-sm);padding:14px;min-height:54px;transition:transform .1s}
+  .gbig:active{transform:translate(3px,3px);box-shadow:none}
+  .gbig:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+  .gbig.ghost{background:var(--surface);color:var(--ink);margin-top:10px}
+  .grules{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:12px;line-height:1.55}
+  .gres-stars{font-size:40px;text-align:center;margin:6px 0}
+  .gres-line{font-size:16px;font-weight:800;text-align:center;margin-bottom:10px}
+  .gres-tip{font-size:13px;color:var(--muted);font-weight:600;text-align:center;line-height:1.55;margin-bottom:14px}
 </style>
 </head>
 <body>
@@ -224,6 +271,11 @@
     <span>화면은 저장되지 않아요. 사람 얼굴은 비추지 않아요 — 책상 위 물건만 비춰요.</span>
   </div>
 
+  <div class="modetoggle" role="group" aria-label="모드 선택">
+    <button id="modePlay" aria-pressed="true" onclick="setMode('play')">🔍 체험 모드</button>
+    <button id="modeGame" aria-pressed="false" onclick="setMode('game')">🎯 게임: 물건 헌트</button>
+  </div>
+
   <!-- 실시간 카메라 체험 -->
   <div class="card" id="liveCard">
     <div class="stage" id="stage">
@@ -233,11 +285,18 @@
       <canvas id="canvas"></canvas>
       <div class="counter" id="counter" role="status" aria-live="polite" aria-label="발견한 사물 수: 0">발견한 사물<b>0</b></div>
       <div class="toast" id="toast">얼굴은 비추지 않기로 해요! 카메라를 물건 쪽으로 돌려요.</div>
+      <div class="ghud-top" id="ghudTop"><span class="rnd" id="gRound">1 / 5</span><span class="tmr" id="gTimer">⏱ 00:20</span></div>
+      <div class="ghud-bottom" id="ghudBottom">
+        <div class="gtarget"><span class="emo" id="gTargetEmo">📖</span><span class="txt"><span id="gTargetName">"책"</span><small id="gStateMsg">카메라로 비춰 봐요!</small></span></div>
+        <div class="ggauge"><div class="fill" id="gGaugeFill"></div><span class="num"><span id="gGaugeNum">0</span> / 60</span></div>
+      </div>
+      <div class="gflash" id="gFlash" aria-live="polite"></div>
       <div class="overlay-msg" id="overlayMsg">
         <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="3" stroke="var(--point)" stroke-width="2.2"/><circle cx="12" cy="12" r="3.5" stroke="var(--point)" stroke-width="2.2"/><path d="M9 5V3M15 5V3" stroke="var(--point)" stroke-width="2" stroke-linecap="round"/></svg>
         아래 버튼을 누르면 카메라가 켜져요
       </div>
     </div>
+    <div id="playControls">
     <p class="caption">잘 보이는 물건을 <b>한 번에 5개까지</b> 찾아요. (엔트리는 3개까지)</p>
     <p class="stateline" id="stateline">준비되면 시작 버튼을 눌러요</p>
     <div class="btnrow">
@@ -247,7 +306,33 @@
       </button>
     </div>
     <button class="linkbtn" id="btnSim">카메라가 없나요? 그림으로 연습하기</button>
-  </div>
+    </div><!-- /playControls -->
+
+    <div id="gamePanel" style="display:none">
+      <div class="gscreen" id="gs-intro">
+        <h2>🎯 물건 헌트</h2>
+        <p class="sub">테마를 고르면 5라운드 동안 목표 물건이 떠요. 카메라로 비추어 <b>60%</b> 이상으로 찾으면 클리어! (라운드당 20초)</p>
+        <div class="themebtns">
+          <button id="thSchool" aria-pressed="true" onclick="pickTheme('school')"><span class="te">🏫</span>학교</button>
+          <button id="thHome" aria-pressed="false" onclick="pickTheme('home')"><span class="te">🏠</span>집</button>
+        </div>
+        <button class="gbig" onclick="gameStart()">게임 시작 (카메라 켜기)</button>
+        <p class="grules">🛡️ 사람 얼굴은 비추지 않아요. 화면은 저장되지 않아요.</p>
+      </div>
+      <div class="gscreen" id="gs-play" style="display:none">
+        <p class="sub" style="margin:0">위 카메라 화면에서 목표 물건을 찾아요. 게이지가 60까지 차면 클리어!</p>
+        <button class="gbig ghost" onclick="gameQuit()">게임 그만하기</button>
+      </div>
+      <div class="gscreen" id="gs-result" style="display:none">
+        <h2 style="text-align:center">게임 끝!</h2>
+        <div class="gres-stars" id="gResStars">⭐⭐⭐</div>
+        <p class="gres-line" id="gResLine"></p>
+        <p class="gres-tip" id="gResTip"></p>
+        <button class="gbig" onclick="showScreen('intro')">다시 하기</button>
+        <button class="gbig ghost" onclick="gameQuit()">체험 모드로</button>
+      </div>
+    </div>
+  </div><!-- /liveCard -->
 
   <!-- 연습 모드(폴백): 인라인 SVG 책상 장면 -->
   <div class="card" id="simCard" style="margin-top:16px">
@@ -372,28 +457,32 @@ let detector = null, stream = null, running = false, raf = 0;
 let lastVideoTime = -1, lastRun = 0, lastCount = -1, toastTimer = null;
 
 // ── 시작 / 멈춤 ──
-$('btnStart').onclick = async function () {
-  if (running) { stopCam('멈췄어요. 다시 시작할 수 있어요'); return; }
-  overlay('<div class="spinner"></div><span>카메라를 켜고 있어요…</span>');
+async function turnCameraOn() {
+  overlay('<div class=\"spinner\"></div><span>카메라를 켜고 있어요…</span>');
   try {
     stream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: 'environment', width: { ideal: 960 }, height: { ideal: 720 } }, audio: false
     });
-  } catch (e) { toSim('카메라를 쓸 수 없어서 연습 모드로 바꿨어요.'); return; }
+  } catch (e) { toSim('카메라를 쓸 수 없어서 연습 모드로 바꿨어요.'); return false; }
   video.srcObject = stream;
   try { await video.play(); } catch (e) {}
-
   if (!detector) {
-    overlay('<div class="spinner"></div><span>AI 눈을 준비하고 있어요… (약 5초)</span>');
+    overlay('<div class=\"spinner\"></div><span>AI 눈을 준비하고 있어요… (약 5초)</span>');
     try { detector = await loadDetector(); }
-    catch (e) { releaseStream(); toSim('AI 눈을 불러오지 못해서 연습 모드로 바꿨어요.'); return; }
+    catch (e) { releaseStream(); toSim('AI 눈을 불러오지 못해서 연습 모드로 바꿨어요.'); return false; }
   }
   overlay('');
-  running = true; lastVideoTime = -1; lastRun = 0; lastCount = -1;
-  this.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2" stroke="currentColor" stroke-width="2.4"/></svg> 멈추기';
+  running = true; lastVideoTime = -1; lastRun = 0; lastCount = -1; tracks = [];
+  raf = requestAnimationFrame(loop);
+  return true;
+}
+
+$('btnStart').onclick = async function () {
+  if (running) { stopCam('멈췄어요. 다시 시작할 수 있어요'); return; }
+  const ok = await turnCameraOn(); if (!ok) return;
+  this.innerHTML = '<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" aria-hidden=\"true\"><rect x=\"6\" y=\"6\" width=\"12\" height=\"12\" rx=\"2\" stroke=\"currentColor\" stroke-width=\"2.4\"/></svg> 멈추기';
   this.classList.add('stop');
   $('stateline').textContent = '물건을 비춰 봐요! 박스가 따라와요';
-  raf = requestAnimationFrame(loop);
 };
 
 function stopCam(msg) {
@@ -458,6 +547,7 @@ let tracks = []; // 스무딩용 이전 프레임 박스
 function render(detections) {
   if (canvas.width !== video.videoWidth) { canvas.width = video.videoWidth; canvas.height = video.videoHeight; }
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  if (GAME.on) { gameRender(detections); return; }
 
   let personSeen = false;
   const found = [];
@@ -603,6 +693,113 @@ addEventListener('pagehide', releaseStream);
 document.addEventListener('visibilitychange', () => {
   if (document.hidden && running) stopCam('화면을 벗어나서 카메라를 껐어요');
 });
+
+// ══════════ 게임 모드: 물건 헌트 ══════════
+const THEMES = {
+  school: { name:'학교', pool:[
+    ['book','📖','책'],['cup','☕','컵'],['clock','⏰','시계'],['backpack','🎒','가방'],
+    ['chair','🪑','의자'],['bottle','🍶','병'],['cell phone','📱','휴대전화'],
+    ['keyboard','⌨️','키보드'],['mouse','🖱️','마우스'],['scissors','✂️','가위'] ] },
+  home: { name:'집', pool:[
+    ['cup','☕','컵'],['bottle','🍶','병'],['bowl','🥣','그릇'],['remote','🎛️','리모컨'],
+    ['clock','⏰','시계'],['teddy bear','🧸','곰인형'],['potted plant','🪴','화분'],
+    ['book','📖','책'],['apple','🍎','사과'],['banana','🍌','바나나'] ] }
+};
+const GAME = { on:false, theme:'school', queue:[], idx:0, target:null, best:0, holdStart:0,
+               score:0, cleared:0, timeLeft:0, timer:null, ROUNDS:5, THRESH:0.60, HOLD:400, PERROUND:20 };
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+const G = id => document.getElementById(id);
+function pickTheme(t){ GAME.theme=t; G('thSchool').setAttribute('aria-pressed', t==='school'); G('thHome').setAttribute('aria-pressed', t==='home'); }
+async function gameStart(){
+  const ok = await turnCameraOn(); if(!ok) return;
+  GAME.on=true; GAME.score=0; GAME.cleared=0; GAME.idx=0;
+  GAME.queue = shuffle(THEMES[GAME.theme].pool).slice(0, GAME.ROUNDS);
+  showScreen('play');
+  G('ghudTop').style.display='flex'; G('ghudBottom').style.display='block';
+  nextRound();
+}
+function nextRound(){
+  clearInterval(GAME.timer);
+  if(GAME.idx >= GAME.queue.length){ gameOver(); return; }
+  GAME.target = GAME.queue[GAME.idx]; GAME.best=0; GAME.holdStart=0;
+  G('gRound').textContent = (GAME.idx+1)+' / '+GAME.ROUNDS;
+  G('gTargetEmo').textContent = GAME.target[1];
+  G('gTargetName').textContent = '“'+GAME.target[2]+'”';
+  G('gGaugeFill').style.width='0%'; G('gGaugeNum').textContent='0';
+  G('gStateMsg').textContent = GAME.target[2]+'을(를) 카메라로 비춰 봐요!';
+  GAME.timeLeft = GAME.PERROUND; paintTimer();
+  GAME.timer = setInterval(()=>{ GAME.timeLeft--; paintTimer(); if(GAME.timeLeft<=0){ clearInterval(GAME.timer); roundResult(false); } }, 1000);
+}
+function paintTimer(){ const t=Math.max(0,GAME.timeLeft); G('gTimer').textContent='⏱ 00:'+String(t).padStart(2,'0'); G('gTimer').classList.toggle('warn', t<=5); }
+function gameRender(dets){
+  let personSeen=false, best=0, bestBox=null;
+  for(const d of dets){
+    const c=d.categories&&d.categories[0]; if(!c) continue;
+    if(c.categoryName==='person'){ personSeen=true; continue; }
+    if(c.categoryName===GAME.target[0] && c.score>best){ best=c.score; bestBox=d.boundingBox; }
+  }
+  if(personSeen) showToast();
+  GAME.best=best;
+  const pct=Math.min(100, Math.round(best/GAME.THRESH*100));
+  G('gGaugeFill').style.width=pct+'%'; G('gGaugeNum').textContent=Math.round(best*100);
+  if(bestBox) drawTargetBox(bestBox,best);
+  const now=performance.now();
+  if(best>=GAME.THRESH){ if(!GAME.holdStart) GAME.holdStart=now; if(now-GAME.holdStart>=GAME.HOLD){ clearInterval(GAME.timer); roundResult(true); } }
+  else GAME.holdStart=0;
+}
+function drawTargetBox(b,score){
+  const x=b.originX,y=b.originY,w=b.width,h=b.height,r=14;
+  ctx.save(); rrect(x,y,w,h,r);
+  ctx.fillStyle='rgba(18,183,106,0.15)'; ctx.fill(); ctx.lineJoin='round';
+  ctx.strokeStyle='#0B0F0D'; ctx.lineWidth=5; ctx.stroke();
+  ctx.strokeStyle= score>=GAME.THRESH?'#12B76A':'#FFB800'; ctx.lineWidth=3; ctx.stroke();
+  const label=GAME.target[2]+'  '+Math.round(score*100)+'%';
+  ctx.font='900 15px -apple-system,"Segoe UI",sans-serif';
+  const pad=10,tw=ctx.measureText(label).width,bw=tw+pad*2,bh=26;
+  let ly=y-bh-4; if(ly<2) ly=y+4; let lx=x; if(lx+bw>canvas.width) lx=canvas.width-bw-2; if(lx<2) lx=2;
+  rrect(lx,ly,bw,bh,9); ctx.fillStyle= score>=GAME.THRESH?'#12B76A':'#FFB800'; ctx.fill();
+  ctx.strokeStyle='#0B0F0D'; ctx.lineWidth=2; ctx.stroke();
+  ctx.fillStyle='#062015'; ctx.textBaseline='middle'; ctx.fillText(label,lx+pad,ly+bh/2+1); ctx.restore();
+}
+function roundResult(success){
+  if(success){ GAME.cleared++; GAME.score+=20+Math.max(0,GAME.timeLeft); }
+  const fl=G('gFlash'); fl.className='gflash '+(success?'ok':'no');
+  fl.innerHTML = success
+    ? '<div class="gflash-emo">'+GAME.target[1]+'</div><div class="gflash-t">찾았다! <b>'+GAME.target[2]+'</b> +'+(20+Math.max(0,GAME.timeLeft))+'점</div>'
+    : '<div class="gflash-emo">⏰</div><div class="gflash-t">시간 초과! <b>'+GAME.target[2]+'</b>은(는) 다음에 찾아봐요</div>';
+  fl.style.display='flex';
+  setTimeout(()=>{ fl.style.display='none'; GAME.idx++; nextRound(); }, 1500);
+}
+function gameOver(){
+  G('ghudTop').style.display='none'; G('ghudBottom').style.display='none';
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const stars=GAME.cleared>=5?3:GAME.cleared>=3?2:GAME.cleared>=1?1:0;
+  G('gResStars').textContent='⭐'.repeat(stars)+'☆'.repeat(3-stars);
+  G('gResLine').innerHTML=GAME.ROUNDS+'개 중 <b>'+GAME.cleared+'개</b>를 찾았어요! 점수 <b>'+GAME.score+'</b>';
+  G('gResTip').textContent = GAME.cleared<GAME.ROUNDS
+    ? '못 찾은 물건은 멀리 있거나 가려졌을 수 있어요. 가까이·밝게 비추면 잘 찾아요.'
+    : '완벽해요! AI의 눈이 얼마나 빠른지 느꼈나요?';
+  showScreen('result');
+}
+function gameQuit(){
+  GAME.on=false; clearInterval(GAME.timer);
+  G('ghudTop').style.display='none'; G('ghudBottom').style.display='none';
+  if(running) stopCam('게임을 끝냈어요.'); showScreen('intro');
+}
+function showScreen(name){ ['intro','play','result'].forEach(n=> G('gs-'+n).style.display = n===name?'block':'none'); }
+function setMode(m){
+  const game = m==='game';
+  G('modePlay').setAttribute('aria-pressed', !game);
+  G('modeGame').setAttribute('aria-pressed', game);
+  G('playControls').style.display = game?'none':'block';
+  G('gamePanel').style.display = game?'block':'none';
+  if(!game && GAME.on) gameQuit();
+  if(!game && running) stopCam('멈췄어요. 다시 시작할 수 있어요');
+  if(game) showScreen('intro');
+}
+window.setMode=setMode; window.pickTheme=pickTheme; window.gameStart=gameStart; window.gameQuit=gameQuit; window.showScreen=showScreen;
+pickTheme('school');
+
 </script>
 
 <script>
