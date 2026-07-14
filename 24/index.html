@@ -114,6 +114,24 @@
     padding:10px 16px;font-size:14.5px;text-align:center;font-weight:800;margin-top:14px}
   .twist b{color:var(--point)}
 
+  /* 사건 선택 카드 */
+  .cases{display:grid;gap:12px;margin-top:14px}
+  .case-card{border:2.5px solid var(--ink);background:var(--surface);border-radius:var(--r-sm);
+    padding:14px 16px;text-align:left;font-family:inherit;cursor:pointer;width:100%;
+    box-shadow:var(--hard-sm);transition:transform .1s,box-shadow .1s;display:flex;gap:12px;align-items:flex-start}
+  .case-card:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .case-card:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+  .case-card .cc-emoji{font-size:26px;line-height:1;flex:0 0 auto}
+  .case-card .cc-title{font-size:16px;font-weight:900;letter-spacing:-.01em}
+  .case-card .cc-sub{font-size:13px;color:var(--muted);font-weight:600;margin-top:3px;line-height:1.4}
+
+  /* 증거 문장 조립 */
+  .evi-line{font-size:15.5px;font-weight:600;line-height:2.1;margin-top:14px}
+  .evi-sel{font-family:inherit;font-size:14.5px;font-weight:800;color:var(--ink);
+    background:var(--point-soft);border:2.5px solid var(--ink);border-radius:8px;
+    padding:4px 6px;margin:0 2px;box-shadow:var(--hard-sm);cursor:pointer;max-width:100%}
+  .evi-sel:focus-visible{outline:3px solid var(--point);outline-offset:2px}
+
   /* 원인 카드 */
   .causes{display:grid;gap:10px;margin-top:14px}
   .cause{border:2.5px solid var(--ink);background:var(--surface);border-radius:var(--r-sm);
@@ -123,6 +141,7 @@
   .cause:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
   .cause:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
   .cause:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .cause.picked{border-color:var(--point);background:var(--point-soft)}
   .cause.no{border-color:var(--red);background:#FFE8E8;animation:shake .4s}
   .cause.yes{border-color:var(--green);background:rgba(18,183,106,.1);box-shadow:var(--hard-sm)}
   @keyframes shake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
@@ -190,9 +209,16 @@
     <span>이 체험의 점수는 전부 수업용 가상 데이터예요. 입력하거나 저장되는 정보는 없어요.</span>
   </div>
 
+  <!-- 0. 사건 선택 -->
+  <div class="card" id="secPick">
+    <h2>수사할 사건을 골라요</h2>
+    <p class="desc">세 사건 모두 전체 점수는 좋아 보여요. 하나를 골라 편향을 찾아봐요.</p>
+    <div class="cases" id="caseCards"></div>
+  </div>
+
   <!-- 1. 전체 점수 -->
-  <div class="card">
-    <h2>우리 학교 음성 인식 AI</h2>
+  <div class="card hidden" id="secDonut">
+    <h2 id="donutTitle">우리 학교 음성 인식 AI</h2>
     <p class="desc">AI 회사가 자랑하는 전체 점수예요.</p>
     <div class="donutbox">
       <div class="donut" role="meter" aria-label="전체 정확도" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="donutMeter">
@@ -202,7 +228,7 @@
         </svg>
         <div class="num"><span id="donutNum">0%</span><small>전체 정확도</small></div>
       </div>
-      <div class="adcopy"><b>"전체 정확도 82%!"</b><br>열 번 중 여덟 번은 알아들어요. 문제없어 보이죠?</div>
+      <div class="adcopy" id="donutCopy"></div>
     </div>
     <p class="vcap">가상 데이터예요</p>
     <button class="btn" id="btnSplit">상황별로 나누어 보기</button>
@@ -211,34 +237,44 @@
   <!-- 2. 상황별 차트 -->
   <div class="card hidden" id="secChart">
     <h2>상황별 기록</h2>
-    <p class="desc">같은 AI인데, 누구의 말인지·어디인지에 따라 점수가 달라요.</p>
+    <p class="desc" id="chartDesc">같은 AI인데, 상황에 따라 점수가 달라요.</p>
     <div class="chart" id="chart"></div>
     <p class="twist"><b>전체 점수에 가려져 있던 편향</b>이 보여요!</p>
     <p class="vcap">가상 데이터예요</p>
   </div>
 
+  <!-- 2.5 증거 문장 조립 -->
+  <div class="card hidden" id="secEvi">
+    <h2>편향 증거 문장 만들기</h2>
+    <p class="desc">빈칸을 골라 탐정의 증거 문장을 완성해요.</p>
+    <p class="evi-line">이 AI의 전체 결과는 <select class="evi-sel" id="eviAll" aria-label="전체 결과 고르기"></select>처럼 보입니다.
+    하지만 <select class="evi-sel" id="eviSit" aria-label="문제 상황 고르기"></select> 상황에서는
+    <select class="evi-sel" id="eviLow" aria-label="낮은 점수 고르기"></select>(으)로 낮게 나타났습니다.
+    그래서 이 AI는 편향이 의심됩니다.</p>
+    <button class="btn" id="btnEvi" disabled>증거 문장 확인</button>
+    <p class="feedback" id="eviFb"></p>
+  </div>
+
   <!-- 3. 원인 추리 -->
   <div class="card hidden" id="secCause">
     <h2>왜 이런 일이 생겼을까요?</h2>
-    <p class="desc">원인이라고 생각하는 카드를 골라 봐요.</p>
-    <div class="causes">
-      <button class="cause" data-k="blame" aria-label="원인 선택: 도윤이 말투 탓이에요">도윤이 말투 탓이에요</button>
-      <button class="cause" data-k="data" aria-label="원인 선택: 데이터가 부족하고 치우쳤어요">데이터가 부족하고 치우쳤어요</button>
-      <button class="cause" data-k="hate" aria-label="원인 선택: AI가 미워해서요">AI가 미워해서요</button>
-    </div>
+    <p class="desc">원인이라고 생각하는 카드를 골라 봐요. (여러 개일 수 있어요)</p>
+    <div class="causes" id="causes"></div>
     <p class="feedback" id="causeFb"></p>
+    <button class="btn hidden" id="btnCauseNext">해결 단계로 가기</button>
   </div>
 
   <!-- 4. 해결 시뮬레이션 -->
   <div class="card hidden" id="secFix">
-    <h2>데이터 급식판 — 골고루 담아 봐요</h2>
-    <p class="desc">부족한 접시에 데이터를 더하면 위의 차트와 전체 점수가 실시간으로 바뀌어요.</p>
+    <h2 id="fixTitle">데이터 급식판 — 골고루 담아 봐요</h2>
+    <p class="desc">부족한 상황의 데이터를 더하면 위의 차트와 전체 점수가 실시간으로 바뀌어요.</p>
     <div class="plates" id="plates"></div>
-    <p class="refchip">참고: 조용한 교실·표준 말투 데이터는 이미 5,000개나 있어요 (치우침!)</p>
+    <p class="refchip" id="fixRef"></p>
     <button class="btn" id="btnAdd">데이터 골고루 추가</button>
     <p class="feedback" id="fixFb"></p>
-    <div class="limit" id="limitMsg"><b>90%에서 멈췄어요.</b> 데이터만으로 100%는 안 돼요 — 그래서 AI가 못 알아들을 때를 위한 <b>버튼 입력 같은 대체 방법</b>과 <b>사람의 확인</b>이 함께 필요해요.</div>
+    <div class="limit" id="limitMsg"><b>90%에서 멈췄어요.</b> 데이터만으로 100%는 안 돼요 — 그래서 AI가 실패할 때를 위한 <b id="limitAlt">버튼 입력 같은 대체 방법</b>과 <b>사람의 확인</b>이 함께 필요해요.</div>
     <p class="vcap">가상 데이터예요</p>
+    <button class="btn hidden" id="btnRestart">다른 사건도 수사하기</button>
   </div>
 
   <div class="obs">
@@ -252,20 +288,88 @@
 <script>
 const $ = id => document.getElementById(id);
 
-// ── 가상 데이터 (설계서 CASE1 활용) ──
-const SITS = [
-  { key:'quiet',  label:'조용한 교실',   acc:95, w:.56, addable:false },
-  { key:'adult',  label:'어른 말투',     acc:88, w:.20, addable:true, plate:'👔 다양한 어른', data:600,
-    steps:[88,89,89,90,90] },
-  { key:'child',  label:'어린이 말투',   acc:55, w:.08, addable:true, plate:'🧒 어린이 말투', data:400,
-    steps:[55,70,81,88,90] },
-  { key:'accent', label:'지역 말투',     acc:50, w:.08, addable:true, plate:'🗣️ 지역 말투', data:300,
-    steps:[50,66,79,87,90] },
-  { key:'noise',  label:'시끄러운 교실', acc:40, w:.08, addable:true, plate:'🔊 소음 환경', data:250,
-    steps:[40,58,73,84,90] },
-];
+// ── 세 사건의 가상 데이터 (원고 심화 4쪽 ①·② 표 기반) ──
+// steps 배열: [초기값, 1탭, 2탭, 3탭, 4탭] — 데이터 추가 때마다 오르는 상황별 점수
+const CASES = {
+  speaker: {
+    emoji:'🔊', pick:'귀가 편식하는 AI 스피커',
+    pickSub:'특정 말투·소음 환경에서 말을 자주 못 알아들어요.',
+    title:'우리 학교 음성 인식 AI',
+    copy:'<b>"전체 정확도 82%!"</b><br>열 번 중 여덟 번은 알아들어요. 문제없어 보이죠?',
+    chartDesc:'같은 AI인데, 누구의 말인지·어디인지에 따라 점수가 달라요.',
+    metric:'정확도',
+    ref:'참고: 조용한 교실·표준 말투 데이터는 이미 5,000개나 있어요 (치우침!)',
+    fixTitle:'데이터 급식판 — 골고루 담아 봐요',
+    alt:'버튼 입력 같은 대체 방법',
+    sits:[
+      { key:'quiet',  label:'조용한 교실',   acc:95, w:.56, addable:false },
+      { key:'adult',  label:'어른 말투',     acc:88, w:.20, addable:true, plate:'👔 다양한 어른', data:600, steps:[88,89,89,90,90] },
+      { key:'child',  label:'어린이 말투',   acc:55, w:.08, addable:true, plate:'🧒 어린이 말투', data:400, steps:[55,70,81,88,90] },
+      { key:'accent', label:'지역 말투',     acc:50, w:.08, addable:true, plate:'🗣️ 지역 말투', data:300, steps:[50,66,79,87,90] },
+      { key:'noise',  label:'시끄러운 교실', acc:40, w:.08, addable:true, plate:'🔊 소음 환경', data:250, steps:[40,58,73,84,90] },
+    ],
+    causes:[
+      { k:'blame', ok:false, label:'도윤이 말투 탓이에요', msg:'사람 탓이 아니에요. AI가 그런 말투 데이터를 충분히 배우지 못한 거예요.' },
+      { k:'lack',  ok:true,  label:'특정 상황의 데이터가 부족해요', msg:'맞아요. 지역 말투·어린이·소음 환경 데이터를 적게 배웠어요.' },
+      { k:'skew',  ok:true,  label:'한쪽 데이터만 너무 많아요', msg:'맞아요. 조용한 곳 어른 목소리만 잔뜩 배워 치우쳤어요.' },
+      { k:'test',  ok:true,  label:'세부 상황을 테스트하지 않았어요', msg:'맞아요. 전체 점수만 보고 상황별로 확인하지 않았어요.' },
+      { k:'hate',  ok:false, label:'AI가 미워해서요', msg:'AI는 미워하는 마음이 없어요. 문제는 배운 데이터예요.' },
+    ],
+  },
+  door: {
+    emoji:'🚪', pick:'눈이 편식하는 AI 출입문',
+    pickSub:'특정 모습이나 상황의 사람을 더 자주 못 알아봐요.',
+    title:'우리 학교 얼굴 인식 출입문',
+    copy:'<b>"전체 정확도 90%!"</b><br>열 번 중 아홉 번은 얼굴을 알아봐요. 문제없어 보이죠?',
+    chartDesc:'같은 AI인데, 어떤 모습·상황인지에 따라 점수가 달라요.',
+    metric:'인식률',
+    ref:'참고: 밝은 곳·정면 얼굴 데이터는 이미 5,000개나 있어요 (치우침!)',
+    fixTitle:'데이터 급식판 — 여러 모습을 담아 봐요',
+    alt:'출입 카드 같은 대체 방법',
+    sits:[
+      { key:'front', label:'밝고 정면 얼굴',   acc:98, w:.82, addable:false },
+      { key:'dark',  label:'어두운 복도',      acc:55, w:.06, addable:true, plate:'🌙 어두운 곳', data:350, steps:[55,70,81,88,90] },
+      { key:'small', label:'키 작은 사람',     acc:53, w:.06, addable:true, plate:'🧒 키 작은 사람', data:300, steps:[53,68,80,87,90] },
+      { key:'hat',   label:'모자·두꺼운 안경', acc:47, w:.06, addable:true, plate:'🧢 모자·안경', data:250, steps:[47,62,76,85,90] },
+    ],
+    causes:[
+      { k:'blame', ok:false, label:'그 사람 외모 탓이에요', msg:'사람 탓이 아니에요. AI가 그런 모습의 사진을 충분히 배우지 못한 거예요.' },
+      { k:'lack',  ok:true,  label:'특정 모습·조명의 데이터가 부족해요', msg:'맞아요. 어두운 곳·모자·안경 쓴 얼굴 사진을 적게 배웠어요.' },
+      { k:'skew',  ok:true,  label:'한쪽 데이터만 너무 많아요', msg:'맞아요. 밝은 곳 정면 얼굴만 잔뜩 배워 치우쳤어요.' },
+      { k:'test',  ok:true,  label:'세부 상황을 테스트하지 않았어요', msg:'맞아요. 전체 점수만 보고 상황별로 확인하지 않았어요.' },
+      { k:'hate',  ok:false, label:'AI가 미워해서요', msg:'AI는 미워하는 마음이 없어요. 문제는 배운 데이터예요.' },
+    ],
+  },
+  recommend: {
+    emoji:'📺', pick:'생각이 편식하는 AI 추천기',
+    pickSub:'과거 기록 속 고정관념을 그대로 따라가요.',
+    title:'영상 추천 AI',
+    copy:'<b>"만족도 88%!"</b><br>내가 좋아할 영상을 잘 골라 줘요. 문제없어 보이죠?',
+    chartDesc:'좋아하는 영상은 잘 맞히지만, 다른 상황의 점수를 볼까요?',
+    metric:'점수',
+    ref:'참고: 과거 클릭 기록 데이터는 이미 5,000개나 있어요 (치우침!)',
+    fixTitle:'데이터 급식판 — 여러 주제를 담아 봐요',
+    alt:'여러 주제를 골고루 보여 주는 방법',
+    sits:[
+      { key:'like',  label:'좋아하던 영상',   acc:92, w:.93, addable:false },
+      { key:'topic', label:'새로운 주제 노출', acc:30, w:.03, addable:true, plate:'🌈 여러 주제', data:250, steps:[30,50,68,82,90] },
+      { key:'job',   label:'직업의 성별 균형', acc:35, w:.02, addable:true, plate:'⚖️ 균형 잡힌 예시', data:280, steps:[35,53,70,83,90] },
+      { key:'maker', label:'다양한 창작자',   acc:40, w:.02, addable:true, plate:'👥 여러 창작자', data:300, steps:[40,58,73,84,90] },
+    ],
+    causes:[
+      { k:'blame', ok:false, label:'내 취향이 이상해서요', msg:'사람 탓이 아니에요. AI가 과거 기록만 반복해 배운 거예요.' },
+      { k:'past',  ok:true,  label:'과거 기록 속 고정관념을 배웠어요', msg:'맞아요. 직업을 한쪽 성별로만 표현한 옛 데이터를 그대로 배웠어요.' },
+      { k:'skew',  ok:true,  label:'한쪽 데이터만 너무 많아요', msg:'맞아요. 좋아하던 영상 기록만 잔뜩 배워 치우쳤어요.' },
+      { k:'test',  ok:true,  label:'세부 상황을 테스트하지 않았어요', msg:'맞아요. 만족도만 보고 다양성을 확인하지 않았어요.' },
+      { k:'hate',  ok:false, label:'AI가 미워해서요', msg:'AI는 미워하는 마음이 없어요. 문제는 배운 데이터예요.' },
+    ],
+  },
+};
+
 const MAX_TAP = 4;
 let taps = 0;
+let CUR = null;      // 현재 사건 key
+let SITS = [];       // 현재 사건의 상황 배열
 
 // ── 도넛 게이지 ──
 const CIRC = 339.3;
@@ -283,7 +387,48 @@ function setDonut(v){
     if(p<1) requestAnimationFrame(tick);
   })(t0);
 }
-setTimeout(()=>setDonut(overall()), 300);
+
+// ── 0. 사건 선택 ──
+function buildCases(){
+  $('caseCards').innerHTML = Object.entries(CASES).map(([k,c])=>
+    `<button class="case-card" data-c="${k}" aria-label="${c.pick}">
+       <span class="cc-emoji" aria-hidden="true">${c.emoji}</span>
+       <span><span class="cc-title">${c.pick}</span><span class="cc-sub">${c.pickSub}</span></span>
+     </button>`).join('');
+  document.querySelectorAll('.case-card').forEach(btn=>{
+    btn.onclick = ()=> startCase(btn.dataset.c);
+  });
+}
+function startCase(key){
+  CUR = key;
+  const c = CASES[key];
+  // 상황 배열을 깊은 복사해 원본 훼손 방지 (다시 수사 시 초기값 유지)
+  SITS = c.sits.map(s=>({...s}));
+  taps = 0; solved = false; shownNum = 0; ++animId;
+
+  // 도넛 카드 세팅
+  $('donutTitle').textContent = c.title;
+  $('donutCopy').innerHTML = c.copy;
+  $('chartDesc').textContent = c.chartDesc;
+  $('donutNum').textContent = '0%';
+  $('donutVal').style.strokeDashoffset = CIRC;
+  $('donutMeter').setAttribute('aria-valuenow', 0);
+  document.querySelector('.donutbox').classList.remove('dimmed');
+  $('btnSplit').disabled = false;
+
+  // 이후 섹션 숨김 초기화
+  ['secChart','secEvi','secCause','secFix'].forEach(id=>$(id).classList.add('hidden'));
+  $('secPick').classList.add('hidden');
+  $('secDonut').classList.remove('hidden');
+  $('secDonut').classList.add('reveal');
+
+  buildEvidence(c);
+  buildCauses(c);
+  resetFix(c);
+
+  window.scrollTo({top:0, behavior:'smooth'});
+  setTimeout(()=>setDonut(overall()), 300);
+}
 
 // ── 막대 차트 ──
 function barClass(a){ return a>=85 ? 'mint' : a>=60 ? '' : 'coral'; }
@@ -325,33 +470,125 @@ $('btnSplit').onclick = function(){
     rows.forEach((row, i) => {
       setTimeout(()=>{ row.classList.add('bar-in'); }, i * 110);
     });
-    // 4) 원인 추리 섹션 등장
-    setTimeout(()=>show('secCause'), rows.length * 110 + 400);
+    // 4) 증거 문장 조립 섹션 등장
+    setTimeout(()=>{ show('secEvi'); $('secEvi').scrollIntoView({behavior:'smooth',block:'nearest'}); }, rows.length * 110 + 400);
   }, 350);
 };
 function show(id){ const el=$(id); el.classList.remove('hidden'); el.classList.add('reveal'); }
 
-// ── 3. 원인 추리 ──
-const CAUSE_FB = {
-  blame:{ ok:false, msg:'❌ 사람 탓이 아니에요! AI가 그런 말투 데이터를 충분히 배우지 못한 거예요.' },
-  hate:{ ok:false, msg:'❌ AI는 미워하는 마음이 없어요. AI가 배운 데이터가 문제예요.' },
-  data:{ ok:true,  msg:'✅ 정답! 조용한 곳의 어른 목소리만 잔뜩 배워서 데이터가 치우쳤어요. 그럼 데이터를 골고루 더해 볼까요?' },
-};
-let solved = false;
-document.querySelectorAll('.cause').forEach(btn=>{
-  btn.onclick = ()=>{
-    if(solved) return;
-    const r = CAUSE_FB[btn.dataset.k];
-    const fb = $('causeFb');
-    fb.textContent = r.msg;
-    fb.className = 'feedback show ' + (r.ok?'good':'bad');
-    btn.classList.remove('no'); void btn.offsetWidth;
-    btn.classList.add(r.ok?'yes':'no');
-    if(r.ok){ solved = true; setTimeout(()=>{ show('secFix'); buildPlates(); }, 500); }
+// ── 2.5 증거 문장 조립 ──
+function buildEvidence(c){
+  const low = SITS.filter(s=>s.acc<60).sort((a,b)=>a.acc-b.acc);
+  const worst = low[0] || SITS.slice().sort((a,b)=>a.acc-b.acc)[0];
+  const all = overall();
+  // 정답 위치가 늘 같지 않도록 보기 순서를 섞음
+  const opt = (arr)=> {
+    const a = arr.slice();
+    if(Math.random()<.5) a.reverse();
+    return ['<option value="">고르기</option>']
+      .concat(a.map(o=>`<option value="${o.v}">${o.t}</option>`)).join('');
   };
-});
+  // 전체 결과: 정답 = 전체 점수, 오답 = 낮은 상황 점수
+  $('eviAll').innerHTML = opt([
+    {v:'ok', t:`좋음(${all}%)`},
+    {v:'x',  t:`나쁨(${worst.acc}%)`},
+  ]);
+  // 문제 상황: 정답 = 가장 낮은 상황, 오답 = 잘 되는 상황
+  const good = SITS.filter(s=>!s.addable)[0] || SITS.slice().sort((a,b)=>b.acc-a.acc)[0];
+  $('eviSit').innerHTML = opt([
+    {v:'ok', t:worst.label},
+    {v:'x',  t:good.label},
+  ]);
+  // 낮은 점수: 정답 = worst 점수
+  const higher = SITS.slice().sort((a,b)=>b.acc-a.acc)[0];
+  $('eviLow').innerHTML = opt([
+    {v:'ok', t:`${worst.acc}%`},
+    {v:'x',  t:`${higher.acc}%`},
+  ]);
+  $('eviFb').className = 'feedback';
+  $('btnEvi').disabled = true;
+  $('btnEvi').textContent = '증거 문장 확인';
+}
+function eviReady(){
+  const filled = ['eviAll','eviSit','eviLow'].every(id=>$(id).value!=='');
+  $('btnEvi').disabled = !filled;
+}
+['eviAll','eviSit','eviLow'].forEach(id=> $(id).onchange = eviReady);
+$('btnEvi').onclick = function(){
+  const allOk = ['eviAll','eviSit','eviLow'].every(id=>$(id).value==='ok');
+  const fb = $('eviFb');
+  if(allOk){
+    fb.textContent = '증거 문장을 완성했어요. 전체 점수는 좋아 보여도 특정 상황에서 뚝 떨어진다는 게 편향의 증거예요.';
+    fb.className = 'feedback show good';
+    this.disabled = true; this.textContent = '완성했어요';
+    setTimeout(()=>{ show('secCause'); $('secCause').scrollIntoView({behavior:'smooth',block:'nearest'}); }, 450);
+  }else{
+    fb.textContent = '다시 살펴봐요. 전체 결과는 높게, 문제 상황은 가장 낮은 점수로 골라야 편향이 드러나요.';
+    fb.className = 'feedback show bad';
+  }
+};
+
+// ── 3. 원인 추리 (여러 개 선택) ──
+let solved = false;
+function buildCauses(c){
+  $('causes').innerHTML = c.causes.map(o=>
+    `<button class="cause" data-k="${o.k}" data-ok="${o.ok}" aria-pressed="false" aria-label="원인 후보: ${o.label}">${o.label}</button>`
+  ).join('');
+  $('causeFb').className = 'feedback';
+  $('btnCauseNext').classList.add('hidden');
+  document.querySelectorAll('.cause').forEach(btn=>{
+    btn.onclick = ()=>{
+      if(solved) return;
+      // 선택 토글
+      const on = btn.classList.toggle('picked');
+      btn.setAttribute('aria-pressed', on);
+      gradeCauses(c);
+    };
+  });
+}
+function gradeCauses(c){
+  const picks = [...document.querySelectorAll('.cause.picked')];
+  const total = c.causes.filter(o=>o.ok).length;
+  const hitOk = picks.filter(b=>b.dataset.ok==='true');
+  const wrong = picks.filter(b=>b.dataset.ok!=='true');
+  const fb = $('causeFb');
+  if(wrong.length){
+    const w = c.causes.find(o=>o.k===wrong[0].dataset.k);
+    fb.textContent = w.msg;
+    fb.className = 'feedback show bad';
+    $('btnCauseNext').classList.add('hidden');
+    return;
+  }
+  if(hitOk.length === total){
+    solved = true;
+    document.querySelectorAll('.cause').forEach(b=>{
+      if(b.dataset.ok==='true') b.classList.add('yes');
+    });
+    fb.textContent = '원인을 모두 찾았어요. 이제 부족한 데이터를 골고루 채워 볼까요?';
+    fb.className = 'feedback show good';
+    $('btnCauseNext').classList.remove('hidden');
+  }else{
+    fb.textContent = `좋아요. 원인이 하나 더 있어요. 모두 골라 봐요. (${hitOk.length}/${total})`;
+    fb.className = 'feedback show good';
+    $('btnCauseNext').classList.add('hidden');
+  }
+}
+$('btnCauseNext').onclick = function(){
+  show('secFix'); buildPlates();
+  $('secFix').scrollIntoView({behavior:'smooth',block:'nearest'});
+};
 
 // ── 4. 데이터 접시 + 시뮬레이션 ──
+function resetFix(c){
+  $('fixTitle').textContent = c.fixTitle;
+  $('fixRef').textContent = c.ref;
+  $('limitAlt').textContent = c.alt;
+  $('fixFb').className = 'feedback';
+  $('limitMsg').classList.remove('show');
+  $('btnAdd').disabled = false;
+  $('btnAdd').textContent = '데이터 골고루 추가';
+  $('btnRestart').classList.add('hidden');
+}
 function buildPlates(){
   $('plates').innerHTML = SITS.filter(s=>s.addable).map(s=>
     `<div class="plate" id="plate-${s.key}">
@@ -385,15 +622,25 @@ $('btnAdd').onclick = function(){
   updateChart(); setDonut(overall());
   const fb = $('fixFb');
   if(taps < MAX_TAP){
-    fb.textContent = `📈 부족했던 상황의 점수가 올랐어요! 전체 점수도 ${overall()}%로 다시 계산됐어요. (${taps}/${MAX_TAP})`;
+    fb.textContent = `부족했던 상황을 다시 테스트하니 점수가 올랐어요. 전체 점수도 ${overall()}%로 다시 계산됐어요. (${taps}/${MAX_TAP})`;
     fb.className = 'feedback show good';
   }else{
-    fb.textContent = '🎉 도윤이의 말투는 그대로인데 AI가 좋아졌어요. 범인은 사람이 아니라 데이터였어요!';
+    fb.textContent = '사람은 그대로인데 AI가 좋아졌어요. 문제는 사람이 아니라 데이터였어요.';
     fb.className = 'feedback show good';
     $('limitMsg').classList.add('show');
-    this.disabled = true; this.textContent = '이제 충분해요!';
+    this.disabled = true; this.textContent = '이제 충분해요';
+    $('btnRestart').classList.remove('hidden');
   }
 };
+$('btnRestart').onclick = function(){
+  ['secDonut','secChart','secEvi','secCause','secFix'].forEach(id=>$(id).classList.add('hidden'));
+  $('secPick').classList.remove('hidden');
+  $('secPick').classList.add('reveal');
+  window.scrollTo({top:0, behavior:'smooth'});
+};
+
+// ── 시작 ──
+buildCases();
 </script>
 </body>
 </html>
