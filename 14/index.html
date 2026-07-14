@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>목소리로 날아라! 소리 조종 게임 · AI 탐험대 14</title>
+<style>
+  :root{
+    --ink:#141414; --paper:#FBF7EC; --surface:#FFFFFF;
+    --sky:#0EA5E9; --sky-soft:#DAF1FD;
+    --amber:#FFB800; --amber-soft:#FFF0C7;
+    --green:#12B76A; --red:#FF4D4D; --muted:#6B6B6B; --line:#141414;
+    --point:#0EA5E9; --point-soft:#DAF1FD;
+    --r:20px; --r-sm:13px;
+    --hard:5px 5px 0 var(--ink); --hard-sm:3px 3px 0 var(--ink);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    background:var(--paper);color:var(--ink);
+    font-size:17px;line-height:1.55;
+    background-image:radial-gradient(var(--ink) .5px,transparent .5px);
+    background-size:22px 22px;background-position:-11px -11px;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:18px 18px 64px}
+
+  /* top nav */
+  .nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+  .back{display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--ink);
+    font-weight:800;font-size:14px;background:var(--surface);border:2.5px solid var(--ink);
+    border-radius:999px;padding:8px 16px;box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
+  .back:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .back:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+  .lesson-tag{font-weight:900;font-size:15px;letter-spacing:-.01em;background:var(--sky);color:#fff;
+    border:2.5px solid var(--ink);border-radius:999px;padding:6px 16px;box-shadow:var(--hard-sm)}
+
+  /* hero */
+  .kicker{display:inline-block;font-weight:900;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
+    background:var(--amber);border:2.5px solid var(--ink);border-radius:8px;padding:4px 12px;box-shadow:var(--hard-sm);margin-bottom:16px}
+  h1{font-size:clamp(28px,7vw,50px);font-weight:900;letter-spacing:-.035em;line-height:1.04}
+  h1 .u{ -webkit-text-decoration:6px underline var(--sky);text-decoration:6px underline var(--sky);text-underline-offset:6px}
+  .lead{font-size:17px;color:var(--muted);margin-top:14px;max-width:640px;font-weight:600}
+  .lead b{color:var(--ink);font-weight:800}
+
+  .safe{display:flex;align-items:center;gap:10px;background:var(--surface);border:2.5px solid var(--ink);
+    border-radius:var(--r-sm);box-shadow:var(--hard-sm);padding:11px 16px;font-size:13.5px;font-weight:600;margin:22px 0 26px}
+  .safe svg{flex-shrink:0}
+  .safe b{font-weight:900}
+
+  /* section head */
+  .cmp-head{display:flex;align-items:center;gap:10px;margin:34px 0 14px}
+  .cmp-head h2{font-size:22px;font-weight:900;letter-spacing:-.02em}
+  .cmp-head .bar{height:3px;background:var(--ink);flex:1;border-radius:2px}
+
+  .panel{background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:22px;position:relative}
+  .panel.sky{background:var(--sky-soft)}
+
+  /* ── 소리 크기 측정기 ── */
+  .meter-num{display:flex;align-items:baseline;justify-content:center;gap:8px;margin:2px 0 12px}
+  .meter-num .big{font-size:clamp(52px,15vw,88px);font-weight:900;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+  .meter-num .unit{font-size:15px;font-weight:800;color:var(--muted)}
+  .badge{display:inline-block;font-size:13px;font-weight:900;border:2.5px solid var(--ink);border-radius:999px;
+    padding:3px 14px;background:var(--paper);box-shadow:var(--hard-sm)}
+
+  .gauge{position:relative;height:30px;background:var(--paper);border:2.5px solid var(--ink);border-radius:999px;overflow:hidden;margin:6px 0 4px}
+  .gaugebar{height:100%;width:0%;background:repeating-linear-gradient(45deg,var(--sky),var(--sky) 9px,#4EC5F5 9px,#4EC5F5 18px);transition:width .06s linear}
+  /* 눈금 (0 / 10 / 30) */
+  .ticks{position:relative;height:34px;margin-top:2px}
+  .tick{position:absolute;top:0;transform:translateX(-50%);text-align:center}
+  .tick .ln{width:2.5px;height:8px;background:var(--ink);margin:0 auto 2px}
+  .tick .tl{font-size:10.5px;font-weight:800;color:var(--muted);white-space:nowrap;letter-spacing:-.02em}
+  .tick.t10 .tl,.tick.t30 .tl{color:var(--ink)}
+
+  /* 파형 */
+  .scope{width:100%;height:64px;display:block;background:var(--paper);border:2.5px solid var(--ink);border-radius:var(--r-sm);margin:12px 0 6px}
+
+  .state{text-align:center;font-size:13.5px;min-height:24px;color:#333;font-weight:700;margin:8px 0 2px}
+  .state b{color:var(--ink)}
+
+  /* 흐름 4단계 스테퍼 */
+  .flow{display:flex;align-items:stretch;gap:0;margin:14px 0 4px;flex-wrap:nowrap}
+  .fstep{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;text-align:center}
+  .fstep .snum{width:26px;height:26px;flex-shrink:0;display:grid;place-items:center;font-weight:900;font-size:13px;
+    border:2px solid var(--ink);border-radius:8px;background:var(--paper);color:var(--ink);transition:background .18s,color .18s,transform .18s}
+  .fstep .slab{font-size:11px;font-weight:800;letter-spacing:-.02em;color:var(--muted);line-height:1.2;transition:color .18s}
+  .fstep:not(:last-child)::after{content:"";position:absolute;top:12px;left:calc(50% + 18px);right:calc(-50% + 18px);height:2.5px;background:var(--ink);opacity:.25}
+  .fstep.on .snum{background:var(--sky);color:#fff;transform:scale(1.1)}
+  .fstep.on .slab{color:var(--ink)}
+
+  /* ── 게임 ── */
+  .game-wrap{position:relative}
+  .stage{width:100%;aspect-ratio:16/10;display:block;background:var(--sky-soft);border:3px solid var(--ink);border-radius:var(--r-sm);touch-action:none}
+  .hud{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin:12px 0 6px}
+  .hud .stat{font-size:14px;font-weight:800}
+  .hud .stat b{font-size:20px;font-weight:900;font-variant-numeric:tabular-nums}
+  .hud .mini{font-size:13px;font-weight:700;color:var(--muted)}
+  .hud .mini b{color:var(--ink);font-variant-numeric:tabular-nums}
+
+  .ctrls{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;flex:1;min-width:150px;cursor:pointer;
+    font-family:inherit;font-size:16px;font-weight:900;letter-spacing:-.01em;color:var(--ink);background:var(--amber);
+    border:2.5px solid var(--ink);border-radius:14px;box-shadow:var(--hard-sm);padding:13px 14px;min-height:50px;
+    transition:transform .1s,box-shadow .1s}
+  .btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .btn:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--ink)}
+  .btn:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
+  .btn.sky{background:var(--sky);color:#fff}
+  .btn.rec{background:var(--red);color:#fff;animation:beat 1s ease-in-out infinite}
+  @keyframes beat{50%{transform:scale(1.02)}}
+  .btn svg{flex-shrink:0}
+
+  .slider-row{margin:16px 0 2px}
+  .slider-row label{display:flex;align-items:baseline;justify-content:space-between;font-size:13.5px;font-weight:800;margin-bottom:6px}
+  .slider-row label b{font-size:17px;font-weight:900;color:var(--sky);font-variant-numeric:tabular-nums}
+  input[type=range]{width:100%;height:26px;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer}
+  input[type=range]::-webkit-slider-runnable-track{height:10px;background:var(--paper);border:2.5px solid var(--ink);border-radius:999px}
+  input[type=range]::-moz-range-track{height:10px;background:var(--paper);border:2.5px solid var(--ink);border-radius:999px}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:26px;height:26px;margin-top:-11px;
+    background:var(--sky);border:2.5px solid var(--ink);border-radius:50%;box-shadow:var(--hard-sm)}
+  input[type=range]::-moz-range-thumb{width:22px;height:22px;background:var(--sky);border:2.5px solid var(--ink);border-radius:50%}
+  input[type=range]:focus-visible{outline:3px solid var(--sky);outline-offset:3px;border-radius:999px}
+  .slider-hint{font-size:12.5px;font-weight:600;color:var(--muted);margin-top:4px}
+
+  .fallback{display:none;background:#FFF3D6;border:2.5px solid var(--ink);border-radius:var(--r-sm);
+    box-shadow:var(--hard-sm);padding:12px 16px;font-size:13.5px;font-weight:700;margin:14px 0 2px;line-height:1.5}
+  .fallback.show{display:block}
+  .fallback b{font-weight:900}
+
+  /* 관찰 박스 */
+  .obs{display:flex;gap:12px;align-items:flex-start;background:var(--ink);color:var(--paper);
+    border-radius:var(--r);padding:18px 20px;font-size:14px;font-weight:600;margin:26px 0;line-height:1.55}
+  .obs svg{flex-shrink:0;margin-top:2px}
+  .obs b{color:var(--amber);font-weight:900}
+
+  /* 비교표 */
+  table{width:100%;border-collapse:separate;border-spacing:0;font-size:14px;background:var(--surface);
+    border:3px solid var(--ink);border-radius:var(--r);overflow:hidden;box-shadow:var(--hard);font-weight:600}
+  thead th{background:var(--ink);color:var(--paper);font-size:14px;font-weight:900;padding:12px}
+  tbody th{background:var(--paper);font-weight:800;font-size:13px;text-align:left;padding:12px 14px;width:28%}
+  td{padding:12px 14px;text-align:center;border-top:2px solid var(--ink)}
+  tbody th{border-top:2px solid var(--ink)}
+  td.a{background:#fff}
+  td.b{background:var(--sky-soft);font-weight:800}
+  tr td:first-of-type{border-right:2px solid var(--ink)}
+  tbody th{border-right:2px solid var(--ink)}
+
+  /* 심화 카드 */
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:6px}
+  @media(max-width:600px){.cards{grid-template-columns:1fr}}
+  .card2{background:var(--surface);border:3px solid var(--ink);border-radius:var(--r-sm);box-shadow:var(--hard-sm);padding:16px 18px;display:flex;flex-direction:column;gap:9px}
+  .card2 .ch{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:900;letter-spacing:-.02em}
+  .card2 .ch svg{flex-shrink:0}
+  .card2 .cd{font-size:13px;color:#333;font-weight:600;line-height:1.5}
+
+  /* 용어 */
+  .terms{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:6px}
+  @media(max-width:600px){.terms{grid-template-columns:1fr}}
+  .term{background:var(--amber-soft);border:2.5px solid var(--ink);border-radius:var(--r-sm);box-shadow:var(--hard-sm);padding:14px 16px}
+  .term .tw{font-size:16px;font-weight:900;letter-spacing:-.02em;margin-bottom:5px}
+  .term .td{font-size:13px;font-weight:600;color:#333;line-height:1.5}
+  .term .td em{font-style:normal;font-weight:800;color:var(--ink)}
+
+  footer{text-align:center;margin-top:34px}
+  footer a{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font-weight:900;color:var(--ink);
+    background:var(--surface);border:2.5px solid var(--ink);border-radius:999px;padding:11px 22px;box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
+  footer a:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  footer a:focus-visible{outline:3px solid var(--sky);outline-offset:3px}
+
+  .quicklinks{margin-top:30px;background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:18px 20px}
+  .ql-h{font-size:14px;font-weight:900;letter-spacing:-.01em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .ql{display:flex;align-items:center;gap:9px;text-decoration:none;font-size:14px;font-weight:800;color:var(--ink);
+    background:var(--paper);border:2.5px solid var(--ink);border-radius:12px;box-shadow:var(--hard-sm);padding:11px 15px;min-height:48px;margin-bottom:10px;transition:transform .1s,box-shadow .1s}
+  .ql:last-child{margin-bottom:0}
+  .ql:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .ql:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+  .ql:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .ql.tool{background:var(--point-soft)}
+  .ql .arw{margin-left:auto;font-weight:900}
+  .ql svg{flex-shrink:0;color:var(--point)}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="nav">
+    <a class="back" href="../">← 전체 목록</a>
+    <span class="lesson-tag">14강 · 소리 조종 게임</span>
+  </nav>
+
+  <header>
+    <span class="kicker">소리를 숫자 데이터로</span>
+    <h1>목소리로 날아라!<br><span class="u">소리 조종 게임</span></h1>
+    <p class="lead">터치를 안 해도 게임을 조종할 수 있어요. 마이크가 <b>소리 크기</b>를 숫자로 바꾸면, 프로그램이 그 숫자로 비행기를 움직여요. 직접 소리 내며 날려 봐요.</p>
+  </header>
+
+  <div class="safe">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6l-8-4Z" fill="var(--amber)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/></svg>
+    <span><b>안전 안내</b> — 실제 목소리를 저장하거나 공유하지 않아요. 소리 크기 수치만 화면에서 실시간으로 쓰여요.</span>
+  </div>
+
+  <!-- ── 1. 소리 크기 측정기 ── -->
+  <div class="cmp-head"><h2>① 소리 크기 측정기</h2><span class="bar" aria-hidden="true"></span></div>
+  <p class="lead" style="margin:-4px 0 14px">마이크 소리를 <b>0~100 숫자</b>와 파형으로 보여줘요. 조용할 때는 0에 가깝고, 작게 “아~” 하면 10 정도, 크게 “아!” 하면 30을 넘겨요.</p>
+
+  <section class="panel sky" aria-labelledby="meterH">
+    <h3 id="meterH" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">소리 크기 측정기</h3>
+    <div class="meter-num">
+      <span class="big" id="meterNum" role="status" aria-live="off">0</span>
+      <span class="unit">/ 100</span>
+      <span class="badge" id="meterBadge">조용해요</span>
+    </div>
+    <div class="gauge" id="gaugeWrap" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="소리 크기 0에서 100"><div class="gaugebar" id="gaugeBar"></div></div>
+    <div class="ticks" aria-hidden="true">
+      <div class="tick t0" style="left:0%"><div class="ln"></div><div class="tl">0<br>조용</div></div>
+      <div class="tick t10" style="left:10%"><div class="ln"></div><div class="tl">10<br>작게 아~</div></div>
+      <div class="tick t30" style="left:30%"><div class="ln"></div><div class="tl">30<br>크게 아!</div></div>
+      <div class="tick" style="left:100%"><div class="ln"></div><div class="tl">100</div></div>
+    </div>
+    <canvas class="scope" id="scope" width="820" height="128" aria-hidden="true"></canvas>
+    <p class="state" id="meterState">버튼을 누르고 마이크를 켠 뒤 소리를 내 봐요</p>
+    <div class="ctrls">
+      <button class="btn sky" id="meterBtn">소리 크기 재기 시작</button>
+    </div>
+    <p class="slider-hint" style="margin-top:12px">내 목소리가 그래프와 숫자로 보이니까, 소리가 진짜 데이터가 돼요.</p>
+  </section>
+
+  <div class="obs">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--amber)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/></svg>
+    <span><b>관찰해 봐요</b> — 무슨 말을 하든 숫자는 <b>소리의 크기</b>만 따라 움직여요. “안녕”이라고 작게 말하면 낮고, 뜻 없이 “아!”만 크게 질러도 높아요. 기계는 말의 뜻이 아니라 소리의 크기에만 반응해요.</span>
+  </div>
+
+  <!-- ── 4단계 흐름 ── -->
+  <div class="cmp-head"><h2>소리가 움직임이 되는 4단계</h2><span class="bar" aria-hidden="true"></span></div>
+  <p class="lead" style="margin:-4px 0 14px">아래 게임을 하는 동안 <b>지금 어느 단계</b>인지 스텝에 불이 켜져요.</p>
+  <section class="panel">
+    <div class="flow" id="flow" role="img" aria-label="소리 크기에서 캐릭터 움직임까지 4단계 흐름">
+      <div class="fstep" data-step="1"><span class="snum">1</span><span class="slab">소리 크기</span></div>
+      <div class="fstep" data-step="2"><span class="snum">2</span><span class="slab">숫자 데이터</span></div>
+      <div class="fstep" data-step="3"><span class="snum">3</span><span class="slab">조건 판단</span></div>
+      <div class="fstep" data-step="4"><span class="snum">4</span><span class="slab">캐릭터 움직임</span></div>
+    </div>
+    <p class="slider-hint" style="margin-top:12px;text-align:center">① 소리 크기 → ② 숫자 데이터 → ③ 기준값과 비교(조건 판단) → ④ 비행기가 오르거나 내려와요. 하드웨어(마이크)와 소프트웨어(프로그램)가 함께 작동해요.</p>
+  </section>
+
+  <!-- ── 2. 소리 조종 게임 ── -->
+  <div class="cmp-head"><h2>② 소리 조종 비행 게임</h2><span class="bar" aria-hidden="true"></span></div>
+  <p class="lead" style="margin:-4px 0 14px">소리 크기가 <b>기준값</b>보다 크면 비행기가 <b>위로</b>, 작으면 <b>아래로</b> 내려와요. 기둥을 피해 오래 날아 봐요. (측정기와 <b>같은 0~100 숫자</b>를 써요.)</p>
+
+  <section class="panel game-wrap" aria-labelledby="gameH">
+    <h3 id="gameH" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">소리 조종 비행 게임</h3>
+    <div class="hud">
+      <span class="stat">점수 <b id="score">0</b></span>
+      <span class="stat">최고 <b id="best">0</b></span>
+      <span class="mini">지금 소리 <b id="liveVol">0</b> · 기준값 <b id="thrEcho">20</b></span>
+    </div>
+    <canvas class="stage" id="stage" width="800" height="500" tabindex="0" aria-label="비행 게임 화면. 시작 후 스페이스바 또는 화면을 눌러도 조종할 수 있어요."></canvas>
+
+    <div class="slider-row">
+      <label for="thr">상승 기준값 <span class="slider-hint" style="font-weight:600">(이보다 크면 위로 올라가요)</span> <b id="thrVal">20</b></label>
+      <input type="range" id="thr" min="5" max="60" value="20" step="1" aria-describedby="thrHint">
+      <p class="slider-hint" id="thrHint">기준값을 낮추면 작은 소리에도 잘 올라가고, 높이면 크게 소리 내야 올라가요. 이것이 <b>조건 판단</b>이에요.</p>
+    </div>
+
+    <div class="ctrls">
+      <button class="btn sky" id="startBtn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        마이크로 시작</button>
+      <button class="btn" id="practiceBtn">연습 모드 (스페이스바)</button>
+    </div>
+
+    <div class="fallback" id="fallback">
+      <b>마이크를 못 쓰면 연습 모드로 놀아요.</b> 스페이스바를 누르고 있거나 화면을 꾹 누르면 비행기가 올라가고, 떼면 내려와요.
+    </div>
+  </section>
+
+  <div class="obs">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18" stroke="var(--amber)" stroke-width="2.2" stroke-linecap="round"/></svg>
+    <span><b>여기가 핵심 —</b> 게임 속 비행기의 움직임은 마법이 아니라, 마이크가 받은 <b>소리 크기 값</b>을 프로그램이 <b>기준값과 비교</b>해서 만든 결과예요. 소리 → 숫자 → 판단 → 움직임, 이 4단계로 작동해요.</span>
+  </div>
+
+  <!-- ── 개념: 터치 vs 소리 입력 ── -->
+  <div class="cmp-head"><h2>터치 입력 vs 소리 입력</h2><span class="bar" aria-hidden="true"></span></div>
+  <p class="lead" style="margin:-4px 0 14px">스마트폰을 터치하는 것도 <b>입력</b>이고, 마이크로 소리를 받는 것도 <b>입력</b>이에요. 무엇을 받아들이는지가 달라요.</p>
+  <table>
+    <thead><tr><th>구분</th><th>터치 입력</th><th>소리 입력</th></tr></thead>
+    <tbody>
+      <tr><th>무엇을 받나요?</th><td class="a">손가락의 위치</td><td class="b">주변의 소리 크기</td></tr>
+      <tr><th>이렇게 조종해요</th><td class="a">화면을 눌러요</td><td class="b">“아~” 하고 소리를 내요</td></tr>
+      <tr><th>편리한 때</th><td class="a">조용한 곳, 정확히 고를 때</td><td class="b">손을 쓰기 어렵거나 멀리서 쓸 때</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ── 용어 ── -->
+  <div class="cmp-head"><h2>용어 쏙쏙</h2><span class="bar" aria-hidden="true"></span></div>
+  <div class="terms">
+    <div class="term">
+      <div class="tw">진동</div>
+      <div class="td">물체가 앞뒤나 위아래로 빠르게 흔들리는 움직임이에요. <em>기타 줄을 튕기면 줄이 떨리는 것</em>이 진동이에요. 소리는 공기의 떨림, 즉 진동이에요.</div>
+    </div>
+    <div class="term">
+      <div class="tw">소리 입력</div>
+      <div class="td">마이크가 소리를 받아 컴퓨터나 기기에 전달하는 것이에요. <em>“아~” 하고 말하면</em> 마이크가 그 소리를 받아 프로그램에 전달해요.</div>
+    </div>
+  </div>
+
+  <!-- ── 심화 사례 ── -->
+  <div class="cmp-head"><h2>소리로 반응하는 사례</h2><span class="bar" aria-hidden="true"></span></div>
+  <p class="lead" style="margin:-4px 0 14px">이 기기들도 소리의 <b>뜻</b>은 몰라요. 소리의 <b>크기</b>만 보고 작동해요.</p>
+  <div class="cards">
+    <div class="card2">
+      <div class="ch">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 11 5 7M8 11 4 12M8 11l-1 4M16 11l3-4M16 11l4 1M16 11l1 4" stroke="var(--sky)" stroke-width="2" stroke-linecap="round"/><path d="M9 13a3 3 0 0 1 6 0v3a3 3 0 0 1-6 0v-3Z" fill="var(--sky-soft)" stroke="var(--ink)" stroke-width="2"/></svg>
+        클랩 스위치
+      </div>
+      <div class="cd">박수처럼 일정 크기 이상의 소리가 나면 전등을 켜고 꺼요. “아!”라고 했는지 “안녕!”이라고 했는지는 몰라요. 소리의 <b>크기</b>만 판단해요.</div>
+    </div>
+    <div class="card2">
+      <div class="ch">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 6 4 9H2v6h2l5 3V6Z" fill="var(--sky-soft)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/><path d="M14 8.5c1.5.7 2.5 2 2.5 3.5s-1 2.8-2.5 3.5" stroke="var(--sky)" stroke-width="2" stroke-linecap="round"/><path d="M18 5.5c2.5 1.4 4 3.7 4 6.5s-1.5 5.1-4 6.5" stroke="var(--sky)" stroke-width="2" stroke-linecap="round"/></svg>
+        사운드 액티브 조명
+      </div>
+      <div class="cd">음악이나 소리의 크기에 따라 반짝이거나 색이 바뀌는 조명이에요. 콘서트에서 음악이 크면 더 밝아지거나 빠르게 깜빡여요. 가사의 뜻이 아니라 소리 <b>크기</b>에 반응해요.</div>
+    </div>
+  </div>
+
+  <!-- ── 교실 배려 약속 ── -->
+  <div class="safe" style="margin:28px 0 4px">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 11c0 5.5-7 10-7 10Z" fill="var(--amber)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/></svg>
+    <span><b>교실 배려 약속</b> — 필요한 만큼만 소리를 내고, 친구가 할 때는 큰 소리를 내지 않으며, 차례를 지켜 사용해요.</span>
+  </div>
+
+  <!-- ── 엔트리 연계 ── -->
+  <div class="quicklinks">
+    <div class="ql-h">🔗 링크 바로가기</div>
+    <a class="ql tool" href="https://playentry.org/" target="_blank" rel="noopener noreferrer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4M14 4h6v6M20 4l-9 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>엔트리에서 소리 크기로 열기구 움직이기</span><span class="arw" aria-hidden="true">↗</span></a>
+    <p class="slider-hint" style="margin-top:2px">엔트리 → [인공지능] 탭 → [인공지능 블록 불러오기] → [음성인식]을 골라, 열기구 오브젝트를 소리 크기로 움직여 봐요.</p>
+  </div>
+
+  <footer><a href="../">← AI 탐험대 체험 전체 목록</a></footer>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+
+/* ══════════ 공용: 소리 크기 0~100 스케일 ══════════
+   측정기와 게임이 같은 함수로 같은 숫자를 만든다. */
+function rmsToVol(analyser, buf){
+  analyser.getByteTimeDomainData(buf);
+  let sum=0;
+  for(const v of buf){ const d=(v-128)/128; sum+=d*d; }
+  const rms=Math.sqrt(sum/buf.length);
+  return Math.min(100, Math.round(rms*300)); // 15편과 동일 스케일(rms*300)
+}
+
+/* ══════════ 1. 소리 크기 측정기 ══════════ */
+let mAudio=null, mAnalyser=null, mStream=null, mBuf=null, mRun=false, mSrc=null;
+const scope=$('scope'), sctx=scope.getContext('2d');
+
+$('meterBtn').onclick=async function(){
+  if(mRun){ stopMeter(); return; }
+  try{
+    mStream=await navigator.mediaDevices.getUserMedia({audio:true});
+    mAudio=mAudio||new (window.AudioContext||window.webkitAudioContext)();
+    if(mAudio.state==='suspended') await mAudio.resume();
+    mSrc=mAudio.createMediaStreamSource(mStream);
+    mAnalyser=mAudio.createAnalyser(); mAnalyser.fftSize=1024;
+    mSrc.connect(mAnalyser);
+    mBuf=new Uint8Array(mAnalyser.fftSize);
+    mRun=true; this.textContent='멈추기'; this.classList.add('rec');
+    $('meterState').innerHTML='소리를 내 봐요! (박수, “아~”, 크게 “아!”)';
+    loopMeter();
+  }catch(e){
+    $('meterState').innerHTML='마이크 사용을 허용해 주세요. 게임은 <b>연습 모드</b>로 할 수 있어요.';
+  }
+};
+function stopMeter(){
+  mRun=false; $('meterBtn').textContent='소리 크기 재기 시작'; $('meterBtn').classList.remove('rec');
+  if(mStream){ mStream.getTracks().forEach(t=>t.stop()); mStream=null; }
+  setMeter(0); $('meterState').textContent='버튼을 누르고 마이크를 켠 뒤 소리를 내 봐요';
+  sctx.clearRect(0,0,scope.width,scope.height);
+}
+function badgeFor(v){
+  if(v>=30) return '크게 아!';
+  if(v>=10) return '작게 아~';
+  return '조용해요';
+}
+function setMeter(v){
+  $('meterNum').textContent=v;
+  $('gaugeBar').style.width=v+'%';
+  $('gaugeWrap').setAttribute('aria-valuenow', v);
+  $('meterBadge').textContent=badgeFor(v);
+}
+function drawScope(){
+  const w=scope.width, h=scope.height;
+  sctx.clearRect(0,0,w,h);
+  sctx.lineWidth=3; sctx.strokeStyle='#0EA5E9'; sctx.beginPath();
+  const step=w/mBuf.length;
+  for(let i=0;i<mBuf.length;i++){
+    const y=(mBuf[i]/255)*h;
+    if(i===0) sctx.moveTo(0,y); else sctx.lineTo(i*step,y);
+  }
+  sctx.stroke();
+}
+function loopMeter(){
+  if(!mRun) return;
+  const v=rmsToVol(mAnalyser, mBuf);
+  setMeter(v);
+  drawScope();
+  requestAnimationFrame(loopMeter);
+}
+
+/* ══════════ 4단계 흐름 스테퍼 ══════════ */
+function flowSet(n){
+  document.querySelectorAll('#flow .fstep').forEach(el=>{
+    el.classList.toggle('on', +el.dataset.step===n);
+  });
+}
+function flowReset(){ document.querySelectorAll('#flow .fstep').forEach(el=>el.classList.remove('on')); }
+
+/* ══════════ 2. 소리 조종 비행 게임 ══════════ */
+const stage=$('stage'), ctx=stage.getContext('2d');
+const W=stage.width, H=stage.height;
+
+/* ── 튜닝 값 ── */
+const GRAV=0.42;        // 아래로 내려오는 가속(중력)
+const LIFT=-0.9;        // 소리가 기준값보다 클 때 위로 주는 가속
+const MAX_VY=8;         // Y속도 상한
+const PIPE_GAP=170;     // 위/아래 기둥 사이 통로 높이
+const PIPE_W=66;        // 기둥 폭
+const PIPE_SPACING=300; // 기둥 사이 가로 간격(px)
+const SCROLL=2.6;       // 스크롤 속도(px/frame)
+const PLANE_X=150;      // 비행기 고정 X
+
+let gAudio=null, gAnalyser=null, gStream=null, gBuf=null;
+let mode=null;          // 'mic' | 'practice'
+let running=false, paused=true;
+let plane, vy, pipes, score, best, threshold, holding, distSincefPipe;
+
+best=+(localStorage.getItem('ebs14_best')||0);
+$('best').textContent=best;
+
+$('thr').addEventListener('input', e=>{
+  threshold=+e.target.value;
+  $('thrVal').textContent=threshold;
+  $('thrEcho').textContent=threshold;
+});
+threshold=+$('thr').value;
+
+function resetGame(){
+  plane={x:PLANE_X, y:H/2, r:16};
+  vy=0; pipes=[]; score=0; distSincefPipe=0; holding=false;
+  $('score').textContent=0;
+  spawnPipe(W+120);
+}
+function spawnPipe(x){
+  const margin=70;
+  const gapY=margin+Math.random()*(H-PIPE_GAP-margin*2)+PIPE_GAP/2;
+  pipes.push({x, gapY, passed:false});
+}
+
+/* 입력 값 얻기: mic=소리크기, practice=버튼/키 홀드를 소리로 흉내 */
+function currentVol(){
+  if(mode==='mic' && gAnalyser){ return rmsToVol(gAnalyser, gBuf); }
+  // 연습 모드: 누르고 있으면 큰 소리(40), 아니면 조용(0)
+  return holding ? 40 : 0;
+}
+
+function step(){
+  if(!running || paused) return;
+  const vol=currentVol();
+  $('liveVol').textContent=vol;
+
+  // ① 소리 크기 → ② 숫자 데이터
+  flowSet(vol>0?2:1);
+  // ③ 조건 판단
+  if(vol>threshold){
+    vy+=LIFT;
+    flowSet(3);
+  }else{
+    vy+=GRAV;
+  }
+  vy=Math.max(-MAX_VY, Math.min(MAX_VY, vy));
+  // ④ 캐릭터 움직임
+  plane.y+=vy;
+  if(vol>threshold) flowSet(4);
+
+  // 천장/바닥
+  if(plane.y<plane.r){ plane.y=plane.r; vy=0; }
+  if(plane.y>H-plane.r){ gameOver(); return; }
+
+  // 기둥 이동/생성/점수/충돌
+  distSincefPipe+=SCROLL;
+  if(distSincefPipe>=PIPE_SPACING){ spawnPipe(W+PIPE_W); distSincefPipe=0; }
+  for(const p of pipes){
+    p.x-=SCROLL;
+    if(!p.passed && p.x+PIPE_W<plane.x){
+      p.passed=true; score++; $('score').textContent=score;
+    }
+    // 충돌
+    if(plane.x+plane.r>p.x && plane.x-plane.r<p.x+PIPE_W){
+      if(plane.y-plane.r<p.gapY-PIPE_GAP/2 || plane.y+plane.r>p.gapY+PIPE_GAP/2){
+        gameOver(); return;
+      }
+    }
+  }
+  pipes=pipes.filter(p=>p.x+PIPE_W>-10);
+
+  draw();
+  requestAnimationFrame(step);
+}
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  // 구름 배경(정적)
+  ctx.fillStyle='rgba(255,255,255,.55)';
+  cloud(120,90,34); cloud(560,150,42); cloud(360,60,26); cloud(680,340,36);
+  // 기둥
+  for(const p of pipes){ drawPipe(p); }
+  // 기준선 안내(왼쪽 계기)
+  drawPlane(plane.x, plane.y);
+}
+function cloud(x,y,r){
+  ctx.beginPath();
+  ctx.arc(x,y,r,0,7); ctx.arc(x+r,y+4,r*.8,0,7); ctx.arc(x-r*.9,y+6,r*.7,0,7);
+  ctx.fill();
+}
+function drawPipe(p){
+  ctx.fillStyle='#12B76A'; ctx.strokeStyle='#141414'; ctx.lineWidth=3;
+  const topH=p.gapY-PIPE_GAP/2;
+  const botY=p.gapY+PIPE_GAP/2;
+  ctx.fillRect(p.x,0,PIPE_W,topH); ctx.strokeRect(p.x,0,PIPE_W,topH);
+  ctx.fillRect(p.x,botY,PIPE_W,H-botY); ctx.strokeRect(p.x,botY,PIPE_W,H-botY);
+}
+function drawPlane(x,y){
+  ctx.save();
+  ctx.translate(x,y);
+  // 살짝 기울이기(속도에 따라)
+  ctx.rotate(Math.max(-0.4,Math.min(0.5, vy*0.05)));
+  // 몸통
+  ctx.fillStyle='#0EA5E9'; ctx.strokeStyle='#141414'; ctx.lineWidth=3;
+  ctx.beginPath();
+  ctx.moveTo(-18,-8); ctx.lineTo(16,-8);
+  ctx.quadraticCurveTo(30,0,16,8); ctx.lineTo(-18,8);
+  ctx.quadraticCurveTo(-24,0,-18,-8); ctx.closePath();
+  ctx.fill(); ctx.stroke();
+  // 꼬리날개
+  ctx.beginPath(); ctx.moveTo(-18,-8); ctx.lineTo(-26,-18); ctx.lineTo(-16,-6); ctx.closePath();
+  ctx.fill(); ctx.stroke();
+  // 창문
+  ctx.fillStyle='#FBF7EC';
+  ctx.beginPath(); ctx.arc(4,0,4,0,7); ctx.fill(); ctx.stroke();
+  // 프로펠러
+  ctx.strokeStyle='#141414'; ctx.beginPath(); ctx.moveTo(22,-9); ctx.lineTo(22,9); ctx.stroke();
+  ctx.restore();
+}
+
+function drawIdle(msg){
+  draw();
+  ctx.fillStyle='rgba(20,20,20,.72)';
+  roundRect((W-420)/2, H/2-46, 420, 92, 16); ctx.fill();
+  ctx.fillStyle='#FBF7EC'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.font='900 22px -apple-system,Segoe UI,sans-serif';
+  ctx.fillText(msg, W/2, H/2);
+}
+function roundRect(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+
+function gameOver(){
+  running=false; paused=true;
+  flowReset();
+  if(score>best){ best=score; localStorage.setItem('ebs14_best', best); $('best').textContent=best; }
+  drawIdle('추락! 점수 '+score+' · 다시 시작');
+  $('startBtn').textContent = mode==='mic' ? '다시 시작 (마이크)' : '마이크로 시작';
+  $('practiceBtn').textContent='다시 시작 (연습 모드)';
+  stopGameMic();
+}
+
+async function startMic(){
+  try{
+    gStream=await navigator.mediaDevices.getUserMedia({audio:true});
+    gAudio=gAudio||new (window.AudioContext||window.webkitAudioContext)();
+    if(gAudio.state==='suspended') await gAudio.resume();
+    const src=gAudio.createMediaStreamSource(gStream);
+    gAnalyser=gAudio.createAnalyser(); gAnalyser.fftSize=1024;
+    src.connect(gAnalyser);
+    gBuf=new Uint8Array(gAnalyser.fftSize);
+    return true;
+  }catch(e){ return false; }
+}
+function stopGameMic(){
+  if(gStream){ gStream.getTracks().forEach(t=>t.stop()); gStream=null; }
+  gAnalyser=null;
+}
+
+async function launch(wantMic){
+  if(wantMic){
+    const ok=await startMic();
+    if(!ok){
+      mode='practice';
+      $('fallback').classList.add('show');
+      $('startBtn').textContent='마이크로 시작';
+    }else{
+      mode='mic';
+      $('fallback').classList.remove('show');
+    }
+  }else{
+    mode='practice';
+    $('fallback').classList.add('show');
+  }
+  resetGame();
+  running=true; paused=false;
+  stage.focus({preventScroll:true});
+  requestAnimationFrame(step);
+}
+
+$('startBtn').onclick=()=>launch(true);
+$('practiceBtn').onclick=()=>launch(false);
+
+/* 연습 모드 입력: 스페이스바 / 화면 홀드 */
+window.addEventListener('keydown', e=>{
+  if(e.code==='Space'){
+    e.preventDefault();
+    holding=true;
+  }
+});
+window.addEventListener('keyup', e=>{ if(e.code==='Space'){ holding=false; } });
+function pressOn(e){ e.preventDefault(); holding=true; }
+function pressOff(){ holding=false; }
+stage.addEventListener('pointerdown', pressOn);
+stage.addEventListener('pointerup', pressOff);
+stage.addEventListener('pointerleave', pressOff);
+stage.addEventListener('pointercancel', pressOff);
+
+/* 초기 화면 */
+resetGame(); running=false; paused=true;
+drawIdle('버튼을 눌러 시작해요');
+</script>
+</body>
+</html>
