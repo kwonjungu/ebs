@@ -44,8 +44,24 @@
 
   /* safe notice */
   .safe{display:flex;align-items:center;gap:10px;background:var(--surface);border:2.5px solid var(--ink);
-    border-radius:var(--r-sm);box-shadow:var(--hard-sm);padding:11px 16px;font-size:13.5px;font-weight:600;margin:22px 0 26px}
+    border-radius:var(--r-sm);box-shadow:var(--hard-sm);padding:11px 16px;font-size:13.5px;font-weight:600;margin:22px 0 20px}
   .safe svg{flex-shrink:0}
+
+  /* 편집 흐름도 띠 */
+  .flow{background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);
+    box-shadow:var(--hard);padding:16px 18px;margin:0 0 26px}
+  .flow h2{font-size:15px;font-weight:900;letter-spacing:-.01em;margin-bottom:12px}
+  .flow-steps{display:flex;align-items:stretch;gap:7px;flex-wrap:wrap}
+  .fstep{flex:1 1 0;min-width:96px;display:flex;flex-direction:column;gap:4px;
+    background:var(--paper);border:2.5px solid var(--ink);border-radius:var(--r-sm);
+    box-shadow:var(--hard-sm);padding:9px 10px;text-align:center}
+  .fstep .fnum{font-size:11px;font-weight:900;color:var(--muted);letter-spacing:.04em}
+  .fstep .flab{font-size:12.5px;font-weight:800;letter-spacing:-.01em;line-height:1.35}
+  .fstep.now{background:var(--point-soft);border-color:var(--point)}
+  .fstep.now .fnum{color:var(--point)}
+  .flow-here{font-size:12.5px;color:var(--muted);font-weight:700;margin-top:11px}
+  .flow-here b{color:var(--point)}
+  @media(max-width:560px){.flow-steps{gap:6px}.fstep{min-width:calc(33% - 6px)}}
 
   /* 기록 카드 */
   .reccard{background:var(--amber-soft);border:3px solid var(--ink);border-radius:var(--r);
@@ -91,6 +107,23 @@
   .oktag{display:block;font-size:13px;font-weight:800;color:var(--green);
     margin-top:5px;letter-spacing:.02em}
 
+  /* 내가 먼저 고쳐 쓰기 */
+  .myfix{margin-top:10px;border:2px dashed var(--ink);border-radius:var(--r-sm);
+    background:var(--paper);padding:10px 12px}
+  .myfix label{display:block;font-size:13.5px;font-weight:800;margin-bottom:7px;letter-spacing:-.01em}
+  .myfix textarea{width:100%;border:2px solid var(--ink);border-radius:9px;background:var(--surface);
+    font-family:inherit;font-size:14px;font-weight:600;color:var(--ink);padding:8px 10px;
+    resize:vertical;min-height:52px;line-height:1.5}
+  .myfix textarea:focus-visible{outline:3px solid var(--point);outline-offset:2px}
+  .myfix .mfbtn{margin-top:8px;border:2.5px solid var(--ink);cursor:pointer;font-family:inherit;
+    font-size:13.5px;font-weight:900;color:#fff;background:var(--point);padding:9px 16px;
+    border-radius:var(--r-sm);min-height:44px;box-shadow:var(--hard-sm);transition:transform .1s,box-shadow .1s}
+  .myfix .mfbtn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .myfix .mfbtn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+  .myfix .mfhint{font-size:12px;color:var(--muted);font-weight:600;margin-top:6px}
+  .mymine{display:block;background:var(--surface);border:2px solid var(--ink);border-radius:var(--r-sm);
+    padding:7px 12px;margin-top:8px;font-size:14px;font-weight:700}
+
   /* 판정 패널 */
   .panel{display:none;background:var(--point-soft);padding:14px 16px;border-top:2.5px solid var(--ink)}
   .sent.open .panel{display:block}
@@ -131,9 +164,28 @@
   .col p{margin-top:6px;line-height:1.6;font-weight:600}
   .col.before p.chg{background:#FFE8E8;border-radius:6px;padding:3px 7px}
   .col.after p.chg{background:rgba(18,183,106,.12);border-radius:6px;padding:3px 7px}
+  /* 최종 확인 질문 체크리스트 */
+  .checklist{margin-top:18px;border-top:2.5px dashed var(--ink);padding-top:16px}
+  .checklist h3{font-size:15px;font-weight:900;letter-spacing:-.01em;margin-bottom:4px}
+  .checklist .clhint{font-size:12.5px;color:var(--muted);font-weight:600;margin-bottom:12px}
+  .clitem{display:flex;align-items:center;gap:11px;width:100%;text-align:left;cursor:pointer;
+    font-family:inherit;font-size:14px;font-weight:700;color:var(--ink);background:var(--surface);
+    border:2.5px solid var(--ink);border-radius:var(--r-sm);box-shadow:var(--hard-sm);
+    padding:11px 14px;min-height:48px;margin-bottom:10px;transition:transform .1s,box-shadow .1s,background .12s}
+  .clitem:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .clitem:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+  .clitem .cbox{flex-shrink:0;width:24px;height:24px;border:2.5px solid var(--ink);border-radius:7px;
+    background:var(--paper);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px}
+  .clitem.on{background:rgba(18,183,106,.1);border-color:var(--green)}
+  .clitem.on .cbox{background:var(--green);color:#fff;border-color:var(--green)}
+
+  .stamp-wrap{text-align:center}
   .stamp{text-align:center;font-size:16px;font-weight:900;color:var(--green);
     margin-top:14px;border:2.5px solid var(--green);border-radius:999px;
-    padding:8px 20px;display:inline-block;margin-left:50%;transform:translateX(-50%)}
+    padding:8px 20px;display:none}
+  .stamp.show{display:inline-block}
+  .stamp-lock{display:block;text-align:center;font-size:13px;color:var(--muted);
+    font-weight:700;margin-top:14px}
 
   /* 관찰 박스 */
   .obs{display:flex;gap:12px;align-items:flex-start;background:var(--ink);color:var(--paper);
@@ -183,6 +235,18 @@
     <span>이 기사와 이름(마루)은 모두 가상의 이야기예요. AI 글의 최종 판단은 사람(편집장)이 해요.</span>
   </div>
 
+  <div class="flow">
+    <h2>편집 흐름 — 초안이 기사가 되기까지</h2>
+    <div class="flow-steps">
+      <div class="fstep"><span class="fnum">1</span><span class="flab">입력한 말</span></div>
+      <div class="fstep"><span class="fnum">2</span><span class="flab">AI 초안</span></div>
+      <div class="fstep now"><span class="fnum">3</span><span class="flab">기록과 비교</span></div>
+      <div class="fstep now"><span class="fnum">4</span><span class="flab">표현 다듬기</span></div>
+      <div class="fstep now"><span class="fnum">5</span><span class="flab">최종 기사</span></div>
+    </div>
+    <p class="flow-here">지금 하는 일은 <b>3~5단계</b>예요. AI가 써 준 초안을 기록과 비교하고, 표현을 다듬어 기사로 완성해요.</p>
+  </div>
+
   <div class="reccard">
     <h2>실제 기록 카드 — 편집장의 근거 자료</h2>
     <ul id="reclist"></ul>
@@ -192,7 +256,7 @@
   <div class="newspaper">
     <h2>AI가 쓴 기사 초안</h2>
     <p class="headline">6학년 2반, 가을 체육대회 우승!</p>
-    <p class="counter">고친 문제 문장 <b id="cnt">0</b> / 5</p>
+    <p class="counter">문제 문장 5개 중 <b id="cnt">0</b>개 고침 · 괜찮은 문장 1개</p>
     <div id="article"></div>
   </div>
 
@@ -202,7 +266,15 @@
       <div class="col before"><h3>AI 초안</h3><div id="beforeCol"></div></div>
       <div class="col after"><h3>편집 후 기사</h3><div id="afterCol"></div></div>
     </div>
-    <p class="stamp">편집 완료 — 채택!</p>
+    <div class="checklist">
+      <h3>편집장 최종 점검</h3>
+      <p class="clhint">세 가지를 모두 확인하면 기사를 채택할 수 있어요.</p>
+      <div id="checkitems"></div>
+    </div>
+    <div class="stamp-wrap">
+      <span class="stamp" id="stamp">편집 완료 — 채택!</span>
+      <span class="stamp-lock" id="stampLock">위 세 가지를 모두 확인하면 채택 도장이 찍혀요.</span>
+    </div>
   </div>
 
   <div class="obs">
@@ -295,27 +367,67 @@ function judge(i,pick){
     fb.innerHTML='🙅 다시 생각해 봐요 — '+s.hint;
     return;
   }
-  done.add(i);
-  const box=$('sent'+i);
-  fb.className='fb good';
   if(s.type==='ok'){
+    // 괜찮은 문장은 바로 마무리
+    done.add(i);
+    fb.className='fb good';
     fb.innerHTML='⭕ 정답! '+s.good;
     $('txt'+i).insertAdjacentHTML('afterend','<span class="oktag">✔ 기록과 맞아요 — 그대로 실어요</span>');
-  }else{
-    solved++; $('cnt').textContent=solved;
-    let msg='⭕ 정답! <b>'+LABEL[s.type]+'</b> 문장이에요.';
-    if(s.contrast) msg+='<div class="contrast"><span class="d">초안 '+s.contrast[0]+'</span> ↔ <span class="r">기록 '+s.contrast[1]+'</span></div>';
-    else msg+='<br>사실은 맞지만 학교 신문에는 과해요. 차분하게 고쳐요.';
-    fb.innerHTML=msg;
-    $('txt'+i).classList.add('old');
-    $('txt'+i).insertAdjacentHTML('afterend','<span class="newtxt">✏️ '+s.fixed+'</span>');
+    finishSent(i);
+    return;
   }
+  // 문제 문장: 판정만 맞히고, 학생이 먼저 고쳐 쓰게 안내
+  const jbtns=$('panel'+i).querySelector('.jbtns');
+  if(jbtns) jbtns.style.display='none';
+  let msg='⭕ 정답! <b>'+LABEL[s.type]+'</b> 문장이에요.';
+  if(s.contrast) msg+='<div class="contrast"><span class="d">초안 '+s.contrast[0]+'</span> ↔ <span class="r">기록 '+s.contrast[1]+'</span></div>';
+  else msg+='<br>사실은 맞지만 학교 신문에는 과해요. 글의 말투와 분위기, 곧 <b>문체</b>를 차분하게 다듬어요.';
+  fb.className='fb good';
+  fb.innerHTML=msg;
+  fb.insertAdjacentHTML('afterend',
+    '<div class="myfix" id="myfix'+i+'">'+
+    '<label for="mytxt'+i+'">✏️ 편집장이 되어 이 문장을 직접 고쳐 써 봐요</label>'+
+    '<textarea id="mytxt'+i+'" rows="2" placeholder="기록에 맞게, 표현은 차분하게 고쳐 써요"></textarea>'+
+    '<button class="mfbtn" onclick="submitFix('+i+')">고쳐 쓰기 완료</button>'+
+    '<p class="mfhint">정답은 없어요. 내가 쓴 뒤 예시와 나란히 비교해 봐요.</p>'+
+    '</div>');
+}
+
+function submitFix(i){
+  if(done.has(i)) return;
+  const s=ART[i];
+  const ta=$('mytxt'+i);
+  const mine=(ta&&ta.value.trim())||'';
+  const wrap=$('myfix'+i);
+  if(wrap) wrap.remove();
+  // 초안에 취소선, 그 아래에 내가 쓴 문장(있으면)과 예시 문장을 항상 보이게 제시
+  $('txt'+i).classList.add('old');
+  let out='';
+  if(mine) out+='<span class="mymine">🙋 내가 고친 문장 — '+esc(mine)+'</span>';
+  out+='<span class="newtxt">✏️ 예시 수정문 — '+s.fixed+'</span>';
+  $('txt'+i).insertAdjacentHTML('afterend',out);
+  done.add(i);
+  solved++; $('cnt').textContent=solved;
+  finishSent(i);
+  if(solved===5) setTimeout(showCompare,900);
+}
+
+function esc(t){ const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
+
+function finishSent(i){
+  const box=$('sent'+i);
   box.classList.add('done');
   const doneBtn=box.querySelector('.sent-btn');
   if(doneBtn){ doneBtn.setAttribute('aria-expanded','false'); doneBtn.setAttribute('aria-disabled','true'); }
-  setTimeout(()=>{ box.classList.remove('open'); $('rec'+s.rec).classList.remove('hl'); },1600);
-  if(solved===5) setTimeout(showCompare,1700);
+  setTimeout(()=>{ box.classList.remove('open'); $('rec'+ART[i].rec).classList.remove('hl'); },1600);
 }
+
+const CHECKS=[
+  '최종 글은 실제 기록과 맞나요?',
+  '과장된 표현이 줄어들었나요?',
+  '학교 신문 기사에 어울리게 정리되었나요?'
+];
+const checked=new Set();
 
 function showCompare(){
   ART.forEach(s=>{
@@ -323,8 +435,26 @@ function showCompare(){
     $('beforeCol').insertAdjacentHTML('beforeend','<p'+(chg?' class="chg"':'')+'>'+s.draft+'</p>');
     $('afterCol').insertAdjacentHTML('beforeend','<p'+(chg?' class="chg"':'')+'>'+(chg?s.fixed:s.draft)+'</p>');
   });
+  CHECKS.forEach((t,i)=>{
+    $('checkitems').insertAdjacentHTML('beforeend',
+      '<button class="clitem" id="cl'+i+'" onclick="toggleCheck('+i+')" aria-pressed="false">'+
+      '<span class="cbox" aria-hidden="true"></span><span>'+t+'</span></button>');
+  });
   $('compare').style.display='block';
   $('compare').scrollIntoView({behavior:'smooth'});
+}
+
+function toggleCheck(i){
+  const el=$('cl'+i);
+  if(checked.has(i)){ checked.delete(i); el.classList.remove('on'); el.setAttribute('aria-pressed','false'); el.querySelector('.cbox').textContent=''; }
+  else{ checked.add(i); el.classList.add('on'); el.setAttribute('aria-pressed','true'); el.querySelector('.cbox').textContent='✓'; }
+  if(checked.size===CHECKS.length){
+    $('stamp').classList.add('show');
+    $('stampLock').style.display='none';
+  }else{
+    $('stamp').classList.remove('show');
+    $('stampLock').style.display='block';
+  }
 }
 </script>
 </body>
