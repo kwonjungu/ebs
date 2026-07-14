@@ -81,6 +81,51 @@
   .obs svg{flex-shrink:0;margin-top:2px}
   .obs b{color:var(--amber);font-weight:900}
 
+  /* 확인→수정 루프 패널 */
+  .revise{display:none;margin-top:14px;border-top:2.5px dashed var(--ink);padding-top:14px}
+  .revise.show{display:block}
+  .revise-h{font-size:14px;font-weight:900;margin-bottom:4px}
+  .revise-sub{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:10px}
+  .fixbtn{display:flex;align-items:center;gap:9px;width:100%;cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:800;text-align:left;
+    color:var(--ink);background:var(--paper);border:2.5px solid var(--ink);border-radius:11px;box-shadow:var(--hard-sm);padding:10px 13px;min-height:44px;margin-bottom:9px;transition:transform .1s,box-shadow .1s}
+  .fixbtn:hover:not(:disabled){transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .fixbtn:active:not(:disabled){transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+  .fixbtn:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .fixbtn.done{background:var(--green);color:#fff;border-color:var(--ink)}
+  .fixbtn .tick{margin-left:auto;font-weight:900}
+  .revise-note{font-size:12.5px;font-weight:700;color:var(--ink);background:var(--point-soft);border:2px solid var(--ink);border-radius:9px;padding:9px 12px;margin-top:4px}
+  .prompt .revise-chunk{display:inline;background:#D9F5E6;border-radius:5px;padding:0 3px;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+
+  /* 결과 확인 체크리스트(접이식) */
+  .check{margin-top:22px;background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);overflow:hidden}
+  .check summary{list-style:none;cursor:pointer;font-size:15px;font-weight:900;padding:16px 20px;display:flex;align-items:center;gap:8px}
+  .check summary::-webkit-details-marker{display:none}
+  .check summary .caret{margin-left:auto;font-weight:900;transition:transform .15s}
+  .check[open] summary .caret{transform:rotate(180deg)}
+  .check ul{list-style:none;padding:0 20px 18px;margin:0}
+  .check li{display:flex;align-items:flex-start;gap:10px;font-size:14px;font-weight:600;padding:7px 0;border-top:2px dashed #E3DCC8}
+  .check li .box{flex-shrink:0;width:20px;height:20px;border:2.5px solid var(--ink);border-radius:5px;margin-top:1px}
+
+  /* 안전 O/X 퀴즈 */
+  .quiz{margin-top:22px;background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:18px 20px}
+  .quiz-h{font-size:15px;font-weight:900;margin-bottom:4px}
+  .quiz-sub{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:14px}
+  .qitem{border:2.5px solid var(--ink);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:12px;background:var(--paper)}
+  .qitem:last-of-type{margin-bottom:0}
+  .qtext{font-size:14px;font-weight:800;margin-bottom:10px}
+  .qbtns{display:flex;gap:10px}
+  .qbtn{width:52px;cursor:pointer;font-family:inherit;font-size:17px;font-weight:900;color:var(--ink);background:var(--surface);
+    border:2.5px solid var(--ink);border-radius:11px;box-shadow:var(--hard-sm);padding:8px 0;transition:transform .1s,box-shadow .1s}
+  .qbtn:hover:not(:disabled){transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .qbtn:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .qbtn.right{background:var(--green);color:#fff}
+  .qbtn.wrong{background:#FFE3E4}
+  .qbtn:disabled{cursor:default}
+  .qfb{font-size:13px;font-weight:700;margin-top:9px;display:none}
+  .qfb.show{display:block}
+  .qfb.ok{color:#0B7A47}
+  .qfb.no{color:#C0362C}
+
   footer{text-align:center;margin-top:30px}
   footer a{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font-weight:900;color:var(--ink);
     background:var(--surface);border:2.5px solid var(--ink);border-radius:999px;padding:11px 22px;box-shadow:var(--hard-sm);transition:transform .12s,box-shadow .12s}
@@ -142,13 +187,63 @@
         <button class="mini" onclick="reset()">↺ 처음부터</button>
         <button class="mini vague" onclick="vague()">“멋지게 그려 줘”만 하면?</button>
       </div>
+
+      <div class="revise" id="revise">
+        <div class="revise-h">시안을 확인하고 고쳐 봐요</div>
+        <p class="revise-sub">첫 그림은 완성품이 아니라 시안이에요. 고칠 점을 골라 다시 요청해 봐요.</p>
+        <button class="fixbtn" id="f1" onclick="fix(1)"><span>표정을 더 귀엽게 바꿔 줘</span><span class="tick" aria-hidden="true"></span></button>
+        <button class="fixbtn" id="f2" onclick="fix(2)"><span>배경을 더 밝게 바꿔 줘</span><span class="tick" aria-hidden="true"></span></button>
+        <button class="fixbtn" id="f3" onclick="fix(3)"><span>운동화를 더 잘 보이게 해 줘</span><span class="tick" aria-hidden="true"></span></button>
+        <div class="revise-note" id="revisenote">고칠 점을 하나 고르면 프롬프트에 수정 요청이 더해져요. 수정은 한 번으로 끝날 수도 있고, 여러 번 반복할 수도 있어요.</div>
+      </div>
     </div>
   </div>
 
   <div class="obs">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--amber)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/></svg>
-    <span><b>발견해 봐요</b> — 대상·행동·소품·스타일을 <b>구체적으로 더할수록</b> 원하는 그림에 가까워져요. 반대로 “멋지게 그려 줘”처럼 막연하게 말하면 AI가 마음대로 정해서 엉뚱한 그림이 나와요.</span>
+    <span><b>발견해 봐요</b> — 대상·행동·배경·스타일·분위기를 <b>구체적으로 더할수록</b> 원하는 그림에 가까워져요. 반대로 “멋지게 그려 줘”처럼 막연하게 말하면 AI가 마음대로 정해서 엉뚱한 그림이 나와요.</span>
   </div>
+  <details class="check">
+    <summary>결과 확인 체크리스트 — 캔바 AI로 만들기 전에 살펴봐요<span class="caret" aria-hidden="true">▾</span></summary>
+    <ul>
+      <li><span class="box" aria-hidden="true"></span><span>내가 정한 마스코트 대상이 잘 보이나요?</span></li>
+      <li><span class="box" aria-hidden="true"></span><span>필요한 요소(운동화·배지 등)가 들어 있나요?</span></li>
+      <li><span class="box" aria-hidden="true"></span><span>그림 스타일과 분위기가 맞나요?</span></li>
+      <li><span class="box" aria-hidden="true"></span><span>포스터에 넣기 좋게 너무 복잡하지 않나요?</span></li>
+      <li><span class="box" aria-hidden="true"></span><span>이상한 글자나 어색한 손·발은 없나요?</span></li>
+    </ul>
+  </details>
+
+  <div class="quiz">
+    <div class="quiz-h">안전 확인 — 해도 되면 O, 안 되면 X</div>
+    <p class="quiz-sub">AI 이미지는 재미있지만 꼭 지킬 약속이 있어요. 골라 보고 바로 확인해요.</p>
+    <div class="qitem" data-ans="O">
+      <div class="qtext">내 상상 속 로봇 마스코트를 만화풍으로 그려 달라고 하기</div>
+      <div class="qbtns"><button class="qbtn" onclick="quiz(this,'O')">O</button><button class="qbtn" onclick="quiz(this,'X')">X</button></div>
+      <p class="qfb">O가 맞아요. 내 아이디어를 그리는 건 괜찮아요.</p>
+    </div>
+    <div class="qitem" data-ans="X">
+      <div class="qtext">친구 얼굴 사진을 올려 마스코트로 바꿔 달라고 하기</div>
+      <div class="qbtns"><button class="qbtn" onclick="quiz(this,'O')">O</button><button class="qbtn" onclick="quiz(this,'X')">X</button></div>
+      <p class="qfb">X가 맞아요. 친구 얼굴은 개인정보라 넣지 않아요.</p>
+    </div>
+    <div class="qitem" data-ans="X">
+      <div class="qtext">실제 우리 학교 이름·로고·주소를 그림에 넣어 달라고 하기</div>
+      <div class="qbtns"><button class="qbtn" onclick="quiz(this,'O')">O</button><button class="qbtn" onclick="quiz(this,'X')">X</button></div>
+      <p class="qfb">X가 맞아요. 학교명·로고·주소는 넣지 않아요.</p>
+    </div>
+    <div class="qitem" data-ans="X">
+      <div class="qtext">유명 만화 캐릭터를 똑같이 따라 그려 달라고 하기</div>
+      <div class="qbtns"><button class="qbtn" onclick="quiz(this,'O')">O</button><button class="qbtn" onclick="quiz(this,'X')">X</button></div>
+      <p class="qfb">X가 맞아요. 유명 캐릭터를 그대로 따라 그리면 저작권 문제가 생겨요.</p>
+    </div>
+    <div class="qitem" data-ans="O">
+      <div class="qtext">완성한 그림이 목적에 맞는지, 이상한 부분은 없는지 확인하기</div>
+      <div class="qbtns"><button class="qbtn" onclick="quiz(this,'O')">O</button><button class="qbtn" onclick="quiz(this,'X')">X</button></div>
+      <p class="qfb">O가 맞아요. 최종 판단은 사람이 해요.</p>
+    </div>
+  </div>
+
   <div class="quicklinks">
     <div class="ql-h">🔗 링크 바로가기</div>
     <a class="ql tool" href="https://www.canva.com/ai" target="_blank" rel="noopener noreferrer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4M14 4h6v6M20 4l-9 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>체험 도구 · 캔바 AI에서 이미지 만들기</span><span class="arw" aria-hidden="true">↗</span></a>
@@ -166,7 +261,7 @@ const STEPS=[
   {img:'step2_hat.png',  chunk:'탐험 모자를 쓰고',  label:'② 소품(모자)을 더했어요', add:'탐험 모자'},
   {img:'step3_badge.png',chunk:'별 배지를 달고',    label:'③ 소품(배지)을 더했어요', add:'별 배지'},
   {img:'step4_bag.png',  chunk:'탐험 가방을 메고',  label:'④ 소품(가방)을 더했어요', add:'탐험 가방'},
-  {img:'step5_final.png',chunk:'만화풍의 밝은',      label:'⑤ 스타일로 다듬었어요 — 완성!', add:'만화풍·밝은 분위기'}
+  {img:'step5_final.png',chunk:'만화풍의 밝은',      label:'⑤ 스타일로 다듬었어요 — 이 그림은 시안이에요', add:'만화풍·밝은 분위기'}
 ];
 let at=0;
 
@@ -186,6 +281,49 @@ function render(){
     b.querySelector('.tick').textContent = i<=at ? '✓' : '';
     b.disabled = (i!==at+1);
   }
+  $('revise').classList.toggle('show', at===5);
+  if(at!==5) clearFixes();
+}
+function clearFixes(){
+  fixes=[];
+  $('pic').style.filter='';
+  for(let i=1;i<=3;i++){ const b=$('f'+i); if(b){ b.classList.remove('done'); b.querySelector('.tick').textContent=''; } }
+  $('revisenote').textContent="고칠 점을 하나 고르면 프롬프트에 수정 요청이 더해져요. 수정은 한 번으로 끝날 수도 있고, 여러 번 반복할 수도 있어요.";
+}
+
+// 확인→수정 요청 루프 (시안을 골라 고쳐요)
+const FIXES={
+  1:{chunk:'표정을 더 귀엽게 바꾸고', filter:'saturate(1.15) brightness(1.03)', note:'표정이 더 부드럽고 귀엽게 바뀌었어요.'},
+  2:{chunk:'배경을 더 밝게 바꾸고',   filter:'brightness(1.12)',              note:'배경이 한층 밝아져 발표회 포스터에 잘 어울려요.'},
+  3:{chunk:'운동화를 더 잘 보이게 하고', filter:'contrast(1.12) saturate(1.1)', note:'운동화를 비롯한 소품이 또렷하게 잘 보여요.'}
+};
+let fixes=[];
+function fix(n){
+  if(at!==5) return;
+  if(fixes.includes(n)) return;
+  fixes.push(n);
+  const b=$('f'+n); b.classList.add('done'); b.querySelector('.tick').textContent='✓';
+  // 프롬프트에 수정 요청 어구 누적 (기본 프롬프트는 STEPS에서 그대로 가져와요)
+  let base=''; for(let i=1;i<=5;i++) base+='<span class="chunk">'+STEPS[i].chunk+'</span> ';
+  let rev=''; fixes.forEach(k=>rev+='<span class="revise-chunk">'+FIXES[k].chunk+'</span> ');
+  $('prompt').innerHTML=base+'<span class="base">고양이 마스코트</span>를 그려 줘. 그리고 '+rev+'다시 그려 줘';
+  // 기존 시안 이미지에 간단한 시각 변화 적용(새 이미지 없이 수정 결과 표현)
+  let f=''; fixes.forEach(k=>f+=FIXES[k].filter+' ');
+  $('pic').style.filter=f.trim();
+  $('steplabel').textContent='시안을 '+fixes.length+'번 고쳤어요 — 수정 결과예요';
+  $('revisenote').textContent=FIXES[n].note+' 아직 더 고칠 점이 있으면 다른 것도 골라 반복해 봐요.';
+  flash('수정 요청 → '+FIXES[n].chunk.replace(/고$/,'기'));
+}
+// 안전 O/X 퀴즈
+function quiz(btn,choice){
+  const item=btn.closest('.qitem');
+  const ans=item.getAttribute('data-ans');
+  const ok=choice===ans;
+  item.querySelectorAll('.qbtn').forEach(b=>{ b.disabled=true; b.classList.remove('right','wrong'); });
+  btn.classList.add(ok?'right':'wrong');
+  if(!ok){ item.querySelectorAll('.qbtn').forEach(b=>{ if(b.textContent.trim()===ans) b.classList.add('right'); }); }
+  const fb=item.querySelector('.qfb');
+  fb.classList.add('show', ok?'ok':'no');
 }
 function flash(txt){
   const f=$('flash'); f.innerHTML='이번에 더한 것 → <b>'+txt+'</b>'; f.classList.add('show');
@@ -197,6 +335,8 @@ function addStep(n){
 }
 function reset(){ at=0; render(); $('flash').classList.remove('show'); }
 function vague(){
+  clearFixes();
+  $('revise').classList.remove('show');
   $('pic').src='../assets/mascot/vague.png';
   $('steplabel').textContent='막연한 요청의 결과 — AI가 마음대로 정했어요';
   $('prompt').innerHTML='<span class="base">멋진 마스코트</span> 그려 줘 <span class="empty">(무엇을·어떻게가 없어요)</span>';
