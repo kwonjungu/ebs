@@ -144,6 +144,55 @@
   .thr .tv b{font-size:22px;color:var(--point)}
   input[type=range]{width:100%;accent-color:var(--point);height:44px;cursor:pointer}
 
+  /* 기준값 프리셋 버튼 */
+  .presets{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+  .pbtn{flex:1 1 auto;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:800;color:var(--ink);
+    background:var(--surface);border:2.5px solid var(--ink);border-radius:10px;box-shadow:var(--hard-sm);
+    padding:8px 6px;min-height:40px;transition:transform .1s,box-shadow .1s}
+  .pbtn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .pbtn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--ink)}
+  .pbtn.on{background:var(--point);color:#fff}
+  .pbtn:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+
+  /* 계산 비밀 접기 */
+  .secret{border:2.5px solid var(--ink);border-radius:var(--r-sm);box-shadow:var(--hard-sm);
+    background:var(--paper);margin:6px 0 14px;overflow:hidden}
+  .secret summary{cursor:pointer;font-weight:900;font-size:13.5px;padding:10px 14px;list-style:none;user-select:none}
+  .secret summary::-webkit-details-marker{display:none}
+  .secret summary::before{content:'▸ ';font-weight:900}
+  .secret[open] summary::before{content:'▾ '}
+  .secret summary:focus-visible{outline:3px solid var(--point);outline-offset:-3px}
+  .secret-body{padding:0 14px 12px;font-size:13.5px;line-height:1.6;font-weight:600}
+  .secret-body b{font-weight:900;color:#067A57}
+  .secret-calc{margin-top:6px;font-size:13px;color:var(--muted);font-weight:700}
+
+  /* 실험 기록표 */
+  .exp,.wrapup{margin-top:26px;background:var(--surface);border:3px solid var(--ink);
+    border-radius:var(--r);box-shadow:var(--hard);padding:22px}
+  .exp h2,.wrapup h2{font-size:18px;font-weight:900;letter-spacing:-.02em;margin-bottom:6px}
+  .exp .sub{font-size:13.5px;color:var(--muted);font-weight:600;margin-bottom:14px}
+  .exptable{width:100%;border-collapse:collapse;font-size:13px;min-width:520px;text-align:center}
+  .exptable th,.exptable td{border:2.5px solid var(--ink);padding:9px 8px;vertical-align:middle}
+  .exptable thead th{font-weight:900;background:var(--paper)}
+  .exptable thead th:first-child{background:var(--point-soft)}
+  .exptable .ssim{font-weight:600;font-size:11px;color:var(--muted)}
+  .exptable tbody th{font-weight:900;background:var(--paper);white-space:nowrap}
+  .exptable .rslt{font-weight:900;border-radius:8px;padding:3px 6px;display:inline-block;min-width:56px;border:2px solid var(--ink)}
+  .exptable .rslt.pass{background:var(--point-soft);color:#067A57}
+  .exptable .rslt.check{background:var(--amber-soft);color:#7A5200}
+  .exptable .rslt.reject{background:#FFE0E0;color:#B91C1C}
+  .exptable tr.cur th,.exptable tr.cur td{background:#FFFBEA}
+
+  /* 트레이드오프 한 줄 정리 */
+  .wrapup .fillrow{font-size:15px;font-weight:700;margin:10px 0;display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+  .wrapup .fillrow b{font-weight:900}
+  .fill{font-family:inherit;font-size:14px;font-weight:800;color:var(--ink);background:var(--paper);
+    border:2.5px solid var(--ink);border-radius:10px;box-shadow:var(--hard-sm);padding:7px 10px;min-height:40px;cursor:pointer}
+  .fill:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .fill-fb{margin-top:8px;font-size:13.5px;font-weight:800;color:var(--muted)}
+  .fill-fb.ok{color:#067A57}
+  .fill-fb.no{color:#B91C1C}
+
   /* 관찰 박스 */
   .obs{display:flex;gap:12px;align-items:flex-start;background:var(--ink);color:var(--paper);
     border-radius:var(--r);padding:18px 20px;font-size:14px;font-weight:600;margin:26px 0;line-height:1.55}
@@ -281,17 +330,62 @@
       </div>
       <p class="verdict" id="verdict">얼굴 카드를 눌러 문 앞에 세워 봐요</p>
 
+      <details class="secret" id="secret">
+        <summary>🔎 유사도 계산 비밀 보기</summary>
+        <div class="secret-body" id="secretBody">먼저 카드를 골라 봐요.</div>
+      </details>
+
       <div class="thr">
         <p class="tv">문지기의 기준값: <b id="thrNum">75</b></p>
         <input type="range" id="thr" min="60" max="95" step="1" value="75" aria-label="기준값">
+        <div class="presets" role="group" aria-label="기준값 프리셋">
+          <button class="pbtn" data-thr="65">65 · 느슨</button>
+          <button class="pbtn" data-thr="75">75 · 예시</button>
+          <button class="pbtn" data-thr="85">85 · 엄격</button>
+          <button class="pbtn" data-thr="90">90 · 매우 엄격</button>
+        </div>
       </div>
     </div>
   </div>
+
+  <!-- 실험 기록표 -->
+  <section class="exp" aria-labelledby="expTitle">
+    <h2 id="expTitle">📋 기준값을 바꿔 가며 실험해요</h2>
+    <p class="sub">프리셋을 누르면 그 기준값에서 네 카드의 판정이 아래 표에 채워져요. 어떤 값이 좋을지 비교해 봐요.</p>
+    <div class="tbl-scroll">
+      <table class="exptable" id="expTable">
+        <thead>
+          <tr><th scope="col">기준값</th><th scope="col">마루 정면<br><span class="ssim">유사도 94</span></th><th scope="col">모자 마루<br><span class="ssim">유사도 76</span></th><th scope="col">어두운 마루<br><span class="ssim">유사도 68</span></th><th scope="col">지훈<br><span class="ssim">유사도 32</span></th></tr>
+        </thead>
+        <tbody id="expBody"></tbody>
+      </table>
+    </div>
+  </section>
 
   <div class="obs">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--amber)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/></svg>
     <span><b>관찰 포인트</b> — 기준값을 높이면 마루도 거부되고, 낮추면 지훈이도 통과해요 — 직접 확인해 봐요.</span>
   </div>
+
+  <!-- 트레이드오프 한 줄 정리 -->
+  <section class="wrapup" aria-labelledby="wrapTitle">
+    <h2 id="wrapTitle">✏️ 실험 후 알게 된 사실을 정리해요</h2>
+    <p class="fillrow">기준값을 너무 <b>높이면</b>
+      <select class="fill" id="fillHigh" aria-label="높일 때 결과">
+        <option value="">고르기</option>
+        <option value="a">등록된 사람도 거부돼요</option>
+        <option value="b">닮은 사람이 통과해요</option>
+      </select>
+    </p>
+    <p class="fillrow">기준값을 너무 <b>낮추면</b>
+      <select class="fill" id="fillLow" aria-label="낮출 때 결과">
+        <option value="">고르기</option>
+        <option value="b">등록된 사람도 거부돼요</option>
+        <option value="a">닮은 사람이 통과해요</option>
+      </select>
+    </p>
+    <p class="fill-fb" id="fillFb" role="status" aria-live="polite">두 칸을 모두 골라 봐요.</p>
+  </section>
 
   <!-- 얼굴 탐지 vs 얼굴 인식 -->
   <section class="vs" aria-labelledby="vsTitle">
@@ -326,6 +420,7 @@
       <button class="cbtn mode-det" id="mDet" disabled>① 탐지 모드</button>
       <button class="cbtn" id="mRec" disabled>② 인식 모드</button>
       <button class="cbtn" id="regMe" disabled>➕ 내 얼굴 등록</button>
+      <button class="cbtn" id="lmk" disabled aria-pressed="false">✨ 특징점 보기</button>
     </div>
 
     <div class="cam-wrap">
@@ -399,7 +494,7 @@ function pick(i, btn) {
       $('scoreNum').textContent = v;
       $('gFill').style.width = v + '%';
       $('gauge').setAttribute('aria-valuenow', v);
-      if (p < 1) requestAnimationFrame(step); else judge();
+      if (p < 1) requestAnimationFrame(step); else { judge(); showSecret(); }
     })(t0);
   }, 900));
 }
@@ -433,7 +528,79 @@ function drawThr() {
   judge(); // 슬라이더만 움직여도 마지막 카드를 즉시 재판정
 }
 $('thr').addEventListener('input', drawThr);
+
+/* 유사도 s와 기준값 t로 판정 종류를 반환 */
+function verdictOf(s, t) {
+  if (s >= t) return { key: 'pass', label: '통과' };
+  if (s >= t - 10) return { key: 'check', label: '확인 필요' };
+  return { key: 'reject', label: '거부' };
+}
+
+/* ===== 계산 비밀 보기 ===== */
+function showSecret() {
+  if (!current) return;
+  const parts = FEATS.map(f => Math.abs(current[f] - REG[f]));
+  const total = parts.reduce((a, b) => a + b, 0), s = sim(current);
+  $('secretBody').innerHTML =
+    '등록값과 카드의 특징값 차이를 모두 더한 뒤, 그 <b>두 배</b>를 100에서 빼요.' +
+    '<div class="secret-calc">차이 합 = ' + parts.join(' + ') + ' = ' + total + '<br>' +
+    '유사도 = 100 − 2 × ' + total + ' = <b>' + s + '</b></div>';
+}
+
+/* ===== 기준값 프리셋 + 실험 기록표 ===== */
+const expRows = {}; // 기준값 -> tr
+function markPreset(t) {
+  document.querySelectorAll('.pbtn').forEach(b => b.classList.toggle('on', +b.dataset.thr === t));
+}
+function fillExpRow(t) {
+  let tr = expRows[t];
+  if (!tr) {
+    tr = document.createElement('tr');
+    const label = { 65: '느슨', 75: '예시', 85: '엄격', 90: '매우 엄격' }[t] || '';
+    let html = '<th scope="row">' + t + (label ? '<br><span class="ssim">' + label + '</span>' : '') + '</th>';
+    CARDS.forEach(c => {
+      const r = verdictOf(sim(c), t);
+      html += '<td><span class="rslt ' + r.key + '">' + r.label + '</span></td>';
+    });
+    tr.innerHTML = html;
+    tr.dataset.thr = t;
+    // 기준값 오름차순으로 삽입
+    const body = $('expBody');
+    const after = [...body.children].find(row => +row.dataset.thr > t);
+    body.insertBefore(tr, after || null);
+    expRows[t] = tr;
+  }
+  [...$('expBody').children].forEach(row => row.classList.toggle('cur', row === tr));
+}
+document.querySelectorAll('.pbtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const t = +btn.dataset.thr;
+    $('thr').value = t;
+    drawThr();
+    markPreset(t);
+    fillExpRow(t);
+  });
+});
+
+// 슬라이더를 직접 움직여도 프리셋 하이라이트 갱신
+$('thr').addEventListener('input', () => markPreset(+$('thr').value));
 drawThr();
+markPreset(+$('thr').value);
+
+/* ===== 트레이드오프 한 줄 정리 ===== */
+function checkFill() {
+  const hi = $('fillHigh').value, lo = $('fillLow').value, fb = $('fillFb');
+  if (!hi || !lo) { fb.textContent = '두 칸을 모두 골라 봐요.'; fb.className = 'fill-fb'; return; }
+  if (hi === 'a' && lo === 'a') {
+    fb.textContent = '맞아요. 기준값이 너무 높으면 등록된 사람도 막히고, 너무 낮으면 닮은 사람이 통과해요.';
+    fb.className = 'fill-fb ok';
+  } else {
+    fb.textContent = '다시 생각해 봐요. 기준값을 높이면 통과가 어려워지고, 낮추면 쉬워져요.';
+    fb.className = 'fill-fb no';
+  }
+}
+$('fillHigh').addEventListener('change', checkFill);
+$('fillLow').addEventListener('change', checkFill);
 
 /* ===== 얼굴 탐지 vs 인식 — 실제 카메라 체험 (face-api.js, 브라우저 안에서만 처리) ===== */
 (function () {
@@ -442,7 +609,7 @@ drawThr();
   const MATCH_DIST = 0.55; // 이 거리보다 가까우면 같은 사람으로 판정
 
   const video = $('cam'), canvas = $('ov'), status = $('vsStatus');
-  let stream = null, mode = 'det', running = false, registered = null, modelsReady = false;
+  let stream = null, mode = 'det', running = false, registered = null, modelsReady = false, showLmk = false;
 
   function say(msg, cls) { status.textContent = msg; status.className = 'vs-status' + (cls ? ' ' + cls : ''); }
   function setBtns() {
@@ -450,8 +617,11 @@ drawThr();
     $('camOn').disabled = on; $('camOff').disabled = !on;
     $('mDet').disabled = !on; $('mRec').disabled = !on;
     $('regMe').disabled = !(on && mode === 'rec');
+    $('lmk').disabled = !on;
     $('mDet').classList.toggle('on', on && mode === 'det');
     $('mRec').classList.toggle('on', on && mode === 'rec');
+    $('lmk').classList.toggle('on', on && showLmk);
+    $('lmk').setAttribute('aria-pressed', String(on && showLmk));
   }
 
   function loadScript(src) {
@@ -492,10 +662,15 @@ drawThr();
   $('camOff').onclick = () => {
     running = false;
     if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
-    video.srcObject = null; registered = null;
+    video.srcObject = null; registered = null; showLmk = false;
     canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
     $('camEmpty').style.display = '';
     setBtns(); say('카메라를 껐어요. 등록했던 얼굴 값도 지웠어요.');
+  };
+  $('lmk').onclick = () => {
+    showLmk = !showLmk; setBtns();
+    say(showLmk ? '✨ 특징점 보기 — 눈·코·입 위치를 점으로 표시해요. AI는 이런 점들을 숫자로 바꿔 비교해요.' :
+      '특징점 표시를 껐어요.', mode === 'det' ? 'det' : 'rec');
   };
   $('mDet').onclick = () => { mode = 'det'; setBtns(); say('① 탐지 모드 — 화면 속 모든 얼굴을 찾아 상자를 그려요. 누구인지는 몰라요!', 'det'); };
   $('mRec').onclick = () => {
@@ -521,6 +696,15 @@ drawThr();
   }
   // 영상이 좌우 반전(거울)이라 상자 x좌표도 반전해서 그린다
   const flipX = b => canvas.width - b.x - b.width;
+  // 특징점(랜드마크) 68개를 거울 좌표로 점 찍기
+  function drawLmk(ctx, landmarks) {
+    ctx.fillStyle = '#12B76A'; ctx.strokeStyle = '#141414'; ctx.lineWidth = 1;
+    landmarks.positions.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(canvas.width - p.x, p.y, 2.2, 0, Math.PI * 2);
+      ctx.fill(); ctx.stroke();
+    });
+  }
 
   async function loop() {
     const ctx = canvas.getContext('2d');
@@ -528,14 +712,17 @@ drawThr();
     while (running) {
       try {
         if (mode === 'det') {
-          const dets = await faceapi.detectAllFaces(video, opts);
+          const dets = showLmk
+            ? await faceapi.detectAllFaces(video, opts).withFaceLandmarks()
+            : await faceapi.detectAllFaces(video, opts);
           if (!running) break;
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           dets.forEach((d, i) => {
-            const b = d.box, x = flipX(b);
+            const box = showLmk ? d.detection : d, b = box.box, x = flipX(b);
             ctx.strokeStyle = '#FFB800'; ctx.lineWidth = 4;
             ctx.strokeRect(x, b.y, b.width, b.height);
-            chip(ctx, x, b.y, '얼굴 ' + (i + 1) + ' · ' + Math.round(d.score * 100) + '%', '#FFF0C7');
+            if (showLmk && d.landmarks) drawLmk(ctx, d.landmarks);
+            chip(ctx, x, b.y, '얼굴 ' + (i + 1) + ' · ' + Math.round(box.score * 100) + '%', '#FFF0C7');
           });
           say('① 탐지 모드 — 찾은 얼굴: ' + dets.length + '개. 위치와 개수만 알고, 누구인지는 몰라요!', 'det');
         } else {
@@ -554,6 +741,7 @@ drawThr();
             }
             ctx.strokeStyle = color; ctx.lineWidth = 4;
             ctx.strokeRect(x, b.y, b.width, b.height);
+            if (showLmk && d.landmarks) drawLmk(ctx, d.landmarks);
             chip(ctx, x, b.y, label, bg);
           });
           if (!registered) say('② 인식 모드 — 등록된 얼굴이 없어서 모두 "모르는 사람"이에요. "내 얼굴 등록"을 눌러요!', 'rec');
