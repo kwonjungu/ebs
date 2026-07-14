@@ -107,6 +107,20 @@
   }
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
+  /* 상황 퀴즈 */
+  .qrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 0;border-top:2px solid var(--ink)}
+  .qrow:first-child{border-top:none;padding-top:0}
+  .qrow .sit{font-weight:800;font-size:15px;flex:1;min-width:150px}
+  .qopt{cursor:pointer;font-family:inherit;font-size:13px;font-weight:800;background:var(--paper);color:var(--ink);
+    border:2.5px solid var(--ink);border-radius:999px;padding:8px 14px;min-height:44px;box-shadow:var(--hard-sm);transition:transform .1s}
+  .qopt:active{transform:translate(2px,2px);box-shadow:none}
+  .qopt:focus-visible{outline:3px solid var(--point);outline-offset:3px}
+  .qopt.ok{background:var(--green);color:#fff}
+  .qopt.no{background:#FFD7D7}
+  .qopt:disabled{cursor:default}
+  .qfb{font-size:12.5px;font-weight:800;width:100%}
+  .qfb.ok{color:var(--green)}.qfb.no{color:#C0392B}
+
   .quicklinks{margin-top:30px;background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:18px 20px}
   .ql-h{font-size:14px;font-weight:900;letter-spacing:-.01em;margin-bottom:12px;display:flex;align-items:center;gap:8px}
   .ql{display:flex;align-items:center;gap:9px;text-decoration:none;font-size:14px;font-weight:800;color:var(--ink);
@@ -139,7 +153,7 @@
   </div>
 
   <div class="dial">
-    <div class="row"><h2>창의성(온도) 다이얼</h2><span class="badge" id="tval">0.7</span></div>
+    <div class="row"><h2>창의성(Temperature·온도) 다이얼</h2><span class="badge" id="tval">1.0</span></div>
     <input type="range" id="temp" min="0" max="100" value="45" aria-label="창의성 온도 조절" aria-describedby="modecap">
     <div class="ends"><span>낮음 · 안정적</span><span>높음 · 새로움</span></div>
     <p class="modecap" id="modecap">지금은 <b>보통</b> — 자연스럽고 살짝 색다른 답이 나와요</p>
@@ -149,6 +163,7 @@
 
   <div class="qcard">
     <div class="qlabel">질문 (프롬프트)</div>
+    <p style="font-size:12.5px;font-weight:700;color:var(--muted);margin:2px 0 8px">비교할 땐 질문은 그대로 두고 창의성만 바꿔요</p>
     <p class="qtext" id="qtext">—</p>
     <span class="atag" id="atag" style="display:none"></span>
     <div class="answer" id="answer"><span style="color:var(--muted);font-weight:600">슬라이더를 정하고 <b>답 받기</b>를 눌러요</span></div>
@@ -159,7 +174,7 @@
 
   <div class="obs">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--amber)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/></svg>
-    <span><b>발견해 봐요</b> — 같은 창의성이어도 <b>답 받기</b>를 여러 번 누르면 조금씩 달라져요. 낮음은 매번 비슷하고, 높음은 매번 더 달라져요. 정확한 안내문은 낮게, 재밌는 이야기는 높게가 좋아요.</span>
+    <span><b>발견해 봐요</b> — 같은 창의성이어도 <b>답 받기</b>를 여러 번 누르면 조금씩 달라져요. 낮음은 매번 비슷하고, 높음은 매번 더 달라져요. 정확한 안내문은 낮게, 재밌는 이야기는 높게가 좋아요. AI 답은 사실과 다를 수 있어 마지막엔 사람이 읽고 확인해요.</span>
   </div>
 
   <div class="cmp-head"><h2>한눈에 비교</h2><span class="bar" aria-hidden="true"></span></div>
@@ -171,6 +186,13 @@
       <tr><th>어울리는 곳</th><td class="lo">안내문·설명</td><td class="hi">동화·아이디어</td></tr>
     </tbody>
   </table>
+  <div class="cmp-head"><h2>상황에 맞게 골라 봐요</h2><span class="bar" aria-hidden="true"></span></div>
+  <div class="qcard" id="quiz">
+    <p style="font-size:13px;font-weight:700;color:var(--muted);margin-bottom:14px">높음이 항상 정답은 아니에요. 각 상황에 어울리는 창의성을 골라 봐요.</p>
+    <div id="quizlist"></div>
+    <p class="modecap" id="quizscore" style="color:var(--ink);min-height:0;margin-top:4px" aria-live="polite"></p>
+  </div>
+
   <div class="quicklinks">
     <div class="ql-h">🔗 링크 바로가기</div>
     <a class="ql tool" href="https://aistudio.google.com/prompts/new_chat" target="_blank" rel="noopener noreferrer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4M14 4h6v6M20 4l-9 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>체험 도구 · 구글 AI 스튜디오 열기</span><span class="arw" aria-hidden="true">↗</span></a>
@@ -185,7 +207,7 @@ const $=id=>document.getElementById(id);
 // 질문별로 미리 준비한 가상 답변 풀 (낮음/보통/높음). 같은 온도에서도 여러 개 중 랜덤 → '매번 조금 달라짐' 체험
 const QUESTIONS=[
   { q:'“말하는 연필”이 처음 한 말을 한 문장으로 써 줘.',
-    low:['“안녕, 오늘도 공부할 준비 됐니?”','“이제 숙제를 시작해 볼까?”','“연필을 잡아 줘서 고마워.”'],
+    low:['“안녕, 오늘도 함께 공부할 준비됐니?”','“이제 숙제를 시작해 볼까?”','“연필을 잡아 줘서 고마워.”'],
     mid:['“드디어 나랑 이야기하게 됐구나!”','“오늘은 무슨 재미난 글을 써 볼까?”','“나를 깎지 말고 이야기부터 하자!”'],
     high:['“이봐, 드디어 먼지 구덩이에서 나를 꺼내 줬구나!”','“나는 달빛으로 글씨를 쓰는 연필이야!”','“어젯밤 지우개랑 우주여행을 다녀왔어.”'] },
   { q:'가을 하늘을 한 문장으로 표현해 줘.',
@@ -215,7 +237,9 @@ function showQ(){
 }
 
 // 온도 라벨
-function band(){ const v=+$('temp').value; return v<34?'low':v<67?'mid':'high'; }
+// 원고 한걸음더 구간: 0~0.5 안정(낮음) / 0.6~1.0 보통 / 1.1~2.0 창의(높음)
+// 표시값 = v/100*1.9+0.1 → 0.5는 v≈21, 1.0은 v≈47 → 경계 v<22(낮음), v<48(보통)
+function band(){ const v=+$('temp').value; return v<22?'low':v<48?'mid':'high'; }
 function updateDial(){
   const v=+$('temp').value;
   $('tval').textContent=(v/100*1.9+0.1).toFixed(1);
@@ -258,6 +282,37 @@ if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
     $('answer').textContent=text;
   };
 }
+
+// 상황에 맞게 골라 봐요 미니 퀴즈 (원고 4쪽 상황 표)
+const QUIZ=[
+  { sit:'학교 안내문 쓰기', ans:'low', why:'정확한 정보가 중요해서 낮음~보통이 알맞아요.' },
+  { sit:'과학 개념 설명하기', ans:'low', why:'사실을 또박또박 전해야 해서 낮음~보통이 알맞아요.' },
+  { sit:'동화 아이디어 떠올리기', ans:'high', why:'새로운 상상이 필요해서 보통~높음이 알맞아요.' },
+  { sit:'별난 캐릭터 이름 짓기', ans:'high', why:'톡톡 튀는 표현이 좋아서 보통~높음이 알맞아요.' }
+];
+let quizDone=0;
+QUIZ.forEach((item,i)=>{
+  const row=document.createElement('div'); row.className='qrow';
+  const sit=document.createElement('span'); sit.className='sit'; sit.textContent=item.sit;
+  const fb=document.createElement('span'); fb.className='qfb';
+  const mk=(val,label)=>{
+    const btn=document.createElement('button'); btn.className='qopt'; btn.type='button'; btn.textContent=label;
+    btn.onclick=()=>{
+      if(row.dataset.answered) return;
+      row.dataset.answered='1';
+      const ok=val===item.ans;
+      btn.classList.add(ok?'ok':'no');
+      fb.className='qfb '+(ok?'ok':'no');
+      fb.textContent=(ok?'맞았어요 · ':'다시 생각해 봐요 · ')+item.why;
+      row.querySelectorAll('.qopt').forEach(o=>o.disabled=true);
+      if(ok && !row.dataset.scored){ row.dataset.scored='1'; quizDone++; updateScore(); }
+    };
+    return btn;
+  };
+  row.append(sit, mk('low','낮음~보통'), mk('high','보통~높음'), fb);
+  $('quizlist').appendChild(row);
+});
+function updateScore(){ $('quizscore').textContent=quizDone===QUIZ.length?'모두 맞혔어요. 상황에 맞게 잘 골랐어요.':'맞힌 상황 '+quizDone+' / '+QUIZ.length; }
 
 updateDial(); showQ();
 </script>
