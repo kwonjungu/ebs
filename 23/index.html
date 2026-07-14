@@ -185,6 +185,23 @@
   .itemgrp .gl{font-size:12px;font-weight:900;color:#fff;background:var(--ink);border-radius:7px;padding:2px 10px;display:inline-block;margin-bottom:8px}
   .chips{display:flex;flex-wrap:wrap;gap:7px}
   .chips span{font-size:13px;font-weight:800;background:var(--point-soft);border:2px solid var(--ink);border-radius:999px;padding:4px 12px}
+  /* 한계 실험 체크리스트 */
+  .expcard{margin-top:26px;background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:20px}
+  .expcard h2{font-size:17px;font-weight:900;letter-spacing:-.02em;margin-bottom:4px}
+  .expcard .sub{font-size:13px;color:var(--muted);font-weight:600;margin-bottom:14px}
+  .exprow{display:flex;align-items:center;gap:10px;background:var(--paper);border:2.5px solid var(--ink);border-radius:var(--r-sm);box-shadow:var(--hard-sm);padding:10px 12px;margin-bottom:10px}
+  .exprow .et{flex:1;font-size:14.5px;font-weight:800;line-height:1.35}
+  .exprow .et small{display:block;font-size:12px;font-weight:600;color:var(--muted)}
+  .exprow .oxrow{display:flex;gap:6px;flex-shrink:0}
+  .exprow .ox{cursor:pointer;font-family:inherit;font-size:17px;font-weight:900;color:var(--ink);background:var(--surface);
+    border:2.5px solid var(--ink);border-radius:10px;width:44px;height:44px;transition:transform .1s}
+  .exprow .ox:active{transform:translate(2px,2px)}
+  .exprow .ox:focus-visible{outline:3px solid var(--point);outline-offset:2px}
+  .exprow .ox.on-o{background:var(--point);color:#fff}
+  .exprow .ox.on-x{background:var(--red);color:#fff}
+  .expdone{font-size:13.5px;font-weight:800;color:var(--point);margin-top:12px;min-height:20px}
+  .expnote{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:4px;line-height:1.55}
+
   /* 한계 한 마디 */
   .limitcard{margin-top:26px;background:var(--ink);color:var(--paper);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:20px}
   .limitcard h2{font-size:17px;font-weight:900;letter-spacing:-.02em;margin-bottom:4px;color:var(--paper)}
@@ -295,7 +312,7 @@
       <span class="vf-bl" aria-hidden="true"></span>
       <video id="video" autoplay muted playsinline></video>
       <canvas id="canvas"></canvas>
-      <div class="counter" id="counter" role="status" aria-live="polite" aria-label="발견한 사물 수: 0">발견한 사물<b>0</b></div>
+      <div class="counter" id="counter" role="status" aria-live="polite" aria-label="인식한 사물 수: 0">인식한 사물<b>0</b></div>
       <div class="toast" id="toast">얼굴은 비추지 않기로 해요! 카메라를 물건 쪽으로 돌려요.</div>
       <div class="ghud-top" id="ghudTop"><span class="rnd" id="gRound">1 / 5</span><span class="tmr" id="gTimer">⏱ 00:20</span></div>
       <div class="ghud-bottom" id="ghudBottom">
@@ -309,7 +326,8 @@
       </div>
     </div>
     <div id="playControls">
-    <p class="caption">잘 보이는 물건을 <b>한 번에 5개까지</b> 찾아요. (엔트리는 3개까지)</p>
+    <p class="caption">물건을 둘러싼 초록 네모를 <b>바운딩 박스</b>라고 해요. 옆의 %는 그 안에 물건이 있을 가능성이에요.</p>
+    <p class="caption">이 웹은 잘 보이는 물건을 <b>한 번에 5개까지</b> 찾아요. (엔트리 사물 인식은 3개까지 보여 줘요.)</p>
     <p class="stateline" id="stateline">준비되면 시작 버튼을 눌러요</p>
     <div class="btnrow">
       <button class="btn" id="btnStart">
@@ -355,7 +373,7 @@
   <div class="card" id="simCard" style="margin-top:16px">
     <p class="simreason" id="simReason" style="display:none"></p>
     <h2>연습 모드 — 그림에서 찾아 봐요</h2>
-    <p class="desc">카메라 대신 그림 속 물건을 AI가 찾는 모습을 보여 줄게요. 진짜 객체 탐지도 이렇게 <b>네모 박스</b>로 위치를 짚어요.</p>
+    <p class="desc">카메라 대신 그림 속 물건을 AI가 찾는 모습을 보여 줄게요. 진짜 객체 탐지도 이렇게 <b>바운딩 박스</b>(위치를 짚는 네모)로 물건을 표시해요.</p>
     <div class="simstage">
       <span class="vf-br" aria-hidden="true"></span>
       <span class="vf-bl" aria-hidden="true"></span>
@@ -398,7 +416,7 @@
           </g>
         </g>
       </svg>
-      <div class="counter" id="simCounter" role="status" aria-live="polite" aria-label="발견한 사물 수: 0">발견한 사물<b>0</b></div>
+      <div class="counter" id="simCounter" role="status" aria-live="polite" aria-label="인식한 사물 수: 0">인식한 사물<b>0</b></div>
     </div>
     <p class="stateline" id="simState">버튼을 누르면 AI가 하나씩 찾아요</p>
     <div class="btnrow">
@@ -411,7 +429,7 @@
 
   <div class="obs">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--amber)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/></svg>
-    <span><b>관찰 포인트</b> — 물건을 <b>멀리</b> 두거나, <b>손으로 가리거나</b>, <b>불을 어둡게</b> 하면 박스가 사라지나요? AI가 언제 잘 못 찾는지 관찰해요.</span>
+    <span><b>관찰 포인트</b> — 물건을 <b>멀리</b> 두거나, <b>손으로 가리거나</b>, <b>불을 어둡게</b> 하거나, <b>여러 개를 겹쳐 놓으면</b> 박스가 사라지나요? AI가 언제 잘 못 찾는지 관찰해요.</span>
   </div>
   
   <div class="itemlist">
@@ -420,6 +438,29 @@
     <div class="itemgrp"><span class="gl">학용품·책상</span><div class="chips"><span>컵</span><span>병</span><span>유리컵</span><span>책</span><span>가위</span><span>휴대전화</span><span>키보드</span><span>마우스</span><span>노트북</span><span>모니터</span><span>리모컨</span><span>시계</span><span>가방</span><span>손가방</span><span>우산</span><span>꽃병</span><span>화분</span><span>책상</span><span>의자</span><span>곰인형</span></div></div>
     <div class="itemgrp"><span class="gl">급식·음식</span><div class="chips"><span>사과</span><span>바나나</span><span>오렌지</span><span>샌드위치</span><span>피자</span><span>도넛</span><span>케이크</span><span>브로콜리</span><span>당근</span><span>핫도그</span><span>공</span><span>그릇</span><span>숟가락</span><span>포크</span><span>칼</span></div></div>
     <div class="itemgrp"><span class="gl">생활·기타</span><div class="chips"><span>칫솔</span><span>드라이어</span><span>전자레인지</span><span>오븐</span><span>토스터</span><span>냉장고</span><span>싱크대</span><span>넥타이</span><span>여행가방</span><span>새</span><span>고양이</span><span>강아지</span></div></div>
+  </div>
+
+  <div class="expcard">
+    <h2>🧪 한계 실험 기록표</h2>
+    <p class="sub">아래 상황을 하나씩 만들어 보고, 인식한 사물 수가 줄거나 못 찾았으면 ○, 잘 찾았으면 ✕를 눌러요.</p>
+    <div class="exprow" data-exp>
+      <span class="et">① 물건을 너무 멀리 두기<small>화면에서 작게 보이도록</small></span>
+      <div class="oxrow"><button type="button" class="ox" data-ox="o" aria-pressed="false" aria-label="1번, 사물 수가 줄었어요">○</button><button type="button" class="ox" data-ox="x" aria-pressed="false" aria-label="1번, 잘 찾았어요">✕</button></div>
+    </div>
+    <div class="exprow" data-exp>
+      <span class="et">② 물건을 손으로 조금 가리기<small>중요한 부분을 살짝</small></span>
+      <div class="oxrow"><button type="button" class="ox" data-ox="o" aria-pressed="false" aria-label="2번, 사물 수가 줄었어요">○</button><button type="button" class="ox" data-ox="x" aria-pressed="false" aria-label="2번, 잘 찾았어요">✕</button></div>
+    </div>
+    <div class="exprow" data-exp>
+      <span class="et">③ 조명을 어둡게 하기<small>불을 살짝 낮춰서</small></span>
+      <div class="oxrow"><button type="button" class="ox" data-ox="o" aria-pressed="false" aria-label="3번, 사물 수가 줄었어요">○</button><button type="button" class="ox" data-ox="x" aria-pressed="false" aria-label="3번, 잘 찾았어요">✕</button></div>
+    </div>
+    <div class="exprow" data-exp>
+      <span class="et">④ 여러 물건을 겹쳐 놓기<small>서로 포개지도록</small></span>
+      <div class="oxrow"><button type="button" class="ox" data-ox="o" aria-pressed="false" aria-label="4번, 사물 수가 줄었어요">○</button><button type="button" class="ox" data-ox="x" aria-pressed="false" aria-label="4번, 잘 찾았어요">✕</button></div>
+    </div>
+    <p class="expdone" id="expDone" role="status" aria-live="polite"></p>
+    <p class="expnote">멀리 있거나 가려지거나 겹쳐 있으면 AI가 놓치기 쉬워요. 물건을 가까이·밝게·따로 놓으면 더 잘 찾아요.</p>
   </div>
 
   <div class="limitcard">
@@ -657,8 +698,8 @@ function setCount(n) {
   if (n === lastCount) return;
   lastCount = n;
   const el = $('counter');
-  el.innerHTML = '발견한 사물<b>' + n + '</b>';
-  el.setAttribute('aria-label', '발견한 사물 수: ' + n);
+  el.innerHTML = '인식한 사물<b>' + n + '</b>';
+  el.setAttribute('aria-label', '인식한 사물 수: ' + n);
   el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
 }
 
@@ -688,13 +729,13 @@ $('btnFind').onclick = function () {
   simPlaying = true;
   const boxes = document.querySelectorAll('#simBoxes .simbox');
   boxes.forEach(b => b.classList.remove('show'));
-  $('simCounter').innerHTML = '지금 찾은 사물 수: <b>0</b>';
+  $('simCounter').innerHTML = '인식한 사물<b>0</b>';
   $('simState').textContent = 'AI가 위치를 찾고 있어요…';
   boxes.forEach((b, i) => {
     setTimeout(() => {
       b.classList.add('show');
       const c = $('simCounter');
-      c.innerHTML = '발견한 사물<b>' + (i + 1) + '</b>';
+      c.innerHTML = '인식한 사물<b>' + (i + 1) + '</b>';
       c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop');
       if (i === boxes.length - 1) {
         simPlaying = false;
@@ -832,6 +873,33 @@ pickTheme('school');
   };
   var inp=document.getElementById('limitInput');
   if(inp) inp.addEventListener('keydown',function(e){ if(e.key==='Enter') saveLimit(); });
+
+  // 한계 실험 기록표 ○/✕
+  var rows=document.querySelectorAll('.exprow[data-exp]');
+  var done=document.getElementById('expDone');
+  function updateDone(){
+    var answered=0;
+    rows.forEach(function(r){ if(r.querySelector('.ox.on-o')||r.querySelector('.ox.on-x')) answered++; });
+    if(answered===rows.length){
+      done.textContent='✓ 네 상황을 모두 실험했어요. 언제 AI가 잘 못 찾았나요?';
+    } else {
+      done.textContent=answered? (answered+' / '+rows.length+' 상황을 실험했어요.') : '';
+    }
+  }
+  rows.forEach(function(r){
+    r.querySelectorAll('.ox').forEach(function(btn){
+      btn.addEventListener('click',function(){
+        var pick=btn.getAttribute('data-ox');
+        r.querySelectorAll('.ox').forEach(function(b){
+          b.classList.remove('on-o','on-x');
+          b.setAttribute('aria-pressed','false');
+        });
+        btn.classList.add(pick==='o'?'on-o':'on-x');
+        btn.setAttribute('aria-pressed','true');
+        updateDone();
+      });
+    });
+  });
 })();
 </script>
 
