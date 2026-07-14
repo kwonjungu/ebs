@@ -73,6 +73,16 @@
   .bulb.on .ray{opacity:1;animation:flick 1.8s ease-in-out infinite}
   @keyframes flick{0%,100%{opacity:1}50%{opacity:.55}}
 
+  /* 음악 오브젝트 */
+  .music{display:flex;align-items:center;justify-content:center;gap:8px;margin:2px 0 4px;opacity:.45;transition:opacity .25s}
+  .music .mnote{opacity:.35;transition:opacity .25s}
+  .music .mtag{font-size:12px;font-weight:900;letter-spacing:.02em;color:var(--muted);transition:color .25s}
+  .music.play{opacity:1}
+  .music.play .mnote{opacity:1;animation:mplay 1s ease-in-out infinite alternate}
+  .music.play .mtag{color:var(--ink)}
+  .music.play .mnote:nth-of-type(2){animation-delay:.2s}
+  @keyframes mplay{from{transform:translateX(0)}to{transform:translateX(1.5px)}}
+
   /* waveform */
   .wave{display:flex;align-items:center;justify-content:center;gap:4px;height:26px;margin:8px 0}
   .wave span{width:5px;border-radius:3px;background:var(--ink);opacity:.28;height:8px}
@@ -104,6 +114,31 @@
 
   .cmds{display:flex;gap:6px;flex-wrap:wrap;margin:2px 0 8px}
   .cmd{font-weight:800;font-size:12.5px;background:var(--paper);border:2px solid var(--ink);border-radius:999px;padding:2px 11px}
+
+  /* 5단계 스테퍼 */
+  .steps{display:flex;align-items:stretch;gap:0;margin:8px 0 4px;flex-wrap:nowrap}
+  .step{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;position:relative;text-align:center}
+  .step .snum{width:24px;height:24px;flex-shrink:0;display:grid;place-items:center;font-weight:900;font-size:12px;
+    border:2px solid var(--ink);border-radius:7px;background:var(--paper);color:var(--ink);transition:background .18s,color .18s}
+  .step .slab{font-size:10px;font-weight:800;letter-spacing:-.02em;color:var(--muted);line-height:1.15;transition:color .18s}
+  .step:not(:last-child)::after{content:"";position:absolute;top:11px;left:calc(50% + 16px);right:calc(-50% + 16px);height:2.5px;background:var(--ink);opacity:.25}
+  .step.on .snum{background:var(--blue);color:#fff}
+  .step.on .slab{color:var(--ink)}
+  .step.done .snum{background:var(--ink);color:#fff}
+
+  /* 틀리기 쉬운 상황 미션 카드 */
+  .missions{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:6px 0 4px}
+  @media(max-width:640px){.missions{grid-template-columns:1fr}}
+  .mission{background:var(--surface);border:3px solid var(--ink);border-radius:var(--r-sm);box-shadow:var(--hard-sm);padding:14px 15px;display:flex;flex-direction:column;gap:9px}
+  .mission .mh{font-size:15px;font-weight:900;letter-spacing:-.02em}
+  .mission .md{font-size:12.5px;color:#333;font-weight:600;line-height:1.4;flex:1}
+  .mchk{display:flex;gap:7px}
+  .mchk button{flex:1;cursor:pointer;font-family:inherit;font-size:12.5px;font-weight:800;color:var(--ink);
+    background:var(--paper);border:2px solid var(--ink);border-radius:9px;padding:7px 4px;transition:transform .1s,box-shadow .1s}
+  .mchk button:hover{transform:translate(-1px,-1px);box-shadow:var(--hard-sm)}
+  .mchk button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+  .mchk button.ok[aria-pressed=true]{background:var(--green);color:#fff}
+  .mchk button.no[aria-pressed=true]{background:var(--red);color:#fff}
 
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;cursor:pointer;
     font-family:inherit;font-size:16px;font-weight:900;letter-spacing:-.01em;color:var(--ink);background:var(--amber);
@@ -207,9 +242,20 @@
     <section class="panel b" aria-labelledby="tB">
       <div class="tagrow"><span class="sigil">B</span><div><div class="psub">학습한 AI · STT</div><div class="ptitle" id="tB">음성 인식</div></div></div>
       <p class="pdesc"><b>말의 내용</b>을 글자로 바꿔요. 등록된 명령어와 맞을 때만 실행돼요.</p>
-      <div class="cmds"><span class="cmd">불 켜 줘</span><span class="cmd">불 꺼 줘</span></div>
+      <div class="cmds"><span class="cmd">불 켜 줘</span><span class="cmd">불 꺼 줘</span><span class="cmd">음악 틀어 줘</span><span class="cmd">음악 꺼 줘</span></div>
+      <div class="steps" id="steps" aria-hidden="true">
+        <div class="step" data-step="1"><span class="snum">1</span><span class="slab">말하기</span></div>
+        <div class="step" data-step="2"><span class="snum">2</span><span class="slab">마이크 입력</span></div>
+        <div class="step" data-step="3"><span class="snum">3</span><span class="slab">글자 변환</span></div>
+        <div class="step" data-step="4"><span class="snum">4</span><span class="slab">명령어 비교</span></div>
+        <div class="step" data-step="5"><span class="snum">5</span><span class="slab">결과 실행</span></div>
+      </div>
       <div class="bulb" id="bulbB" aria-hidden="true">
         <svg viewBox="0 0 64 92"><g class="ray"><line x1="32" y1="2" x2="32" y2="-6"/><line x1="7" y1="12" x2="1" y2="7"/><line x1="57" y1="12" x2="63" y2="7"/></g><path class="glass" d="M32 6C19 6 9 16 9 29c0 9 6 15 10 21v6h26v-6c4-6 10-12 10-21C55 16 45 6 32 6Z"/><path class="fil" d="M24 40c3-5 5-5 8 0s5 5 8 0"/><rect class="cap" x="21" y="56" width="22" height="7" rx="2"/><rect class="cap" x="24" y="64" width="16" height="6" rx="2"/></svg>
+      </div>
+      <div class="music" id="musicB" aria-hidden="true">
+        <svg width="46" height="46" viewBox="0 0 24 24" fill="none"><path d="M9 6 4 9H2v6h2l5 3V6Z" fill="var(--paper)" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/><path class="mnote" d="M14 8.5c1.5.7 2.5 2 2.5 3.5s-1 2.8-2.5 3.5" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/><path class="mnote" d="M18 5.5c2.5 1.4 4 3.7 4 6.5s-1.5 5.1-4 6.5" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/></svg>
+        <span class="mtag">음악</span>
       </div>
       <div class="wave" id="waveB" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
       <div class="stt" id="sttout"><span class="dim">내 말이 글자로 나타나요</span></div>
@@ -224,7 +270,41 @@
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--amber)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/></svg>
     <span><b>실험해 봐요</b> — Ⓐ에서 “불 꺼 줘”라고 크게 외쳐도 불이 켜져요. 크기만 재니까요. 반대로 Ⓑ는 작게 말해도 내용을 알아들으면 켜지고, 시끄러우면 틀리기도 해요.</span>
   </div>
+  <div class="obs" id="obsB">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18" stroke="var(--amber)" stroke-width="2.2" stroke-linecap="round"/></svg>
+    <span><b>여기도 봐요</b> — Ⓑ에서 “불 켜지 마”라고 말해도 불이 켜져요. AI가 글자에 “불 켜”가 들어 있는지만 비교하고, 앞뒤 뜻은 살피지 못하기 때문이에요. <b>단순 글자 비교</b>만으로는 이런 실수가 생겨요.</span>
+  </div>
   <div class="fallback" id="nosr">⚠️ 이 브라우저는 음성 인식을 지원하지 않아요. <b>크롬(Chrome)·엣지(Edge)</b>로 열어 주세요.</div>
+
+  <div class="cmp-head"><h2>틀리기 쉬운 상황</h2><span class="bar" aria-hidden="true"></span></div>
+  <p class="lead" style="margin:-4px 0 14px">Ⓑ음성 인식 버튼을 켜고 아래처럼 말해 봐요. 잘 알아들었는지 결과를 눌러 표시해요.</p>
+  <div class="missions">
+    <div class="mission">
+      <div class="mh">멀리서 말하기</div>
+      <div class="md">마이크(기기)에서 한두 걸음 떨어져 같은 명령을 말해 봐요.</div>
+      <div class="mchk" role="group" aria-label="멀리서 말하기 결과">
+        <button type="button" class="ok" aria-pressed="false">잘 됐다</button>
+        <button type="button" class="no" aria-pressed="false">틀렸다</button>
+      </div>
+    </div>
+    <div class="mission">
+      <div class="mh">빠르게 말하기</div>
+      <div class="md">“불 켜 줘”를 아주 빠르게 이어서 말해 봐요.</div>
+      <div class="mchk" role="group" aria-label="빠르게 말하기 결과">
+        <button type="button" class="ok" aria-pressed="false">잘 됐다</button>
+        <button type="button" class="no" aria-pressed="false">틀렸다</button>
+      </div>
+    </div>
+    <div class="mission">
+      <div class="mh">시끄러운 곳에서</div>
+      <div class="md">음악을 틀거나 여럿이 함께 말하며 명령을 해 봐요.</div>
+      <div class="mchk" role="group" aria-label="시끄러운 곳에서 결과">
+        <button type="button" class="ok" aria-pressed="false">잘 됐다</button>
+        <button type="button" class="no" aria-pressed="false">틀렸다</button>
+      </div>
+    </div>
+  </div>
+  <p class="vcap" style="text-align:left;margin:2px 0 8px">틀린 경우가 있다면, 왜 그런지 생각해 봐요. 소음·빠른 말·먼 마이크는 음성 인식을 어렵게 해요.</p>
 
   <div class="cmp-head"><h2>한눈에 비교</h2><span class="bar" aria-hidden="true"></span></div>
   <table>
@@ -288,6 +368,44 @@ function loopVol(){
   }
   requestAnimationFrame(loopVol);
 }
+// ── 5단계 스테퍼 ──
+// 1 말하기 · 2 마이크 입력 · 3 글자 변환 · 4 명령어 비교 · 5 결과 실행
+function stepSet(n){
+  document.querySelectorAll('#steps .step').forEach(el=>{
+    const s=+el.dataset.step;
+    el.classList.toggle('on', s===n);
+    el.classList.toggle('done', s<n);
+  });
+}
+function stepReset(){ document.querySelectorAll('#steps .step').forEach(el=>el.classList.remove('on','done')); }
+
+// ── 음악 오브젝트 (Web Audio 짧은 멜로디) ──
+let musicTimers=[], musicPlaying=false;
+function playMusic(){
+  audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended') audioCtx.resume();
+  stopMusic(false);
+  musicPlaying=true; $('musicB').classList.add('play');
+  const notes=[523.25,587.33,659.25,783.99,659.25,587.33,523.25]; // 도레미솔미레도
+  const dur=0.26;
+  notes.forEach((f,i)=>{
+    const t0=audioCtx.currentTime+i*dur;
+    const osc=audioCtx.createOscillator(), g=audioCtx.createGain();
+    osc.type='triangle'; osc.frequency.value=f;
+    g.gain.setValueAtTime(0.0001,t0);
+    g.gain.exponentialRampToValueAtTime(0.18,t0+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001,t0+dur*0.9);
+    osc.connect(g).connect(audioCtx.destination);
+    osc.start(t0); osc.stop(t0+dur);
+  });
+  const total=notes.length*dur*1000;
+  musicTimers.push(setTimeout(()=>{ musicPlaying=false; $('musicB').classList.remove('play'); }, total));
+}
+function stopMusic(clearVisual){
+  musicTimers.forEach(clearTimeout); musicTimers=[]; musicPlaying=false;
+  if(clearVisual!==false) $('musicB').classList.remove('play');
+}
+
 // ── Ⓑ 음성 인식 (Web Speech API) ──
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 let rec=null, listening=false;
@@ -295,23 +413,37 @@ if(!SR){ $('nosr').style.display='block'; $('btnB').disabled=true; }
 $('btnB').onclick=function(){
   if(listening){ try{rec.stop();}catch(e){} return; }
   rec=new SR(); rec.lang='ko-KR'; rec.interimResults=true;
-  rec.onstart=()=>{listening=true; this.textContent='듣는 중… (누르면 멈춤)'; this.classList.add('rec'); $('stateB').textContent='명령을 말해 보세요'; $('waveB').classList.add('active');};
-  rec.onend=()=>{listening=false; this.textContent='음성 인식 시작'; this.classList.remove('rec'); $('waveB').classList.remove('active');};
-  rec.onerror=e=>{ $('stateB').textContent = e.error==='not-allowed' ? '마이크 사용을 허용해 주세요' : '잘 못 들었어요. 다시 시도!'; };
+  rec.onstart=()=>{listening=true; this.textContent='듣는 중… (누르면 멈춤)'; this.classList.add('rec'); $('stateB').textContent='명령을 말해 보세요'; $('waveB').classList.add('active'); stepSet(1);};
+  rec.onend=()=>{listening=false; this.textContent='음성 인식 시작'; this.classList.remove('rec'); $('waveB').classList.remove('active'); stepReset();};
+  rec.onerror=e=>{ $('stateB').textContent = e.error==='not-allowed' ? '마이크 사용을 허용해 주세요' : '잘 못 들었어요. 다시 시도!'; stepReset(); if(listening)stepSet(1); };
   rec.onresult=ev=>{
     let fin='', inter='';
     for(const r of ev.results){ if(r.isFinal) fin+=r[0].transcript; else inter+=r[0].transcript; }
-    if(inter) $('sttout').innerHTML='<span class="dim">'+esc(inter)+'</span>';
-    if(fin){ $('sttout').innerHTML='<b>“'+esc(fin.trim())+'”</b>'; judge(fin.trim()); }
+    if(inter){ $('sttout').innerHTML='<span class="dim">'+esc(inter)+'</span>'; stepSet(3); }
+    if(fin){ $('sttout').innerHTML='<b>“'+esc(fin.trim())+'”</b>'; stepSet(4); judge(fin.trim()); }
   };
-  rec.start();
+  rec.start(); stepSet(2);
 };
 function judge(t){
   const n=t.replace(/[\s.,!?~]/g,'');
+  stepSet(5);
   if(n.includes('불켜')){ $('bulbB').classList.add('on'); $('stateB').innerHTML='명령어 <b>“불 켜 줘”</b> 일치 → <b>불 켜짐</b>'; }
   else if(n.includes('불꺼')){ $('bulbB').classList.remove('on'); $('stateB').innerHTML='명령어 <b>“불 꺼 줘”</b> 일치 → <b>불 꺼짐</b>'; }
+  else if(n.includes('음악틀') || n.includes('음악켜')){ playMusic(); $('stateB').innerHTML='명령어 <b>“음악 틀어 줘”</b> 일치 → <b>음악 재생</b>'; }
+  else if(n.includes('음악꺼') || n.includes('음악끄')){ stopMusic(true); $('stateB').innerHTML='명령어 <b>“음악 꺼 줘”</b> 일치 → <b>음악 멈춤</b>'; }
   else { $('stateB').innerHTML='등록된 명령어가 아니에요 (크게 말해도 실행 안 돼요)'; }
 }
+
+// ── 틀리기 쉬운 상황 미션 결과 체크 ──
+document.querySelectorAll('.mchk').forEach(group=>{
+  group.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const pressed=btn.getAttribute('aria-pressed')==='true';
+      group.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed','false'));
+      btn.setAttribute('aria-pressed', pressed?'false':'true');
+    });
+  });
+});
 function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
 </script>
 </body>
