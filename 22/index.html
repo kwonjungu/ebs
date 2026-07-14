@@ -69,6 +69,17 @@
   .bubble small{display:block;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
     color:var(--muted);margin-bottom:5px}
 
+  /* fact-check 5-step strip */
+  .steps{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
+  .steps .st{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:800;
+    background:var(--paper);border:2px solid var(--ink);border-radius:999px;padding:4px 9px;color:var(--muted)}
+  .steps .st b{background:var(--ink);color:var(--paper);border-radius:50%;width:16px;height:16px;
+    display:grid;place-items:center;font-size:10px;font-weight:900;flex-shrink:0}
+  .steps .st.on{background:var(--amber);color:var(--ink);box-shadow:var(--hard-sm)}
+  .steps .st.on b{background:var(--ink);color:var(--amber)}
+  .steps .st.done{background:var(--green);color:#fff;border-color:var(--ink)}
+  .steps .st.done b{background:#fff;color:var(--green)}
+
   /* step labels */
   .stepq{font-size:14.5px;font-weight:900;margin:14px 0 8px;letter-spacing:-.01em}
 
@@ -128,6 +139,7 @@
   .v-ok  {background:var(--green);color:#fff;transform:rotate(-2.5deg)}
   .v-no  {background:var(--point);color:#fff;transform:rotate(1.8deg)}
   .v-half{background:var(--amber);color:var(--ink);transform:rotate(-1.2deg)}
+  .v-none{background:var(--muted);color:#fff;transform:rotate(1.2deg)}
   .why{font-size:14.5px;margin-top:10px;font-weight:600;line-height:1.55}
   .fixline{background:var(--amber-soft);border:2px solid var(--ink);border-radius:var(--r-sm);
     padding:8px 13px;font-size:14px;font-weight:700;margin-top:10px;box-shadow:var(--hard-sm)}
@@ -159,6 +171,7 @@
     .v-ok{transform:rotate(-2.5deg)!important}
     .v-no{transform:rotate(1.8deg)!important}
     .v-half{transform:rotate(-1.2deg)!important}
+    .v-none{transform:rotate(1.2deg)!important}
   }
 
   .quicklinks{margin-top:30px;background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:18px 20px}
@@ -188,7 +201,7 @@
   <header>
     <span class="kicker">AI가 자신 있게 말할 때</span>
     <h1>팩트체크 탐정 체험</h1>
-    <p class="lead">AI가 자신 있게 말한 상식 5가지 — 먼저 예상하고, 근거 자료를 열어 확인해요.</p>
+    <p class="lead">AI가 자신 있게 말한 상식 여러 가지 — 먼저 예상하고, 근거 자료를 열어 확인해요.</p>
     <img class="hero-art" src="../assets/art/22_stamp.png" alt="" aria-hidden="true">
   </header>
 
@@ -200,6 +213,13 @@
   <div class="dots" id="dots"></div>
 
   <div class="card" id="stage">
+    <div class="steps" id="steps" aria-label="팩트 체크 5단계 진행">
+      <span class="st" data-step="0"><b>1</b>표시하기</span>
+      <span class="st" data-step="1"><b>2</b>찾기</span>
+      <span class="st" data-step="1"><b>3</b>비교하기</span>
+      <span class="st" data-step="2"><b>4</b>나누기</span>
+      <span class="st" data-step="3"><b>5</b>사용하기</span>
+    </div>
     <img class="scene" id="scene" src="../assets/fact/card0_moon.png" alt="이 카드가 다루는 상식 장면 그림">
     <div class="ai">
       <div class="ai-icon" aria-hidden="true">
@@ -256,8 +276,8 @@
     <div class="report-icon">
       <svg width="64" height="64" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="10" stroke="var(--point)" stroke-width="2.5"/><circle cx="9" cy="10" r="1.5" fill="var(--ink)"/><circle cx="15" cy="10" r="1.5" fill="var(--ink)"/><path d="M8 15c1 1.5 2 2 4 2s3-.5 4-2" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/><path d="M12 5v1M12 18v1M5 12h1M18 12h1" stroke="var(--ink)" stroke-width="1.8" stroke-linecap="round"/></svg>
     </div>
-    <p class="big">내 직감 적중 <b id="score"></b>/5</p>
-    <p class="msg">자신 있는 말투라고 다 사실은 아니에요!<br>AI는 거짓말쟁이가 아니라, 근거가 부족한 곳을 그럴듯한 말로 채운 거예요. 그래서 마지막 확인은 사람이 해요.</p>
+    <p class="big">내 직감 적중 <b id="score"></b>/<span id="scoretotal"></span></p>
+    <p class="msg">자신 있는 말투라고 다 사실은 아니에요.<br>AI가 사실과 다른 내용을 그럴듯하게 만들어 내는 현상을 <b>할루시네이션</b>이라고 해요. AI는 거짓말쟁이가 아니라, 근거가 부족한 곳을 그럴듯한 말로 채운 거예요. 그래서 마지막 확인은 사람이 해요.</p>
     <button class="btn" onclick="location.reload()">처음부터 다시</button>
   </div>
 
@@ -281,7 +301,7 @@
 
 <script>
 const $=id=>document.getElementById(id);
-// verdict: ok(확인됨) | no(사실과 다름) | half(일부 다름)
+// verdict: ok(확인됨) | no(틀림) | half(일부 다름) | none(근거 없음)
 const CARDS=[
  { ai:'확실해요! 아폴로 11호에서 달 표면을 가장 먼저 밟은 사람은 버즈 올드린이에요.',
    src:'NASA 공식 자료 요약',
@@ -312,21 +332,36 @@ const CARDS=[
    evi:'달에는 대기가 거의 없어서 바람과 비가 없어요. 그래서 크레이터가 수십억 년 동안 거의 그대로 남아 있어요.',
    verdict:'no',
    why:'"과학적으로 검증된"이라는 말까지 붙였지만 사실이 아니에요. 자신 있는 말투를 조심해요.',
-   fixed:'달에는 바람과 비가 없어서 크레이터가 아주 오래 남아요.' }
+   fixed:'달에는 바람과 비가 없어서 크레이터가 아주 오래 남아요.' },
+ { ai:'물병자리 유성우는 매년 8월 8일 밤 8시에 가장 많이 떨어져요. 시간까지 딱 정해져 있어요!',
+   src:'NASA 유성우 안내 자료 요약',
+   evi:'유성우가 잘 보이는 시기는 있지만, "8월 8일 밤 8시"처럼 딱 정해진 시각은 어느 공식 자료에서도 찾을 수 없어요. 날짜와 시각이 지나치게 구체적이면 지어낸 정보일 수 있어요.',
+   verdict:'none',
+   why:'근거 자료를 찾아봐도 이 시각을 확인할 수 없어요. 확인이 안 되면 "틀림"이 아니라 "근거 없음"이에요.',
+   fixed:'유성우가 언제 잘 보이는지는 믿을 만한 천문 자료에서 확인해요.' }
 ];
-const VLABEL={ok:['확인됨','v-ok'], no:['사실과 다름','v-no'], half:['일부 다름','v-half']};
+const VLABEL={ok:['확인됨','v-ok'], no:['틀림','v-no'], half:['일부 다름','v-half'], none:['근거 없음','v-none']};
 let idx=0, myGuess=null, hits=0;
 const results=[];
 
+const TOTAL=CARDS.length;
+function setPhase(p){
+  document.querySelectorAll('#steps .st').forEach(el=>{
+    const s=+el.dataset.step;
+    el.classList.remove('on','done');
+    if(s<p) el.classList.add('done');
+    else if(s===p) el.classList.add('on');
+  });
+}
 function renderDots(){
   let h='';
-  for(let i=0;i<5;i++){
+  for(let i=0;i<TOTAL;i++){
     let cls='dot';
     if(i<results.length) cls+=results[i]?' hit':' miss';
-    else if(i===idx && idx<5) cls+=' now';
+    else if(i===idx && idx<TOTAL) cls+=' now';
     h+='<span class="'+cls+'"></span>';
   }
-  $('dots').innerHTML=h+'<span>카드 '+Math.min(idx+1,5)+'/5</span>';
+  $('dots').innerHTML=h+'<span>카드 '+Math.min(idx+1,TOTAL)+'/'+TOTAL+'</span>';
 }
 
 const SCENES=['card0_moon.png','card1_mars.png','card2_curie.png','card3_wall.png','card4_crater.png'];
@@ -335,11 +370,13 @@ const LINKS=[
   {url:'https://science.nasa.gov/mars/moons/', label:'NASA · 화성의 위성'},
   {url:'https://www.nobelprize.org/prizes/physics/1903/marie-curie/facts/', label:'노벨상 공식 · 마리 퀴리'},
   {url:'https://earthobservatory.nasa.gov/images/1856/the-great-wall-of-china', label:'NASA 지구관측소 · 만리장성'},
-  {url:'https://science.nasa.gov/moon/', label:'NASA · 달'}
+  {url:'https://science.nasa.gov/moon/', label:'NASA · 달'},
+  {url:'https://science.nasa.gov/solar-system/meteors-meteorites/', label:'NASA · 유성우'}
 ];
 function show(){
   const c=CARDS[idx];
-  if(SCENES[idx]) $('scene').src='../assets/fact/'+SCENES[idx];
+  if(SCENES[idx]){ $('scene').src='../assets/fact/'+SCENES[idx]; $('scene').style.display=''; }
+  else{ $('scene').style.display='none'; }
   if(LINKS[idx]){ $('evilink').href=LINKS[idx].url; $('evilinktxt').textContent=LINKS[idx].label+' 원문 확인하기'; }
   $('aitxt').textContent=c.ai;
   $('gT').disabled=false; $('gF').disabled=false;
@@ -347,6 +384,7 @@ function show(){
   $('openEvi').style.display='none';
   $('evi').style.display='none';
   $('verdict').style.display='none';
+  setPhase(0);
   renderDots();
 }
 
@@ -375,17 +413,19 @@ function openEvi(){
   if(hit) hits++;
   results.push(hit);
   $('gcheck').innerHTML='내 직감: <b>'+(myGuess?'참':'거짓')+'</b> → 실제: <b>'+label+'</b> '+(hit?'— 적중!':'— 빗나감');
-  $('next').innerHTML = (idx<4 ? '다음 카드' : '수사 결과 보기')+'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  $('next').innerHTML = (idx<TOTAL-1 ? '다음 카드' : '수사 결과 보기')+'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   $('verdict').style.display='block';
+  setPhase(2);
   renderDots();
 }
 
 function next(){
   idx++; myGuess=null;
-  if(idx<5){ show(); }
+  if(idx<TOTAL){ show(); }
   else{
     $('stage').style.display='none';
     $('score').textContent=hits;
+    $('scoretotal').textContent=TOTAL;
     $('report').style.display='block';
     renderDots();
   }
