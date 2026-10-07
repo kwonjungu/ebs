@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <link rel="icon" type="image/png" href="../assets/brand/favicon-32.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI 편향 탐정 — AI 탐험대 24</title>
+<title>24강 골고루 학습하지 못한 AI의 치명적 오류 · AI 탐험대</title>
 <style>
   :root{
     --ink:#141414; --paper:#FBF7EC; --surface:#FFFFFF;
@@ -192,6 +192,7 @@
 </style>
 </head>
 <body>
+<div class="lessonbar" style="background:#141414;color:#FBF7EC;font:700 13px/1.4 -apple-system,'Segoe UI',sans-serif;padding:7px 16px;text-align:center;letter-spacing:-.01em">중급 24강 · 골고루 학습하지 못한 AI의 치명적 오류</div>
 <div class="wrap">
 
   <nav class="nav">
@@ -294,9 +295,9 @@ const $ = id => document.getElementById(id);
 const CASES = {
   speaker: {
     emoji:'🔊', pick:'귀가 편식하는 AI 스피커',
-    pickSub:'특정 말투·소음 환경에서 말을 자주 못 알아들어요.',
+    pickSub:'특정 말투·소음 환경에서 말을 자주 제대로 인식하지 못해요.',
     title:'우리 학교 음성 인식 AI',
-    copy:'<b>"전체 정확도 82%!"</b><br>열 번 중 여덟 번은 알아들어요. 문제없어 보이죠?',
+    copy:'<b>"전체 정확도 82%!"</b><br>열 번 중 여덟 번은 제대로 인식해요. 문제없어 보이죠?',
     chartDesc:'같은 AI인데, 누구의 말인지·어디인지에 따라 점수가 달라요.',
     metric:'정확도',
     ref:'참고: 조용한 교실·표준 말투 데이터는 이미 5,000개나 있어요 (치우침!)',
@@ -310,11 +311,11 @@ const CASES = {
       { key:'noise',  label:'시끄러운 교실', acc:40, w:.08, addable:true, plate:'🔊 소음 환경', data:250, steps:[40,58,73,84,90] },
     ],
     causes:[
-      { k:'blame', ok:false, label:'도윤이 말투 탓이에요', msg:'사람 탓이 아니에요. AI가 그런 말투 데이터를 충분히 배우지 못한 거예요.' },
+      { k:'blame', ok:false, label:'도윤이 말투 탓이에요', msg:'사람 탓이 아니에요. AI가 그런 말투 데이터를 충분히 학습하지 못한 거예요.' },
       { k:'lack',  ok:true,  label:'특정 상황의 데이터가 부족해요', msg:'맞아요. 지역 말투·어린이·소음 환경 데이터를 적게 배웠어요.' },
       { k:'skew',  ok:true,  label:'한쪽 데이터만 너무 많아요', msg:'맞아요. 조용한 곳 어른 목소리만 잔뜩 배워 치우쳤어요.' },
       { k:'test',  ok:true,  label:'세부 상황을 테스트하지 않았어요', msg:'맞아요. 전체 점수만 보고 상황별로 확인하지 않았어요.' },
-      { k:'hate',  ok:false, label:'AI가 미워해서요', msg:'AI는 미워하는 마음이 없어요. 문제는 배운 데이터예요.' },
+      { k:'hate',  ok:false, label:'AI가 미워해서요', msg:'AI는 미워하는 마음이 없어요. 문제는 학습한 데이터예요.' },
     ],
   },
   door: {
@@ -334,11 +335,11 @@ const CASES = {
       { key:'hat',   label:'모자·두꺼운 안경', acc:47, w:.06, addable:true, plate:'🧢 모자·안경', data:250, steps:[47,62,76,85,90] },
     ],
     causes:[
-      { k:'blame', ok:false, label:'그 사람 외모 탓이에요', msg:'사람 탓이 아니에요. AI가 그런 모습의 사진을 충분히 배우지 못한 거예요.' },
+      { k:'blame', ok:false, label:'그 사람 외모 탓이에요', msg:'사람 탓이 아니에요. AI가 그런 모습의 사진을 충분히 학습하지 못한 거예요.' },
       { k:'lack',  ok:true,  label:'특정 모습·조명의 데이터가 부족해요', msg:'맞아요. 어두운 곳·모자·안경 쓴 얼굴 사진을 적게 배웠어요.' },
       { k:'skew',  ok:true,  label:'한쪽 데이터만 너무 많아요', msg:'맞아요. 밝은 곳 정면 얼굴만 잔뜩 배워 치우쳤어요.' },
       { k:'test',  ok:true,  label:'세부 상황을 테스트하지 않았어요', msg:'맞아요. 전체 점수만 보고 상황별로 확인하지 않았어요.' },
-      { k:'hate',  ok:false, label:'AI가 미워해서요', msg:'AI는 미워하는 마음이 없어요. 문제는 배운 데이터예요.' },
+      { k:'hate',  ok:false, label:'AI가 미워해서요', msg:'AI는 미워하는 마음이 없어요. 문제는 학습한 데이터예요.' },
     ],
   },
   recommend: {
@@ -358,11 +359,11 @@ const CASES = {
       { key:'maker', label:'다양한 창작자',   acc:40, w:.02, addable:true, plate:'👥 여러 창작자', data:300, steps:[40,58,73,84,90] },
     ],
     causes:[
-      { k:'blame', ok:false, label:'내 취향이 이상해서요', msg:'사람 탓이 아니에요. AI가 과거 기록만 반복해 배운 거예요.' },
+      { k:'blame', ok:false, label:'내 취향이 이상해서요', msg:'사람 탓이 아니에요. AI가 과거 기록만 반복해 학습한 거예요.' },
       { k:'past',  ok:true,  label:'과거 기록 속 고정관념을 배웠어요', msg:'맞아요. 직업을 한쪽 성별로만 표현한 옛 데이터를 그대로 배웠어요.' },
       { k:'skew',  ok:true,  label:'한쪽 데이터만 너무 많아요', msg:'맞아요. 좋아하던 영상 기록만 잔뜩 배워 치우쳤어요.' },
       { k:'test',  ok:true,  label:'세부 상황을 테스트하지 않았어요', msg:'맞아요. 만족도만 보고 다양성을 확인하지 않았어요.' },
-      { k:'hate',  ok:false, label:'AI가 미워해서요', msg:'AI는 미워하는 마음이 없어요. 문제는 배운 데이터예요.' },
+      { k:'hate',  ok:false, label:'AI가 미워해서요', msg:'AI는 미워하는 마음이 없어요. 문제는 학습한 데이터예요.' },
     ],
   },
 };
@@ -626,7 +627,7 @@ $('btnAdd').onclick = function(){
     fb.textContent = `부족했던 상황을 다시 테스트하니 점수가 올랐어요. 전체 점수도 ${overall()}%로 다시 계산됐어요. (${taps}/${MAX_TAP})`;
     fb.className = 'feedback show good';
   }else{
-    fb.textContent = '사람은 그대로인데 AI가 좋아졌어요. 문제는 사람이 아니라 데이터였어요.';
+    fb.textContent = '사람은 그대로인데 AI의 결과가 좋아졌어요. 문제는 사람이 아니라 데이터였어요.';
     fb.className = 'feedback show good';
     $('limitMsg').classList.add('show');
     this.disabled = true; this.textContent = '이제 충분해요';

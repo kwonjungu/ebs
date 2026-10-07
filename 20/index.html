@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <link rel="icon" type="image/png" href="../assets/brand/favicon-32.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>프롬프트 마스코트 · AI 탐험대 20</title>
+<title>20강 내 상상 속 마스코트, AI로 그려 볼까? · AI 탐험대</title>
 <style>
   :root{
     --ink:#141414; --paper:#FBF7EC; --surface:#FFFFFF;
@@ -149,6 +149,7 @@
 </style>
 </head>
 <body>
+<div class="lessonbar" style="background:#141414;color:#FBF7EC;font:700 13px/1.4 -apple-system,'Segoe UI',sans-serif;padding:7px 16px;text-align:center;letter-spacing:-.01em">중급 20강 · 내 상상 속 마스코트, AI로 그려 볼까?</div>
 <div class="wrap">
   <nav class="nav">
     <a class="back" href="../">← 전체 목록</a>
@@ -202,10 +203,10 @@
 
   <div class="obs">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--amber)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/></svg>
-    <span><b>발견해 봐요</b> — 대상·행동·배경·스타일·분위기를 <b>구체적으로 더할수록</b> 원하는 그림에 가까워져요. 반대로 “멋지게 그려 줘”처럼 막연하게 말하면 AI가 마음대로 정해서 엉뚱한 그림이 나와요.</span>
+    <span><b>발견해 봐요</b> — 대상·행동·배경·스타일·분위기를 <b>구체적으로 더할수록</b> 원하는 그림에 가까워져요. 반대로 “멋지게 그려 줘”처럼 막연하게 요청하면 AI가 정해지지 않은 부분을 임의로 채워서 엉뚱한 그림이 나와요.</span>
   </div>
   <details class="check">
-    <summary>결과 확인 체크리스트 — 캔바 AI로 만들기 전에 살펴봐요<span class="caret" aria-hidden="true">▾</span></summary>
+    <summary>결과 확인 체크리스트 — 생성형 AI 이미지 도구로 만들기 전에 살펴봐요<span class="caret" aria-hidden="true">▾</span></summary>
     <ul>
       <li><span class="box" aria-hidden="true"></span><span>내가 정한 마스코트 대상이 잘 보이나요?</span></li>
       <li><span class="box" aria-hidden="true"></span><span>필요한 요소(운동화·배지 등)가 들어 있나요?</span></li>
@@ -247,7 +248,7 @@
 
   <div class="quicklinks">
     <div class="ql-h">🔗 링크 바로가기</div>
-    <a class="ql tool" href="https://www.canva.com/ai" target="_blank" rel="noopener noreferrer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4M14 4h6v6M20 4l-9 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>체험 도구 · 캔바 AI에서 이미지 만들기</span><span class="arw" aria-hidden="true">↗</span></a>
+    <a class="ql tool" href="https://gemini.google.com/app?hl=ko" target="_blank" rel="noopener noreferrer"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4M14 4h6v6M20 4l-9 9" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>체험 도구 · Gemini에서 이미지 만들기</span><span class="arw" aria-hidden="true">↗</span></a>
   </div>
 
 
@@ -339,7 +340,7 @@ function vague(){
   clearFixes();
   $('revise').classList.remove('show');
   $('pic').src='../assets/mascot/vague.png';
-  $('steplabel').textContent='막연한 요청의 결과 — AI가 마음대로 정했어요';
+  $('steplabel').textContent='막연한 요청의 결과 — 빠진 부분이 임의로 채워졌어요';
   $('prompt').innerHTML='<span class="base">멋진 마스코트</span> 그려 줘 <span class="empty">(무엇을·어떻게가 없어요)</span>';
   const f=$('flash'); f.innerHTML='구체적인 말이 없으면 <b>이렇게 엉뚱해져요</b>'; f.classList.add('show');
   clearTimeout(flash._t); flash._t=setTimeout(()=>f.classList.remove('show'),2600);

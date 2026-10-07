@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <link rel="icon" type="image/png" href="../assets/brand/favicon-32.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI DJ! 내 기분을 읽고 노래를 골라요 — AI 탐험대 18</title>
+<title>18강 AI DJ는 내 기분에 맞는 노래를 추천할 수 있을까? · AI 탐험대</title>
 <style>
   :root{
     --ink:#141414; --paper:#FBF7EC; --surface:#FFFFFF;
@@ -267,6 +267,7 @@
 </style>
 </head>
 <body>
+<div class="lessonbar" style="background:#141414;color:#FBF7EC;font:700 13px/1.4 -apple-system,'Segoe UI',sans-serif;padding:7px 16px;text-align:center;letter-spacing:-.01em">중급 18강 · AI DJ는 내 기분에 맞는 노래를 추천할 수 있을까?</div>
 <div class="wrap">
 
   <nav class="nav">
@@ -279,7 +280,7 @@
 
   <header>
     <span class="kicker">단어가 곧 단서</span>
-    <h1>AI DJ! 내 기분을 읽고<br>노래를 골라요</h1>
+    <h1>AI DJ! 일기 속 감정을<br>분석해 노래를 추천해요</h1>
     <p class="lead">일기 속 단어를 단서로 감정을 추정하고, 어울리는 음악을 추천해요.</p>
     <img class="hero-art" src="../assets/art/18_dj.png" alt="">
   </header>
@@ -336,7 +337,7 @@
 
   <div class="obs" id="obsNote">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--amber)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/></svg>
-    <span><b>관찰 포인트</b> — AI는 속마음이 아니라 <b>단어</b>를 봐요. "오늘 급식은 카레였다"처럼 감정 단어가 없는 일기도 넣어 봐요.</span>
+    <span><b>관찰 포인트</b> — AI는 속마음이 아니라 글 속 <b>단어</b>를 분석해요. "오늘 급식은 카레였다"처럼 감정 단어가 없는 일기도 넣어 봐요.</span>
   </div>
   <section class="uses" aria-label="감정 분석을 쓰는 곳">
     <div class="uses-h">🔎 감정 분석은 음악 말고 이런 곳에도 쓰여요</div>
@@ -375,7 +376,7 @@
       <li>위 버튼으로 <b>.ent 파일</b>을 내려받고, <b>엔트리(playentry.org)</b>에서 [작품 불러오기]로 열어요.</li>
       <li>인공지능 블록의 <b>학습하기</b>에서 감정 클래스 <b>네 개</b>가 있는지 확인해요: 기쁨/신남, 슬픔/우울, 화남/스트레스, 불안/긴장.</li>
       <li>아래 카드의 <b>[예시 문장 복사]</b>를 눌러, 같은 이름의 클래스 입력칸에 <b>붙여넣기</b> 해요. (한 줄에 한 문장씩 들어가요.)</li>
-      <li><b>[학습하기]</b>를 눌러요. AI는 마음을 읽는 게 아니라 <b>표현의 패턴</b>을 익히는 거예요.</li>
+      <li><b>[학습하기]</b>를 눌러요. AI는 마음을 읽는 게 아니라 <b>표현의 패턴</b>을 학습하는 거예요.</li>
       <li>학습에 안 쓴 <b>새 문장</b>을 넣어 결과를 확인하고, 추천 음악이 어울리는지 <b>내가 판단</b>해요.</li>
     </ol>
 
@@ -927,7 +928,7 @@ function showMatchNote(aiTop, hasClue) {
     el.textContent = '내 예측(' + me + ')과 AI 분석(' + ai + ')이 같아요. 어떤 단어를 보고 그렇게 골랐는지 비교해 봐요.';
   } else {
     el.className = 'matchnote miss';
-    el.textContent = '내 예측은 ' + me + ', AI 분석은 ' + ai + '이에요. 서로 다른 건 틀린 게 아니에요 — AI는 속마음이 아니라 단어를 보고 골라요.';
+    el.textContent = '내 예측은 ' + me + ', AI 분석은 ' + ai + '이에요. 서로 다른 건 틀린 게 아니에요 — AI는 속마음이 아니라 글 속 단어를 분석해 분류해요.';
   }
   el.style.display = 'flex';
 }
