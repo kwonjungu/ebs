@@ -78,7 +78,8 @@
   .card.green{border-top-color:var(--green)}
   .icons{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .icon{background:var(--paper);border:2.5px solid var(--ink);border-radius:var(--r-sm);text-align:center;padding:10px 4px;font-weight:900;font-size:18px}
-  .icon svg{margin:0 auto 4px}
+  .icon{display:flex;flex-direction:column;align-items:center;white-space:nowrap;word-break:keep-all;line-height:1.2}
+  .icon svg{display:block;flex:none;margin:0 auto 6px}
   .icon.opt{background:var(--amber-soft)}
   .promise-art{display:flex;align-items:center;justify-content:center;gap:14px}
   .promise-art img{width:140px;height:140px;object-fit:contain;filter:drop-shadow(3px 3px 0 var(--ink))}
@@ -258,7 +259,7 @@
 </section>
 
 <!-- 10 -->
-<section class="page step" id="p-10" data-toc="이럴 땐" data-n="10" data-figs="3">
+<section class="page step" id="p-10" data-toc="이럴 땐" data-n="10" data-figs="2">
   <div class="head"><div class="badge">10</div><div><span class="kicker">STEP 10</span><h2>이럴 땐<span class="dot">.</span></h2></div></div>
   <div class="help">
     <figure class="fig"><img src="manual_img/s10a_nofolder.png" alt="앱 파일을 찾을 수 없어요 창"></figure>
@@ -266,18 +267,14 @@
   </div>
   <div class="help">
     <figure class="fig"><img src="manual_img/s10b_portbusy.png" alt="다른 프로그램이 쓰고 있어서 시작할 수 없다는 창"></figure>
-    <p class="say"><small>이 창이 나오면</small>다른 프로그램이 쓰고 있어서 못 켜요. 컴퓨터를 껐다 켜 보고, 안 되면 인터넷 주소로 들어가요.</p>
-  </div>
-  <div class="help">
-    <figure class="fig"><img src="manual_img/s10c_url.png" alt="주소창에 https://kwonjungu.github.io/ebs/ 를 써요"></figure>
-    <p class="say"><small>켜지지 않는 컴퓨터는</small>exe가 막힌 컴퓨터는 이 주소를 써요. 같은 체험을 할 수 있어요.</p>
+    <p class="say"><small>이 창이 나오면</small>다른 프로그램이 쓰고 있어서 못 켜요. 컴퓨터를 껐다 켜 보고, 안 되면 선생님께 말해요.</p>
   </div>
   <p class="mocknote">그림은 이해를 돕는 모형이에요</p>
   <div class="foot"><div class="teacher" style="flex:1"><h3>선생님용</h3><ul>
-    <li>exe는 서명되지 않아 SmartScreen이 뜹니다. 학교 보안 정책으로 막히면 온라인 주소를 쓰세요.</li>
+    <li>exe는 서명되지 않아 SmartScreen이 뜹니다. [추가 정보] → [실행]을 누르면 열립니다. 학교 보안 정책으로 막히면 전산 담당자에게 허용을 요청하세요.</li>
     <li>앱은 내 컴퓨터(127.0.0.1:47815)에서 작은 웹 서버로 돌고 Edge 앱 창으로 열립니다. 학생 정보는 밖으로 나가지 않습니다.</li>
     <li>진행 기록은 이 컴퓨터의 브라우저 저장소에만 있습니다. 15강 음성 인식은 인터넷이 필요합니다.</li>
-    <li>포트 충돌 메시지가 반복되면 재부팅하거나 온라인 주소를 쓰세요.</li>
+    <li>포트 충돌 메시지가 반복되면 재부팅하세요.</li>
     <li>닉네임이나 번호를 쓰게 지도해 주세요.</li></ul></div></div>
 </section>
 

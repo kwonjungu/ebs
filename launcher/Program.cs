@@ -33,7 +33,7 @@ namespace EbsLauncher
                     if (opt.OpenBrowser) BrowserLauncher.Open(url);
                     return 0;
                 }
-                Notify(opt, "다른 프로그램이 " + opt.Port + "번 포트를 쓰고 있어서 시작할 수 없어요.\n\n컴퓨터를 다시 시작한 뒤 실행하거나, 온라인 주소를 사용해 주세요.\nhttps://kwonjungu.github.io/ebs/");
+                Notify(opt, "다른 프로그램이 " + opt.Port + "번 포트를 쓰고 있어서 시작할 수 없어요.\n\n컴퓨터를 다시 시작한 뒤 실행해 주세요.\n그래도 안 되면 선생님께 말해요.");
                 return 3;
             }
 
