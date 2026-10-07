@@ -13,6 +13,7 @@ head -c 200000 /dev/urandom | gzip > "$APP/x.ent"
 head -c 9000000 /dev/urandom > "$APP/big.bin"
 printf 'secret' > "$WORK/secret.txt"
 
+if curl -s -o /dev/null "$BASE/__ebs_ping"; then echo "FAIL port $PORT already in use (stale server?)"; exit 1; fi
 "$EXE" --no-browser --port $PORT --root "$(cygpath -w "$APP")" >/dev/null 2>&1 &
 PID=$!
 WINPID=$(cat /proc/$PID/winpid 2>/dev/null)
