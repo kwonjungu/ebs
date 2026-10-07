@@ -16,4 +16,17 @@ if ($LASTEXITCODE -ne 0) { throw "csc failed ($LASTEXITCODE)" }
 Write-Host "built $Exe"
 
 if ($SkipPackage) { return }
-# 패키징 단계는 Task 7에서 추가
+$App = Join-Path $Out 'app'
+if (Test-Path $App) { Remove-Item -Recurse -Force $App }
+New-Item -ItemType Directory -Force $App | Out-Null
+Copy-Item (Join-Path $Repo 'index.html') $App
+14..25 | ForEach-Object { Copy-Item -Recurse (Join-Path $Repo "$_") (Join-Path $App "$_") }
+Copy-Item -Recurse (Join-Path $Repo 'assets') (Join-Path $App 'assets')
+Get-ChildItem $App -Recurse -Filter .gitkeep | Remove-Item -Force
+Copy-Item (Join-Path $Repo 'package\사용법.txt') $Out
+
+$Zip = Join-Path $Repo "dist\${AppName}_v$Version.zip"
+if (Test-Path $Zip) { Remove-Item -Force $Zip }
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+[IO.Compression.ZipFile]::CreateFromDirectory($Out, $Zip, [IO.Compression.CompressionLevel]::Optimal, $true, [Text.Encoding]::UTF8)
+Write-Host ("packaged {0} ({1:N1} MB)" -f $Zip, ((Get-Item $Zip).Length / 1MB))
