@@ -1,4 +1,15 @@
-# AI 탐험가 라이선스 발급 미션 (EBS AI탐험대 중급 25차시)
+# EBS AI 탐험대 중급 14~25강 체험
+
+## PC 앱으로 쓰기 (Windows)
+
+1. [Releases](https://github.com/kwonjungu/ebs/releases)에서 `AI탐험대_v1.0.zip`을 내려받아 압축을 풉니다.
+2. `AI탐험대.exe`를 더블클릭하면 체험 창이 열립니다. 자세한 안내는 압축 안의 `사용법.txt`.
+3. 인터넷 주소로 쓰려면: https://kwonjungu.github.io/ebs/
+
+**빌드(개발자):** `powershell -ExecutionPolicy Bypass -File build.ps1` → `dist\AI탐험대_v1.0.zip`
+테스트: `bash launcher/tests/server_test.sh dist/AI탐험대/AI탐험대.exe`, `bash launcher/tests/startup_test.sh dist/AI탐험대/AI탐험대.exe`, `bash tests/check_vendor.sh`, `bash tests/check_brand.sh`, `bash tests/package_test.sh`, `python -I brand/test_make_icons.py`
+
+## 25강 · AI 탐험가 라이선스 발급 미션
 
 중급 25차시 종합 정리 활동을 게임형 웹앱으로 만든 것입니다. 설치 없이 `index.html`을 브라우저로 열면 됩니다.
 
