@@ -153,13 +153,13 @@
 <div class="wrap">
   <nav class="nav">
     <a class="back" href="../">← 전체 목록</a>
-    <span class="lesson-tag">20강 · 프롬프트</span>
+    <span class="lesson-tag">20강 · 이미지 생성용 프롬프트</span>
   </nav>
 
   <header>
     <span class="kicker">한 마디씩 더할수록 또렷해져요</span>
     <h1>말을 <span class="u">더할수록</span><br>그림이 자세해져요</h1>
-    <p class="lead">AI 그림 도구는 내가 쓴 <b>말(프롬프트)</b>을 보고 그려요. 요소를 하나씩 더하면 그림이 어떻게 <b>또렷</b>해지는지 직접 만들어 봐요.<br><span style="font-size:13px">※ 실제 AI로 미리 만들어 둔 그림으로 원리를 체험해요.</span></p>
+    <p class="lead">생성형 AI 이미지 도구는 내가 쓴 <b>글(이미지 생성용 프롬프트)</b>을 바탕으로 그림을 만들어요. 요소를 하나씩 더하면 그림이 어떻게 <b>또렷</b>해지는지 직접 만들어 봐요.<br><span style="font-size:13px">※ 생성형 AI 이미지 도구로 미리 만들어 둔 그림으로 원리를 체험해요.</span></p>
   </header>
 
   <div class="safe">
@@ -176,7 +176,7 @@
 
     <!-- 빌더 -->
     <div class="builder">
-      <div class="bh">주문서(프롬프트) 만들기</div>
+      <div class="bh">이미지 생성용 프롬프트 만들기</div>
       <div class="prompt" id="prompt" aria-live="polite"><span class="base">고양이 마스코트</span><span class="empty">를 그려 줘 — 아래에서 하나씩 더해 봐요</span></div>
 
       <button class="addbtn" id="b1" onclick="addStep(1)"><span class="n">1</span><span>“달리는 모습”을 더해요</span><span class="tick" aria-hidden="true"></span></button>
@@ -203,10 +203,10 @@
 
   <div class="obs">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--amber)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/></svg>
-    <span><b>발견해 봐요</b> — 대상·행동·배경·스타일·분위기를 <b>구체적으로 더할수록</b> 원하는 그림에 가까워져요. 반대로 “멋지게 그려 줘”처럼 막연하게 요청하면 AI가 정해지지 않은 부분을 임의로 채워서 엉뚱한 그림이 나와요.</span>
+    <span><b>발견해 봐요</b> — 대상·행동·배경·스타일·분위기를 <b>구체적으로 더할수록</b> 원하는 그림에 가까워져요. 반대로 “멋지게 그려 줘”처럼 막연하게 요청하면 빠진 부분이 AI가 학습한 흔한 모습으로 채워져서 엉뚱한 그림이 나와요.</span>
   </div>
   <details class="check">
-    <summary>결과 확인 체크리스트 — 생성형 AI 이미지 도구로 만들기 전에 살펴봐요<span class="caret" aria-hidden="true">▾</span></summary>
+    <summary>결과 확인 체크리스트 — 생성형 AI 이미지 도구로 만든 그림을 확인할 때 살펴봐요<span class="caret" aria-hidden="true">▾</span></summary>
     <ul>
       <li><span class="box" aria-hidden="true"></span><span>내가 정한 마스코트 대상이 잘 보이나요?</span></li>
       <li><span class="box" aria-hidden="true"></span><span>필요한 요소(운동화·배지 등)가 들어 있나요?</span></li>
@@ -340,7 +340,7 @@ function vague(){
   clearFixes();
   $('revise').classList.remove('show');
   $('pic').src='../assets/mascot/vague.png';
-  $('steplabel').textContent='막연한 요청의 결과 — 빠진 부분이 임의로 채워졌어요';
+  $('steplabel').textContent='막연한 요청의 결과 — 빠진 내용이 엉뚱하게 채워졌어요';
   $('prompt').innerHTML='<span class="base">멋진 마스코트</span> 그려 줘 <span class="empty">(무엇을·어떻게가 없어요)</span>';
   const f=$('flash'); f.innerHTML='구체적인 말이 없으면 <b>이렇게 엉뚱해져요</b>'; f.classList.add('show');
   clearTimeout(flash._t); flash._t=setTimeout(()=>f.classList.remove('show'),2600);

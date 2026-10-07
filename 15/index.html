@@ -242,7 +242,7 @@
 
     <!-- B -->
     <section class="panel b" aria-labelledby="tB">
-      <div class="tagrow"><span class="sigil">B</span><div><div class="psub">학습한 AI · STT</div><div class="ptitle" id="tB">음성 인식</div></div></div>
+      <div class="tagrow"><span class="sigil">B</span><div><div class="psub">학습한 AI · STT</div><div class="ptitle" id="tB">음성 인식(STT)</div></div></div>
       <p class="pdesc"><b>말의 내용</b>을 글자로 바꿔요. 등록된 명령어와 맞을 때만 실행돼요.</p>
       <div class="cmds"><span class="cmd">불 켜 줘</span><span class="cmd">불 꺼 줘</span><span class="cmd">음악 틀어 줘</span><span class="cmd">음악 꺼 줘</span></div>
       <div class="steps" id="steps" aria-hidden="true">
@@ -415,9 +415,9 @@ if(!SR){ $('nosr').style.display='block'; $('btnB').disabled=true; }
 $('btnB').onclick=function(){
   if(listening){ try{rec.stop();}catch(e){} return; }
   rec=new SR(); rec.lang='ko-KR'; rec.interimResults=true;
-  rec.onstart=()=>{listening=true; this.textContent='듣는 중… (누르면 멈춤)'; this.classList.add('rec'); $('stateB').textContent='명령을 말해 보세요'; $('waveB').classList.add('active'); stepSet(1);};
+  rec.onstart=()=>{listening=true; this.textContent='인식 중… (누르면 멈춤)'; this.classList.add('rec'); $('stateB').textContent='명령을 말해 보세요'; $('waveB').classList.add('active'); stepSet(1);};
   rec.onend=()=>{listening=false; this.textContent='음성 인식 시작'; this.classList.remove('rec'); $('waveB').classList.remove('active'); stepReset();};
-  rec.onerror=e=>{ $('stateB').textContent = e.error==='not-allowed' ? '마이크 사용을 허용해 주세요' : '잘 못 들었어요. 다시 시도!'; stepReset(); if(listening)stepSet(1); };
+  rec.onerror=e=>{ $('stateB').textContent = e.error==='not-allowed' ? '마이크 사용을 허용해 주세요' : '음성을 인식하지 못했어요. 다시 시도!'; stepReset(); if(listening)stepSet(1); };
   rec.onresult=ev=>{
     let fin='', inter='';
     for(const r of ev.results){ if(r.isFinal) fin+=r[0].transcript; else inter+=r[0].transcript; }

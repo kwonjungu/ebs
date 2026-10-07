@@ -140,13 +140,13 @@
 <div class="wrap">
   <nav class="nav">
     <a class="back" href="../">← 전체 목록</a>
-    <span class="lesson-tag">19강 · 창의성 조절</span>
+    <span class="lesson-tag">19강 · 창의성 설정</span>
   </nav>
 
   <header>
-    <span class="kicker">같은 질문, 다른 온도</span>
+    <span class="kicker">같은 질문, 다른 창의성 설정</span>
     <h1>창의성을 <span class="u">조절</span>하면<br>AI의 답이 달라져요</h1>
-    <p class="lead">같은 질문이라도 창의성(온도)을 <b>낮추면 안정적</b>, <b>높이면 새롭고 엉뚱</b>하게 답해요. 슬라이더를 움직이고 <b>답 받기</b>를 눌러 직접 비교해 봐요. <br><span style="font-size:13px">※ 미리 준비한 예시 답변으로 원리를 체험해요. 실제 생성형 AI에서는 Gemini로 창의성 설정을 바꿔 결과를 비교해 봐요.</span></p>
+    <p class="lead">같은 질문이라도 창의성 설정을 <b>낮추면 안정적</b>, <b>높이면 새롭고 엉뚱</b>하게 답해요. 슬라이더를 움직이고 <b>답 받기</b>를 눌러 직접 비교해 봐요. <br><span style="font-size:13px">※ 미리 준비한 예시 답변으로 원리를 체험해요. 실제 생성형 AI에서는 Gemini로 창의성 설정을 바꿔 결과를 비교해 봐요.</span></p>
   </header>
 
   <div class="safe">
@@ -155,8 +155,8 @@
   </div>
 
   <div class="dial">
-    <div class="row"><h2>창의성(Temperature·온도) 다이얼</h2><span class="badge" id="tval">1.0</span></div>
-    <input type="range" id="temp" min="0" max="100" value="45" aria-label="창의성 온도 조절" aria-describedby="modecap">
+    <div class="row"><h2>창의성 설정(Temperature) 다이얼</h2><span class="badge" id="tval">1.0</span></div>
+    <input type="range" id="temp" min="0" max="100" value="45" aria-label="창의성 설정 조절" aria-describedby="modecap">
     <div class="ends"><span>낮음 · 안정적</span><span>높음 · 새로움</span></div>
     <p class="modecap" id="modecap">지금은 <b>보통</b> — 자연스럽고 살짝 색다른 답이 나와요</p>
   </div>
@@ -165,7 +165,7 @@
 
   <div class="qcard">
     <div class="qlabel">질문 (프롬프트)</div>
-    <p style="font-size:12.5px;font-weight:700;color:var(--muted);margin:2px 0 8px">비교할 땐 질문은 그대로 두고 창의성만 바꿔요</p>
+    <p style="font-size:12.5px;font-weight:700;color:var(--muted);margin:2px 0 8px">비교할 땐 질문은 그대로 두고 창의성 설정만 바꿔요</p>
     <p class="qtext" id="qtext">—</p>
     <span class="atag" id="atag" style="display:none"></span>
     <div class="answer" id="answer"><span style="color:var(--muted);font-weight:600">슬라이더를 정하고 <b>답 받기</b>를 눌러요</span></div>
@@ -176,7 +176,7 @@
 
   <div class="obs">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="7" stroke="var(--amber)" stroke-width="2.4"/><path d="m16 16 5 5" stroke="var(--amber)" stroke-width="2.4" stroke-linecap="round"/></svg>
-    <span><b>발견해 봐요</b> — 같은 창의성이어도 <b>답 받기</b>를 여러 번 누르면 조금씩 달라져요. 낮음은 매번 비슷하고, 높음은 매번 더 달라져요. 정확한 안내문은 낮게, 재밌는 이야기는 높게가 좋아요. AI 답은 사실과 다를 수 있어 마지막엔 사람이 읽고 확인해요.</span>
+    <span><b>발견해 봐요</b> — 같은 창의성 설정이어도 <b>답 받기</b>를 여러 번 누르면 조금씩 달라져요. 낮음은 매번 비슷하고, 높음은 매번 더 달라져요. 정확한 안내문은 낮게, 재밌는 이야기는 높게가 좋아요. AI 답은 사실과 다를 수 있어 마지막엔 사람이 읽고 확인해요.</span>
   </div>
 
   <div class="cmp-head"><h2>한눈에 비교</h2><span class="bar" aria-hidden="true"></span></div>
@@ -190,7 +190,7 @@
   </table>
   <div class="cmp-head"><h2>상황에 맞게 골라 봐요</h2><span class="bar" aria-hidden="true"></span></div>
   <div class="qcard" id="quiz">
-    <p style="font-size:13px;font-weight:700;color:var(--muted);margin-bottom:14px">높음이 항상 정답은 아니에요. 각 상황에 어울리는 창의성을 골라 봐요.</p>
+    <p style="font-size:13px;font-weight:700;color:var(--muted);margin-bottom:14px">높음이 항상 정답은 아니에요. 각 상황에 어울리는 창의성 설정을 골라 봐요.</p>
     <div id="quizlist"></div>
     <p class="modecap" id="quizscore" style="color:var(--ink);min-height:0;margin-top:4px" aria-live="polite"></p>
   </div>
