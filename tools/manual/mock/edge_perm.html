@@ -1,0 +1,15 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><link rel="stylesheet" href="common.css">
+<body><div id="stage" style="height:648px;background:#fff">
+ <div style="height:48px;background:#DCE6F5;display:flex;align-items:center;padding:0 16px;gap:12px">
+  <div style="flex:1;height:34px;border-radius:17px;background:#fff;padding:5px 18px;font-size:17px;color:#333;display:flex;gap:10px;align-items:center">
+   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="2.4"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>127.0.0.1:47815</div></div>
+ <img id="bg" alt="" style="width:960px;display:block">
+ <div style="position:absolute;left:18px;top:58px;width:640px;background:#fff;border:1px solid #c9c9c9;border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.35);padding:18px 20px">
+  <div style="font-size:19px;font-weight:700;line-height:1.35">127.0.0.1:47815에서 다음을 사용하려고 합니다: 카메라, 마이크</div>
+  <div style="margin-top:14px;font-size:18px;display:flex;gap:26px">
+   <span style="display:flex;gap:8px;align-items:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m16 11 6-3v8l-6-3"/></svg>카메라</span>
+   <span style="display:flex;gap:8px;align-items:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>마이크</span></div>
+  <div style="display:flex;gap:12px;margin-top:18px"><span class="btn-w primary" data-callout="allow" style="flex:1;text-align:center">허용</span><span class="btn-w" style="flex:1;text-align:center">차단</span></div>
+ </div>
+</div>
+<script>const b=new URLSearchParams(location.search).get('bg');if(b)document.getElementById('bg').src=b</script></body></html>

@@ -1,0 +1,19 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><link rel="stylesheet" href="common.css">
+<style>#stage{width:680px;height:auto;background:#E9E9E9;padding:0}
+.box{background:#fff;border:1px solid #9a9a9a;box-shadow:0 8px 28px rgba(0,0,0,.25)}
+.tb{height:42px;background:#fff;padding:0 16px;display:flex;align-items:center;font-size:17px;border-bottom:1px solid #eee}
+.tb .x{margin-left:auto;font-size:20px;color:#444}
+.body{display:flex;gap:22px;padding:30px 28px 28px;align-items:flex-start}
+.msg{font-size:21px;line-height:1.55;white-space:pre-line;color:#000}
+.foot{background:#F0F0F0;padding:18px 24px;display:flex;justify-content:flex-end}
+.foot .btn-w{min-width:110px;text-align:center;padding:8px 20px;font-size:19px;background:#E1E1E1;border-color:#ADADAD;border-radius:3px;outline:2px solid #0067C0;outline-offset:-3px}</style>
+<body><div id="stage"><div class="box"><div class="tb">AI 탐험대<span class="x">&#10005;</span></div>
+<div class="body"><svg width="48" height="48" viewBox="0 0 48 48" style="flex:none"><circle cx="24" cy="24" r="22" fill="#2B7DD8"/><rect x="21" y="20" width="6" height="16" rx="2" fill="#fff"/><circle cx="24" cy="13" r="3.5" fill="#fff"/></svg>
+<div class="msg" id="msg"></div></div><div class="foot"><span class="btn-w" data-callout="ok">확인</span></div></div></div>
+<!-- 본문은 launcher/Program.cs 의 Notify 문자열과 같아야 한다 (capture.py가 비교). 포트=47815 -->
+<script>
+const T={
+ 2:"앱 파일(app 폴더)을 찾을 수 없어요.\n\n압축 파일(zip)을 먼저 [모두 압축 풀기] 한 다음,\n풀린 폴더 안의 AI탐험대.exe를 실행해 주세요.",
+ 3:"다른 프로그램이 47815번 포트를 쓰고 있어서 시작할 수 없어요.\n\n컴퓨터를 다시 시작한 뒤 실행하거나, 온라인 주소를 사용해 주세요.\nhttps://kwonjungu.github.io/ebs/"};
+document.getElementById('msg').textContent=T[new URLSearchParams(location.search).get('t')];
+</script></body></html>

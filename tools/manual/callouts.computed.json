@@ -1,0 +1,182 @@
+{
+ "s01_download": [
+  {
+   "from": "top-left",
+   "len": 110,
+   "num": null,
+   "pad": 8,
+   "rh": 0.148,
+   "rw": 0.3875,
+   "rx": 0.5333,
+   "ry": 0.3352
+  }
+ ],
+ "s02_extract": [
+  {
+   "from": "bottom-right",
+   "len": 110,
+   "num": null,
+   "pad": 4,
+   "rh": 0.0882,
+   "rw": 0.3292,
+   "rx": 0.3625,
+   "ry": 0.5179
+  }
+ ],
+ "s03_folder": [
+  {
+   "from": "top-right",
+   "len": 110,
+   "num": null,
+   "pad": 6,
+   "rh": 0.3667,
+   "rw": 0.2701,
+   "rx": 0.0844,
+   "ry": 0.1907
+  }
+ ],
+ "s04a_smart": [
+  {
+   "from": "bottom-right",
+   "len": 110,
+   "num": null,
+   "pad": 14,
+   "rh": 0.05,
+   "rw": 0.089,
+   "rx": 0.2188,
+   "ry": 0.4935
+  }
+ ],
+ "s04b_smart": [
+  {
+   "from": "top-right",
+   "len": 110,
+   "num": null,
+   "pad": 14,
+   "rh": 0.1019,
+   "rw": 0.1083,
+   "rx": 0.4969,
+   "ry": 0.6602
+  }
+ ],
+ "s05_hub": [
+  {
+   "from": "top-right",
+   "len": 90,
+   "num": null,
+   "pad": 12,
+   "rh": 0.1806,
+   "rw": 0.287,
+   "rx": 0.1234,
+   "ry": 0.1292
+  }
+ ],
+ "s06_pick": [
+  {
+   "from": "bottom-right",
+   "len": 110,
+   "num": null,
+   "pad": 8,
+   "rh": 0.3158,
+   "rw": 0.2417,
+   "rx": 0.6349,
+   "ry": 0.0375
+  }
+ ],
+ "s06b_topbar": [
+  {
+   "from": "bottom-right",
+   "len": 70,
+   "num": null,
+   "pad": 9,
+   "rh": 0.1133,
+   "rw": 0.316,
+   "rx": 0.342,
+   "ry": 0.2467
+  }
+ ],
+ "s07_perm": [
+  {
+   "from": "bottom-right",
+   "len": 110,
+   "num": null,
+   "pad": 6,
+   "rh": 0.0684,
+   "rw": 0.3052,
+   "rx": 0.0406,
+   "ry": 0.2453
+  }
+ ],
+ "s07b_camera": [
+  {
+   "from": "top-right",
+   "len": 70,
+   "num": null,
+   "pad": 8,
+   "rh": 0.2038,
+   "rw": 0.2677,
+   "rx": 0.3662,
+   "ry": 0.7346
+  }
+ ],
+ "s08_entry": [
+  {
+   "from": "top-right",
+   "len": 70,
+   "num": null,
+   "pad": 6,
+   "rh": 0.2948,
+   "rw": 0.9822,
+   "rx": 0.0089,
+   "ry": 0.3158
+  }
+ ],
+ "s09_tray": [
+  {
+   "from": "top-left",
+   "len": 110,
+   "num": null,
+   "pad": 14,
+   "rh": 0.1062,
+   "rw": 0.2562,
+   "rx": 0.7156,
+   "ry": 0.7417
+  }
+ ],
+ "s10a_nofolder": [
+  {
+   "from": "top-left",
+   "len": 40,
+   "num": null,
+   "pad": 6,
+   "rh": 0.14,
+   "rw": 0.1618,
+   "rx": 0.8015,
+   "ry": 0.7991
+  }
+ ],
+ "s10b_portbusy": [
+  {
+   "from": "top-left",
+   "len": 40,
+   "num": null,
+   "pad": 6,
+   "rh": 0.1158,
+   "rw": 0.1618,
+   "rx": 0.8015,
+   "ry": 0.8338
+  }
+ ],
+ "s10c_url": [
+  {
+   "from": "bottom-right",
+   "len": 110,
+   "num": null,
+   "pad": 12,
+   "rh": 0.15,
+   "rw": 0.6708,
+   "rx": 0.1368,
+   "ry": 0.2472
+  }
+ ]
+}

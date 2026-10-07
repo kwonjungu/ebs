@@ -1,0 +1,131 @@
+{
+ "_설명": "강조 표시 설정. 좌표는 손으로 적지 않고 capture.py가 대상(target)의 상자를 Playwright로 읽어 그림 크기 대비 비율로 계산(callouts.computed.json)하고, Pillow가 raw/ 원본 위에 빨간 둥근 네모(#E53935)+흰 외곽선+화살표(+번호 원 num)를 구워 manual_img/ 에 저장한다. pad: 대상 둘레 여유(px, 음수면 안쪽), from: 화살표가 오는 방향(top-left|top-right|bottom-left|bottom-right), len: 화살표 길이(px), tight: 글자 영역만.",
+ "s01_download": [
+  {
+   "target": "item",
+   "shape": "rect",
+   "pad": 8,
+   "from": "top-left"
+  }
+ ],
+ "s02_extract": [
+  {
+   "target": "extract",
+   "shape": "rect",
+   "pad": 4,
+   "from": "bottom-right"
+  }
+ ],
+ "s03_folder": [
+  {
+   "target": "exe",
+   "shape": "rect",
+   "pad": 6,
+   "from": "top-right"
+  }
+ ],
+ "s04a_smart": [
+  {
+   "target": "more",
+   "shape": "rect",
+   "pad": 14,
+   "from": "bottom-right"
+  }
+ ],
+ "s04b_smart": [
+  {
+   "target": "run",
+   "shape": "rect",
+   "pad": 14,
+   "from": "top-right"
+  }
+ ],
+ "s05_hub": [
+  {
+   "target": "h1",
+   "shape": "rect",
+   "pad": 12,
+   "from": "top-right",
+   "tight": true,
+   "len": 90
+  }
+ ],
+ "s06_pick": [
+  {
+   "target": "card",
+   "shape": "rect",
+   "pad": 8,
+   "from": "bottom-right"
+  }
+ ],
+ "s06b_topbar": [
+  {
+   "target": "bar",
+   "shape": "rect",
+   "pad": 9,
+   "from": "bottom-right",
+   "len": 70,
+   "tight": true
+  }
+ ],
+ "s07_perm": [
+  {
+   "target": "allow",
+   "shape": "rect",
+   "pad": 6,
+   "from": "bottom-right"
+  }
+ ],
+ "s08_entry": [
+  {
+   "target": "dl",
+   "shape": "rect",
+   "pad": 6,
+   "from": "top-right",
+   "len": 70
+  }
+ ],
+ "s09_tray": [
+  {
+   "target": "quit",
+   "shape": "rect",
+   "pad": 14,
+   "from": "top-left"
+  }
+ ],
+ "s10c_url": [
+  {
+   "target": "url",
+   "shape": "rect",
+   "pad": 12,
+   "from": "bottom-right"
+  }
+ ],
+ "s07b_camera": [
+  {
+   "target": "picker",
+   "shape": "rect",
+   "pad": 8,
+   "from": "top-right",
+   "len": 70
+  }
+ ],
+ "s10a_nofolder": [
+  {
+   "target": "ok",
+   "shape": "rect",
+   "pad": 6,
+   "from": "top-left",
+   "len": 40
+  }
+ ],
+ "s10b_portbusy": [
+  {
+   "target": "ok",
+   "shape": "rect",
+   "pad": 6,
+   "from": "top-left",
+   "len": 40
+  }
+ ]
+}

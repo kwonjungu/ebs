@@ -27,6 +27,13 @@ Copy-Item (Join-Path $Repo 'index.html') $App
 Copy-Item -Recurse (Join-Path $Repo 'assets') (Join-Path $App 'assets')
 Get-ChildItem $App -Recurse -Filter .gitkeep | Remove-Item -Force
 Copy-Item (Join-Path $Repo 'package\사용법.txt') $Out
+# 그림 설명서(없으면 경고만 — 설명서가 배포를 막지 않게)
+foreach ($m in '설명서.html','설명서.pdf','빠른안내.html','빠른안내.pdf') {
+  $src = Join-Path $Repo "package\$m"
+  if (Test-Path $src) { Copy-Item $src $Out } else { Write-Warning "$m 이(가) 없어요 (powershell tools\manual\build_all.ps1 로 만들 수 있어요)" }
+}
+$ManualImg = Join-Path $Repo 'package\manual_img'
+if (Test-Path $ManualImg) { Copy-Item -Recurse $ManualImg (Join-Path $Out 'manual_img') } else { Write-Warning 'manual_img 폴더가 없어요 (설명서 그림 없이 배포돼요)' }
 
 $Zip = Join-Path $Repo "dist\${AppName}_v$Version.zip"
 if (Test-Path $Zip) { Remove-Item -Force $Zip }

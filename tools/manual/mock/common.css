@@ -1,0 +1,12 @@
+/* Windows 11 느낌 모형 공통 스타일 (실제 Windows 화면이 아니라 이해를 돕는 그림) */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#fff}
+body{font-family:'Segoe UI','Malgun Gothic','Noto Sans KR',sans-serif;color:#1b1b1b;font-size:18px;line-height:1.35}
+#stage{position:relative;overflow:hidden;width:960px;height:540px;
+  background:radial-gradient(900px 500px at 15% 10%,#9fc4f2 0,transparent 60%),radial-gradient(800px 500px at 90% 90%,#c9b8f0 0,transparent 60%),linear-gradient(135deg,#5f9be6,#8fb7ef 50%,#b6c9f2)}
+.win{position:absolute;background:#F3F3F3;border:1px solid #b9b9b9;border-radius:12px;box-shadow:0 10px 36px rgba(0,0,0,.28);overflow:hidden}
+.titlebar{height:44px;background:#E9EEF6;display:flex;align-items:center;padding:0 14px;gap:10px;font-size:16px}
+.titlebar .ctl{margin-left:auto;display:flex;gap:26px;font-size:18px;color:#444}
+.btn-w{display:inline-block;padding:9px 26px;border-radius:6px;border:1px solid #c6c6c6;background:#fff;font-size:18px}
+.btn-w.primary{background:#0067C0;color:#fff;border-color:#0067C0}
+svg{display:block}

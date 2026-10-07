@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 탐험대 빠른 안내</title>
+<link rel="icon" type="image/png" href="manual_img/logo_512.png">
+<style>
+  :root{
+    --ink:#141414; --paper:#FBF7EC; --surface:#FFFFFF;
+    --cobalt:#3D5AFE; --amber:#FFB800; --amber-soft:#FFF0C7; --muted:#6B6B6B;
+    --r:20px; --hard:5px 5px 0 var(--ink); --hard-sm:3px 3px 0 var(--ink);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;
+    background:var(--paper);color:var(--ink);font-size:18px;line-height:1.45;
+    background-image:radial-gradient(var(--ink) .5px,transparent .5px);background-size:22px 22px;background-position:-11px -11px}
+  .sheet{max-width:900px;margin:0 auto;padding:22px 18px 28px;display:flex;flex-direction:column;gap:16px}
+  header{display:flex;align-items:center;gap:16px}
+  header img{width:84px;height:84px;filter:drop-shadow(3px 3px 0 var(--ink))}
+  .kicker{display:inline-block;font-weight:900;font-size:16px;letter-spacing:.14em;background:var(--amber);border:2.5px solid var(--ink);
+    border-radius:8px;padding:2px 12px;box-shadow:var(--hard-sm);margin-bottom:6px}
+  h1{font-size:44px;font-weight:900;letter-spacing:-.035em;line-height:1.05}
+  h1 .dot{color:var(--cobalt)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .stepbox{background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);border-top:9px solid var(--cobalt);
+    padding:14px;display:flex;flex-direction:column;gap:10px}
+  .top{display:flex;align-items:center;gap:12px}
+  .badge{flex:none;width:56px;height:56px;border-radius:50%;background:var(--cobalt);color:#fff;border:3px solid var(--ink);box-shadow:var(--hard-sm);
+    font-size:32px;font-weight:900;line-height:50px;text-align:center}
+  .say{font-size:23px;font-weight:900;letter-spacing:-.02em;line-height:1.3;word-break:keep-all}
+  .say b{background:var(--amber-soft);border:2px solid var(--ink);border-radius:7px;padding:0 6px;white-space:nowrap}
+  .pic{border:2.5px solid var(--ink);border-radius:12px;overflow:hidden;background:#fff;display:flex;gap:4px;align-items:center}
+  .pic img{display:block;width:100%;height:auto;min-width:0}
+  .pic.two img{width:50%}
+  .foot{background:var(--ink);color:var(--paper);border-radius:var(--r);padding:12px 18px;font-size:16px;font-weight:700;line-height:1.5;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+  .foot b{color:var(--amber);font-weight:900}
+  .mock{font-size:16px;color:var(--muted);font-weight:700;text-align:center}
+  @media (max-width:640px){.grid{grid-template-columns:1fr}}
+  @media print{
+    @page{size:A4;margin:0}
+    body{background-image:none;height:297mm;overflow:hidden}
+    .sheet{max-width:none;padding:11mm;height:297mm;justify-content:space-between}
+    header img{filter:none}
+    .grid{flex:1;grid-template-rows:1fr 1fr}
+    .pic{flex:1;align-items:center}
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+  <header><img src="manual_img/logo_512.png" alt=""><div><span class="kicker">EBS AI 탐험대 · 중급</span><h1>켜는 방법, 딱 4번<span class="dot">.</span></h1></div></header>
+  <div class="grid">
+    <section class="stepbox"><div class="top"><div class="badge">1</div><p class="say">zip 파일을 <b>받아요</b></p></div>
+      <div class="pic"><img src="manual_img/s01_download.png" alt="다운로드 창에서 zip 파일을 받아요"></div></section>
+    <section class="stepbox"><div class="top"><div class="badge">2</div><p class="say">오른쪽 버튼 → <b>모두 압축 풀기</b></p></div>
+      <div class="pic"><img src="manual_img/s02_extract.png" alt="오른쪽 버튼 메뉴에서 모두 압축 풀기를 눌러요"></div></section>
+    <section class="stepbox"><div class="top"><div class="badge">3</div><p class="say"><b>AI탐험대</b>를 두 번 눌러요</p></div>
+      <div class="pic"><img src="manual_img/s03_folder.png" alt="풀린 폴더에서 나침반 그림 AI탐험대를 눌러요"></div></section>
+    <section class="stepbox"><div class="top"><div class="badge">4</div><p class="say">파란 창이 나오면 <b>추가 정보</b> → <b>실행</b></p></div>
+      <div class="pic two"><img src="manual_img/s04a_smart.png" alt="추가 정보를 눌러요"><img src="manual_img/s04b_smart.png" alt="실행을 눌러요"></div></section>
+  </div>
+  <p class="mock">그림은 이해를 돕는 모형이에요 · 자세한 설명은 설명서.pdf</p>
+  <div class="foot"><span><b>끝낼 때</b> 오른쪽 아래 나침반 아이콘 → 종료</span><span><b>안 켜지면</b> 인터넷 주소: https://kwonjungu.github.io/ebs/</span></div>
+</div>
+</body>
+</html>

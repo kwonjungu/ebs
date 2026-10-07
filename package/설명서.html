@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 탐험대 설명서</title>
+<link rel="icon" type="image/png" href="manual_img/logo_512.png">
+<style>
+  /* 앱 허브(index.html)와 같은 디자인 토큰 */
+  :root{
+    --ink:#141414; --paper:#FBF7EC; --surface:#FFFFFF;
+    --cobalt:#3D5AFE; --amber:#FFB800; --amber-soft:#FFF0C7; --green:#12B76A; --muted:#6B6B6B;
+    --red:#E5322D;
+    --r:20px; --r-sm:13px;
+    --hard:5px 5px 0 var(--ink); --hard-sm:3px 3px 0 var(--ink);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;
+    background:var(--paper);color:var(--ink);font-size:19px;line-height:1.55;
+    background-image:radial-gradient(var(--ink) .5px,transparent .5px);
+    background-size:22px 22px;background-position:-11px -11px;
+  }
+  .wrap{max-width:900px;margin:0 auto;padding:0 18px}
+  .page{padding:34px 0 40px;display:flex;flex-direction:column;gap:18px}
+  .page + .page{border-top:3px dashed rgba(20,20,20,.25)}
+
+  .kicker{display:inline-block;font-weight:900;font-size:16px;letter-spacing:.14em;text-transform:uppercase;
+    background:var(--amber);border:2.5px solid var(--ink);border-radius:8px;padding:3px 12px;box-shadow:var(--hard-sm)}
+  h1{font-size:clamp(40px,8vw,64px);font-weight:900;letter-spacing:-.035em;line-height:1.05}
+  h1 .dot,h2 .dot{color:var(--cobalt)}
+  h2{font-size:32px;font-weight:900;letter-spacing:-.03em;line-height:1.15;word-break:keep-all}
+  .lead{font-size:22px;color:var(--muted);font-weight:700}
+
+  .head{display:flex;align-items:center;gap:18px}
+  .badge{flex:none;width:64px;height:64px;border-radius:50%;background:var(--cobalt);color:#fff;border:3px solid var(--ink);
+    box-shadow:var(--hard-sm);font-size:34px;font-weight:900;line-height:58px;text-align:center}
+  .head .kicker{margin-bottom:6px}
+
+  .fig{background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:12px;
+    border-top:9px solid var(--cobalt);text-align:center}
+  .fig img{display:block;margin:0 auto;max-width:100%;width:auto;height:auto;max-height:min(150mm,46vh);border-radius:10px}
+  .fig + .fig{margin-top:6px}
+  .fig.two-img img{max-height:30vh}
+  .fig .cap{font-weight:900;font-size:16px;margin-bottom:8px;text-align:left}
+  .fig .cap b{display:inline-block;background:var(--amber);border:2px solid var(--ink);border-radius:7px;padding:0 9px;margin-right:8px}
+  .mocknote{font-size:16px;color:var(--muted);font-weight:700;text-align:center;margin-top:-6px}
+  .fig .mocknote{margin:10px 0 0}
+
+  .say{font-size:24px;font-weight:800;line-height:1.5;letter-spacing:-.02em;word-break:keep-all}
+  .say b{background:var(--amber-soft);border:2px solid var(--ink);border-radius:7px;padding:0 7px;font-weight:900;white-space:nowrap}
+
+  .foot{display:flex;align-items:flex-end;gap:16px;justify-content:space-between}
+  .remember{flex:1;display:flex;gap:12px;align-items:center;background:var(--amber);border:3px solid var(--ink);border-radius:var(--r);
+    box-shadow:var(--hard-sm);padding:12px 16px;font-size:20px;font-weight:800;line-height:1.4;word-break:keep-all}
+  .remember svg{flex:none}
+  .remember small{display:block;font-size:16px;letter-spacing:.1em;font-weight:900}
+  .maru{flex:none;display:flex;align-items:flex-end;gap:8px;margin-left:auto}
+  .maru img{height:120px;width:120px;object-fit:contain;filter:drop-shadow(3px 3px 0 var(--ink))}
+  .bubble{background:var(--amber);border:3px solid var(--ink);border-radius:18px 18px 18px 4px;padding:8px 14px;font-weight:900;font-size:18px;
+    box-shadow:var(--hard-sm);margin-bottom:46px;white-space:nowrap}
+
+  /* 표지 */
+  .cover{align-items:center;text-align:center;gap:20px;padding-top:44px}
+  .cover .brandrow{display:flex;align-items:center;gap:16px;justify-content:center}
+  .cover .brandrow img{width:96px;height:96px;filter:drop-shadow(4px 4px 0 var(--ink))}
+  .cover .hero{width:300px;height:300px;object-fit:contain;filter:drop-shadow(5px 5px 0 var(--ink))}
+  .toc{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:760px}
+  .toc a{font-size:16px;font-weight:900;text-decoration:none;color:var(--ink);background:var(--surface);border:2.5px solid var(--ink);
+    border-radius:999px;padding:3px 14px;box-shadow:var(--hard-sm)}
+  .toc a:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+  .toc a i{font-style:normal;color:#fff;background:var(--cobalt);border-radius:50%;display:inline-block;width:24px;height:24px;text-align:center;line-height:24px;margin-right:6px;font-size:16px}
+
+  /* 시작 전에 */
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .card{background:var(--surface);border:3px solid var(--ink);border-radius:var(--r);box-shadow:var(--hard);padding:18px;border-top:9px solid var(--cobalt);display:flex;flex-direction:column;gap:12px}
+  .card.green{border-top-color:var(--green)}
+  .icons{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .icon{background:var(--paper);border:2.5px solid var(--ink);border-radius:var(--r-sm);text-align:center;padding:10px 4px;font-weight:900;font-size:18px}
+  .icon svg{margin:0 auto 4px}
+  .icon.opt{background:var(--amber-soft)}
+  .promise-art{display:flex;align-items:center;justify-content:center;gap:14px}
+  .promise-art img{width:140px;height:140px;object-fit:contain;filter:drop-shadow(3px 3px 0 var(--ink))}
+  .card .say{font-size:21px}
+
+  /* 이럴 땐 */
+  .help{display:grid;grid-template-columns:1.1fr 1fr;gap:16px;align-items:center}
+  .help .fig{padding:8px;border-top-width:6px}
+  .help .say{font-size:21px}
+  .help .say small{display:block;font-size:16px;color:var(--muted);font-weight:800;margin-bottom:2px}
+  .teacher{display:flex;gap:14px;background:var(--ink);color:var(--paper);border-radius:var(--r);padding:14px 20px;font-size:16px;font-weight:600;line-height:1.5}
+  .teacher h3{flex:none;color:var(--amber);font-size:18px;font-weight:900;writing-mode:horizontal-tb;white-space:nowrap}
+  .teacher ul{padding-left:18px}
+  .teacher b{color:var(--amber);font-weight:900}
+
+  @media (max-width:640px){
+    .two,.help{grid-template-columns:1fr}
+    .say{font-size:21px}
+    .foot{flex-direction:column;align-items:stretch}
+    .maru{margin-left:0;justify-content:flex-end}
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+  @media print{
+    @page{size:A4;margin:0}  /* 종이색이 쪽 끝까지 가도록 여백은 .page 안쪽 패딩(12mm)으로 */
+    body{font-size:18px;background-image:none}
+    .wrap{max-width:none;padding:0}
+    .page{break-after:page;break-inside:avoid;padding:12mm;border:0!important;height:296mm;gap:14px;overflow:hidden}
+    .page:last-child{break-after:auto}
+    .step{justify-content:space-between}
+    .step .say{font-size:28px}
+    .fig img{max-height:150mm}
+    .fig:not(.two-img) img{width:100%;object-fit:contain}
+    .fig.two-img img{max-height:66mm}
+    .fig.two-img.wide img{max-height:84mm}
+    .card .remember{flex:none}
+    .promise-art img{width:190px;height:190px}
+    .promise-art svg{width:150px;height:150px}
+    .cover{justify-content:center}
+    .cover .hero{width:380px;height:380px}
+    .two{flex:1}
+    .card{justify-content:space-around}
+    .card .say{font-size:24px}
+    .icon{padding:16px 4px}
+    .toc a:hover{transform:none}
+    .maru img,.cover .hero,.promise-art img,.cover .brandrow img{filter:none}
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-pc" viewBox="0 0 64 64"><rect x="6" y="9" width="52" height="34" rx="5" fill="#E4E8FF" stroke="#141414" stroke-width="3.5"/><path d="M24 55h16M32 43v12" stroke="#141414" stroke-width="3.5" stroke-linecap="round"/><path d="M16 20h20M16 28h12" stroke="#3D5AFE" stroke-width="3.5" stroke-linecap="round"/></symbol>
+  <symbol id="i-net" viewBox="0 0 64 64"><circle cx="32" cy="32" r="24" fill="#D6F5E6" stroke="#141414" stroke-width="3.5"/><ellipse cx="32" cy="32" rx="10" ry="24" fill="none" stroke="#141414" stroke-width="3"/><path d="M9 24h46M9 40h46" stroke="#141414" stroke-width="3"/></symbol>
+  <symbol id="i-cam" viewBox="0 0 64 64"><rect x="6" y="16" width="38" height="32" rx="6" fill="#EDE7FF" stroke="#141414" stroke-width="3.5"/><path d="M44 28l14-8v24l-14-8Z" fill="#7C3AED" stroke="#141414" stroke-width="3.5" stroke-linejoin="round"/><circle cx="25" cy="32" r="7" fill="#fff" stroke="#141414" stroke-width="3"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 64 64"><rect x="23" y="6" width="18" height="32" rx="9" fill="#FFB800" stroke="#141414" stroke-width="3.5"/><path d="M13 30a19 19 0 0 0 38 0M32 49v10M22 59h20" fill="none" stroke="#141414" stroke-width="3.5" stroke-linecap="round"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 64 64"><path d="M20 28v-8a12 12 0 0 1 24 0v8" fill="none" stroke="#141414" stroke-width="4"/><rect x="12" y="28" width="40" height="30" rx="6" fill="#FFB800" stroke="#141414" stroke-width="3.5"/><circle cx="32" cy="42" r="4.5" fill="#141414"/><path d="M32 45v7" stroke="#141414" stroke-width="3.5" stroke-linecap="round"/></symbol>
+  <symbol id="i-bulb" viewBox="0 0 48 48"><path d="M24 4a14 14 0 0 0-8 25.5V35h16v-5.5A14 14 0 0 0 24 4Z" fill="#fff" stroke="#141414" stroke-width="3" stroke-linejoin="round"/><path d="M17 41h14M19 46h10" stroke="#141414" stroke-width="3" stroke-linecap="round"/><path d="M24 14v8M20 22h8" stroke="#141414" stroke-width="2.5" stroke-linecap="round"/></symbol>
+</svg>
+<div class="wrap">
+
+<!-- 표지 -->
+<section class="page cover" id="p-cover" data-toc="표지">
+  <div class="brandrow"><img src="manual_img/logo_512.png" alt="" width="96" height="96"><span class="kicker">EBS AI 탐험대 · 중급</span></div>
+  <h1>AI 탐험대 설명서<span class="dot">.</span></h1>
+  <p class="lead">처음 쓰는 친구도 따라 할 수 있어요</p>
+  <img class="hero" src="manual_img/maru_hero.png" alt="">
+  <nav class="toc" aria-label="쪽 건너뛰기">
+    <a href="#p-cover">표지</a>
+    <a href="#p-ready">준비물</a>
+    <a href="#p-1"><i>1</i>받기</a>
+    <a href="#p-2"><i>2</i>압축 풀기</a>
+    <a href="#p-3"><i>3</i>실행</a>
+    <a href="#p-4"><i>4</i>파란 경고창</a>
+    <a href="#p-5"><i>5</i>첫 화면</a>
+    <a href="#p-6"><i>6</i>강 고르기</a>
+    <a href="#p-7"><i>7</i>카메라·마이크</a>
+    <a href="#p-8"><i>8</i>엔트리 파일</a>
+    <a href="#p-9"><i>9</i>끝내기</a>
+    <a href="#p-10"><i>10</i>이럴 땐</a>
+  </nav>
+</section>
+
+<!-- 시작 전에: 준비물 + 약속 -->
+<section class="page" id="p-ready" data-toc="준비물">
+  <div class="head"><div><span class="kicker">시작하기 전에</span><h2>준비물과 약속<span class="dot">.</span></h2></div></div>
+  <div class="two">
+    <div class="card">
+      <h2 style="font-size:26px">준비물</h2>
+      <div class="icons">
+        <div class="icon"><svg width="64" height="64"><use href="#i-pc"/></svg>컴퓨터</div>
+        <div class="icon"><svg width="64" height="64"><use href="#i-net"/></svg>인터넷</div>
+        <div class="icon opt"><svg width="64" height="64"><use href="#i-cam"/></svg>카메라</div>
+        <div class="icon opt"><svg width="64" height="64"><use href="#i-mic"/></svg>마이크</div>
+      </div>
+      <p class="say">컴퓨터와 인터넷이 있으면 돼요. 카메라와 마이크는 일부 강에서만 써요.</p>
+      <div class="remember" style="box-shadow:var(--hard-sm)"><svg width="34" height="34"><use href="#i-bulb"/></svg><div><small>꼭 기억해요</small>14~17강, 23강이 카메라나 마이크를 써요.</div></div>
+    </div>
+    <div class="card green">
+      <h2 style="font-size:26px">약속</h2>
+      <div class="promise-art"><img src="manual_img/maru_hero.png" alt=""><svg width="110" height="110"><use href="#i-lock"/></svg></div>
+      <p class="say">이름 대신 닉네임을 써요. 기록은 이 컴퓨터에만 남아요.</p>
+      <div class="remember" style="box-shadow:var(--hard-sm)"><svg width="34" height="34"><use href="#i-bulb"/></svg><div><small>꼭 기억해요</small>다른 컴퓨터로는 안 옮겨져요.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="page step" id="p-1" data-toc="받기" data-n="1" data-figs="1">
+  <div class="head"><div class="badge">1</div><div><span class="kicker">STEP 1</span><h2>받기<span class="dot">.</span></h2></div></div>
+  <figure class="fig"><img src="manual_img/s01_download.png" alt="Edge 다운로드 창에 AI탐험대_v1.0.zip 파일이 보여요"><p class="mocknote">그림은 이해를 돕는 모형이에요</p></figure>
+  <p class="say">zip 파일을 내려받아요. 이름 끝이 <b>.zip</b>이에요.</p>
+  <div class="foot"><div></div><div class="maru"><div class="bubble">잘했어요!</div><img src="manual_img/maru_cheer.png" alt=""></div></div>
+</section>
+
+<!-- 2 -->
+<section class="page step" id="p-2" data-toc="압축 풀기" data-n="2" data-figs="1">
+  <div class="head"><div class="badge">2</div><div><span class="kicker">STEP 2</span><h2>압축 풀기<span class="dot">.</span></h2></div></div>
+  <figure class="fig"><img src="manual_img/s02_extract.png" alt="zip 파일을 오른쪽 버튼으로 누르면 모두 압축 풀기 메뉴가 나와요"><p class="mocknote">그림은 이해를 돕는 모형이에요</p></figure>
+  <p class="say">파일에서 오른쪽 버튼을 눌러요. <b>모두 압축 풀기</b>를 눌러요.</p>
+  <div class="foot"><div class="remember"><svg width="40" height="40"><use href="#i-bulb"/></svg><div><small>꼭 기억해요</small>꼭 풀어야 해요.</div></div><div class="maru"><div class="bubble">천천히 해요!</div><img src="manual_img/maru_cheer.png" alt=""></div></div>
+</section>
+
+<!-- 3 -->
+<section class="page step" id="p-3" data-toc="실행" data-n="3" data-figs="1">
+  <div class="head"><div class="badge">3</div><div><span class="kicker">STEP 3</span><h2>실행<span class="dot">.</span></h2></div></div>
+  <figure class="fig"><img src="manual_img/s03_folder.png" alt="풀린 폴더 안에서 나침반 그림 AI탐험대를 눌러요"><p class="mocknote">그림은 이해를 돕는 모형이에요</p></figure>
+  <p class="say">나침반 그림 <b>AI탐험대</b>를 두 번 눌러요. 조금 기다려요.</p>
+  <div class="foot"><div class="remember"><svg width="40" height="40"><use href="#i-bulb"/></svg><div><small>꼭 기억해요</small>풀린 폴더 안에서 눌러요.</div></div><div class="maru"><div class="bubble">다음으로 가요</div><img src="manual_img/maru_cheer.png" alt=""></div></div>
+</section>
+
+<!-- 4 -->
+<section class="page step" id="p-4" data-toc="파란 경고창" data-n="4" data-figs="2">
+  <div class="head"><div class="badge">4</div><div><span class="kicker">STEP 4</span><h2>파란 경고창<span class="dot">.</span></h2></div></div>
+  <div>
+    <figure class="fig two-img"><div class="cap"><b>1</b>먼저 이 창이 나와요</div><img src="manual_img/s04a_smart.png" alt="파란 창에서 추가 정보를 눌러요"></figure>
+    <figure class="fig two-img"><div class="cap"><b>2</b>그다음 이 창이 나와요</div><img src="manual_img/s04b_smart.png" alt="실행 버튼을 눌러요"></figure>
+  </div>
+  <p class="mocknote">그림은 이해를 돕는 모형이에요</p>
+  <p class="say">파란 창이 나와도 놀라지 마세요. <b>추가 정보</b>를 누르고 <b>실행</b>을 눌러요.</p>
+  <div class="foot"><div class="remember"><svg width="40" height="40"><use href="#i-bulb"/></svg><div><small>꼭 기억해요</small>처음 한 번만 나와요. 고장이 아니에요.</div></div><div class="maru"><div class="bubble">괜찮아요!</div><img src="manual_img/maru_cheer.png" alt=""></div></div>
+</section>
+
+<!-- 5 -->
+<section class="page step" id="p-5" data-toc="첫 화면" data-n="5" data-figs="1">
+  <div class="head"><div class="badge">5</div><div><span class="kicker">STEP 5</span><h2>첫 화면<span class="dot">.</span></h2></div></div>
+  <figure class="fig"><img src="manual_img/s05_hub.png" alt="AI 기능, 직접 만져 보는 체험 첫 화면"></figure>
+  <p class="say">이 화면이 나오면 성공이에요.</p>
+  <div class="foot"><div></div><div class="maru"><div class="bubble">멋져요!</div><img src="manual_img/maru_cheer.png" alt=""></div></div>
+</section>
+
+<!-- 6 -->
+<section class="page step" id="p-6" data-toc="강 고르기" data-n="6" data-figs="2">
+  <div class="head"><div class="badge">6</div><div><span class="kicker">STEP 6</span><h2>강 고르기<span class="dot">.</span></h2></div></div>
+  <div>
+    <figure class="fig two-img"><div class="cap"><b>1</b>하고 싶은 카드를 눌러요</div><img src="manual_img/s06_pick.png" alt="14강부터 25강까지 카드가 있어요"></figure>
+    <figure class="fig two-img"><div class="cap"><b>2</b>위쪽 줄에 지금 강이 보여요</div><img src="manual_img/s06b_topbar.png" alt="위쪽 줄에 중급 16강 이름이 보여요"></figure>
+  </div>
+  <p class="say">하고 싶은 강 카드를 눌러요. 위쪽 줄에서 지금 몇 강인지 볼 수 있어요.</p>
+  <div class="foot"><div></div><div class="maru"><div class="bubble">골라 봐요!</div><img src="manual_img/maru_cheer.png" alt=""></div></div>
+</section>
+
+<!-- 7 -->
+<section class="page step" id="p-7" data-toc="카메라·마이크" data-n="7" data-figs="2">
+  <div class="head"><div class="badge">7</div><div><span class="kicker">STEP 7</span><h2>카메라·마이크<span class="dot">.</span></h2></div></div>
+  <div>
+    <figure class="fig two-img wide"><div class="cap"><b>1</b>허용 창이 나오면 눌러요</div><img src="manual_img/s07_perm.png" alt="카메라와 마이크를 써도 되는지 묻는 창에서 허용을 눌러요"></figure>
+    <figure class="fig two-img"><div class="cap"><b>2</b>카메라가 여러 개면 여기서 골라요</div><img src="manual_img/s07b_camera.png" alt="화면 아래 카메라 고르기 상자"></figure>
+  </div>
+  <p class="mocknote">그림 1은 이해를 돕는 모형이에요</p>
+  <p class="say">허용 창이 나오면 <b>허용</b>을 눌러요. 카메라가 여러 개면 아래 상자에서 골라요.</p>
+  <div class="foot"><div class="remember"><svg width="40" height="40"><use href="#i-bulb"/></svg><div><small>꼭 기억해요</small>영상과 소리는 컴퓨터 밖으로 안 나가요.</div></div><div class="maru"><div class="bubble">안심해요!</div><img src="manual_img/maru_cheer.png" alt=""></div></div>
+</section>
+
+<!-- 8 -->
+<section class="page step" id="p-8" data-toc="엔트리 파일" data-n="8" data-figs="1">
+  <div class="head"><div class="badge">8</div><div><span class="kicker">STEP 8</span><h2>엔트리 파일 받기<span class="dot">.</span></h2></div></div>
+  <figure class="fig"><img src="manual_img/s08_entry.png" alt="엔트리 파일 내려받기 버튼"></figure>
+  <p class="say"><b>엔트리 파일 내려받기</b>를 눌러요. 엔트리에서 <b>작품 불러오기</b>를 눌러요.</p>
+  <div class="foot"><div class="remember"><svg width="40" height="40"><use href="#i-bulb"/></svg><div><small>꼭 기억해요</small>파일은 '다운로드' 폴더에 있어요.</div></div><div class="maru"><div class="bubble">거의 다 왔어요!</div><img src="manual_img/maru_cheer.png" alt=""></div></div>
+</section>
+
+<!-- 9 -->
+<section class="page step" id="p-9" data-toc="끝내기" data-n="9" data-figs="1">
+  <div class="head"><div class="badge">9</div><div><span class="kicker">STEP 9</span><h2>끝내기<span class="dot">.</span></h2></div></div>
+  <figure class="fig"><img src="manual_img/s09_tray.png" alt="오른쪽 아래 나침반을 오른쪽 버튼으로 누르면 종료 메뉴가 나와요"><p class="mocknote">그림은 이해를 돕는 모형이에요</p></figure>
+  <p class="say">창을 닫아요. 오른쪽 아래 나침반을 오른쪽 버튼으로 눌러 <b>종료</b>를 눌러요.</p>
+  <div class="foot"><div class="remember"><svg width="40" height="40"><use href="#i-bulb"/></svg><div><small>꼭 기억해요</small>창만 닫으면 아직 켜져 있어요.</div></div><div class="maru"><div class="bubble">수고했어요!</div><img src="manual_img/maru_cheer.png" alt=""></div></div>
+</section>
+
+<!-- 10 -->
+<section class="page step" id="p-10" data-toc="이럴 땐" data-n="10" data-figs="3">
+  <div class="head"><div class="badge">10</div><div><span class="kicker">STEP 10</span><h2>이럴 땐<span class="dot">.</span></h2></div></div>
+  <div class="help">
+    <figure class="fig"><img src="manual_img/s10a_nofolder.png" alt="앱 파일을 찾을 수 없어요 창"></figure>
+    <p class="say"><small>이 창이 나오면</small>압축을 안 풀었어요. <b>2</b>부터 다시 해요.</p>
+  </div>
+  <div class="help">
+    <figure class="fig"><img src="manual_img/s10b_portbusy.png" alt="다른 프로그램이 쓰고 있어서 시작할 수 없다는 창"></figure>
+    <p class="say"><small>이 창이 나오면</small>다른 프로그램이 쓰고 있어서 못 켜요. 컴퓨터를 껐다 켜 보고, 안 되면 인터넷 주소로 들어가요.</p>
+  </div>
+  <div class="help">
+    <figure class="fig"><img src="manual_img/s10c_url.png" alt="주소창에 https://kwonjungu.github.io/ebs/ 를 써요"></figure>
+    <p class="say"><small>켜지지 않는 컴퓨터는</small>exe가 막힌 컴퓨터는 이 주소를 써요. 같은 체험을 할 수 있어요.</p>
+  </div>
+  <p class="mocknote">그림은 이해를 돕는 모형이에요</p>
+  <div class="foot"><div class="teacher" style="flex:1"><h3>선생님용</h3><ul>
+    <li>exe는 서명되지 않아 SmartScreen이 뜹니다. 학교 보안 정책으로 막히면 온라인 주소를 쓰세요.</li>
+    <li>앱은 내 컴퓨터(127.0.0.1:47815)에서 작은 웹 서버로 돌고 Edge 앱 창으로 열립니다. 학생 정보는 밖으로 나가지 않습니다.</li>
+    <li>진행 기록은 이 컴퓨터의 브라우저 저장소에만 있습니다. 15강 음성 인식은 인터넷이 필요합니다.</li>
+    <li>포트 충돌 메시지가 반복되면 재부팅하거나 온라인 주소를 쓰세요.</li>
+    <li>닉네임이나 번호를 쓰게 지도해 주세요.</li></ul></div></div>
+</section>
+
+</div>
+</body>
+</html>
