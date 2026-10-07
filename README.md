@@ -2,7 +2,7 @@
 
 ## PC 앱으로 쓰기 (Windows)
 
-1. [Releases](https://github.com/kwonjungu/ebs/releases)에서 `AI탐험대_v1.0.zip`을 내려받아 압축을 풉니다.
+1. [Releases](https://github.com/kwonjungu/ebs/releases/latest)에서 `AI-Explorer-v1.0.zip`(표시 이름: AI탐험대_v1.0.zip)을 내려받아 압축을 풉니다. 압축 안의 `빠른안내.pdf`(1쪽)·`설명서.pdf`(12쪽)에 그림 안내가 있어요.
 2. `AI탐험대.exe`를 더블클릭하면 체험 창이 열립니다. 자세한 안내는 압축 안의 `사용법.txt`.
 3. 인터넷 주소로 쓰려면: https://kwonjungu.github.io/ebs/
 
