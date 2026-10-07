@@ -2,6 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/png" href="assets/brand/favicon-32.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI 탐험대 중급 · 기능 체험</title>
 <style>
@@ -21,6 +22,9 @@
   .wrap{max-width:1000px;margin:0 auto;padding:22px 18px 70px}
 
   header{margin-bottom:30px}
+  .brandrow{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+  .brandrow img{width:64px;height:64px;filter:drop-shadow(3px 3px 0 var(--ink))}
+  .brandrow .kicker{margin-bottom:0}
   .kicker{display:inline-block;font-weight:900;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;
     background:var(--amber);border:2.5px solid var(--ink);border-radius:8px;padding:4px 12px;box-shadow:var(--hard-sm);margin-bottom:16px}
   h1{font-size:clamp(32px,7vw,56px);font-weight:900;letter-spacing:-.035em;line-height:1.0}
@@ -54,7 +58,10 @@
 <body>
 <div class="wrap">
   <header>
-    <span class="kicker">EBS AI 탐험대 · 중급</span>
+    <div class="brandrow">
+      <img src="assets/brand/logo_512.png" alt="" width="64" height="64">
+      <span class="kicker">EBS AI 탐험대 · 중급</span>
+    </div>
     <h1>AI 기능, 직접<br>만져 보는 체험<span class="dot">.</span></h1>
     <p class="lead">교재의 QR로 이어지는 강별 체험이에요. 배우는 AI 기능을 <b>버튼 하나로 바로</b> 만져 봐요.</p>
   </header>
