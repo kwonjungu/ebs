@@ -21,7 +21,11 @@ namespace EbsLauncher
                 }
                 catch (System.ComponentModel.Win32Exception) { }
             }
-            Process.Start(url);
+            try { Process.Start(url); }
+            catch (System.ComponentModel.Win32Exception)
+            {
+                System.Windows.Forms.MessageBox.Show("브라우저를 찾지 못했어요.\n\nEdge나 Chrome을 열고 아래 주소를 입력해 주세요.\n" + url, "AI 탐험대");
+            }
         }
 
         static string Find(string exe, string rel)

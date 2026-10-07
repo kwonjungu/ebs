@@ -7,7 +7,10 @@ $Version = '1.0'
 $Out = Join-Path $Repo "dist\$AppName"
 $Exe = Join-Path $Out "$AppName.exe"
 $Csc = Join-Path $env:WINDIR 'Microsoft.NET\Framework64\v4.0.30319\csc.exe'
+if (-not (Test-Path $Csc)) { $Csc = Join-Path $env:WINDIR 'Microsoft.NET\Framework\v4.0.30319\csc.exe' }
 
+# 지난 빌드 찌꺼기가 zip에 섞이지 않게 비우고 시작 (dist의 exe가 실행 중이면 여기서 멈춤 → 트레이에서 종료 후 다시)
+if (Test-Path $Out) { Remove-Item -Recurse -Force $Out }
 New-Item -ItemType Directory -Force $Out | Out-Null
 $sources = Get-ChildItem (Join-Path $Repo 'launcher') -Filter *.cs | ForEach-Object { $_.FullName }
 & $Csc /nologo /target:winexe /codepage:65001 /optimize+ "/out:$Exe" "/win32icon:$(Join-Path $Repo 'brand\app.ico')" `

@@ -6,7 +6,7 @@ printf '<h1>hub</h1>' > "$WORK/app/index.html"
 APPW="$(cygpath -w "$WORK/app")"
 FAIL=0
 check(){ if [ "$2" = "$3" ]; then echo "ok   $1"; else echo "FAIL $1: expected [$3] got [$2]"; FAIL=1; fi; }
-kill_port(){ for p in $(netstat -ano | tr -d '' | awk -v a="127.0.0.1:$1" '$2==a && $4=="LISTENING"{print $5}' | sort -u); do taskkill //F //PID "$p" >/dev/null 2>&1; done; }
+kill_port(){ for p in $(netstat -ano | tr -d '\r' | awk -v a="127.0.0.1:$1" '$2==a && $4=="LISTENING"{print $5}' | sort -u); do taskkill //F //PID "$p" >/dev/null 2>&1; done; }
 cleanup(){ kill_port 47896; kill_port 47895; rm -rf "$WORK"; }
 trap cleanup EXIT
 

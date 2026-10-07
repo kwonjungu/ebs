@@ -19,7 +19,7 @@ for d in docs brand launcher _designsystem _tools; do
 done
 
 PORT=47894; BASE="http://127.0.0.1:$PORT"
-kill_port(){ for p in $(netstat -ano | tr -d '' | awk -v a="127.0.0.1:$1" '$2==a && $4=="LISTENING"{print $5}' | sort -u); do taskkill //F //PID "$p" >/dev/null 2>&1; done; }
+kill_port(){ for p in $(netstat -ano | tr -d '\r' | awk -v a="127.0.0.1:$1" '$2==a && $4=="LISTENING"{print $5}' | sort -u); do taskkill //F //PID "$p" >/dev/null 2>&1; done; }
 trap 'kill_port $PORT' EXIT
 "$ROOT/AI탐험대.exe" --no-browser --port $PORT >/dev/null 2>&1 &
 curl -s --retry 20 --retry-connrefused --retry-delay 1 -o /dev/null "$BASE/__ebs_ping"

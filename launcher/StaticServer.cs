@@ -44,9 +44,13 @@ namespace EbsLauncher
             {
                 TcpClient c;
                 try { c = listener.AcceptTcpClient(); }
-                catch (SocketException) { if (!running) return; continue; }
+                catch (SocketException) { if (!running) return; Thread.Sleep(50); continue; }
                 catch (ObjectDisposedException) { return; }
-                ThreadPool.QueueUserWorkItem(_ => Handle(c));
+                catch (InvalidOperationException) { return; }
+                // 연결마다 전용 스레드: 빈 연결(브라우저 미리 연결 등)이 스레드 풀을 막아 다른 요청이 멈추지 않게
+                var client = c;
+                var t = new Thread(() => Handle(client)) { IsBackground = true };
+                t.Start();
             }
         }
 
@@ -56,7 +60,7 @@ namespace EbsLauncher
             {
                 try
                 {
-                    c.ReceiveTimeout = 10000;
+                    c.ReceiveTimeout = 5000;
                     c.SendTimeout = 60000;
                     var s = c.GetStream();
                     string head = ReadHead(s);
@@ -70,6 +74,12 @@ namespace EbsLauncher
                 catch (IOException) { }
                 catch (SocketException) { }
                 catch (ObjectDisposedException) { }
+                catch (Exception)
+                {
+                    // 권한 거부·백신 차단 등 예상 못 한 오류도 앱 전체를 끄지 않는다
+                    try { SendText(c.GetStream(), 500, "Internal Server Error", false); }
+                    catch (Exception) { }
+                }
             }
         }
 
@@ -114,7 +124,8 @@ namespace EbsLauncher
             {
                 if (!path.EndsWith("/"))
                 {
-                    WriteHead(s, 301, "Moved Permanently", "text/plain; charset=utf-8", 0, "Location: " + path + "/" + query + "\r\n");
+                    string loc = (path + "/" + query).Replace("\r", "").Replace("\n", "");
+                    WriteHead(s, 301, "Moved Permanently", "text/plain; charset=utf-8", 0, "Location: " + loc + "\r\n");
                     return;
                 }
                 full = Path.Combine(full, "index.html");
