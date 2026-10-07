@@ -604,8 +604,8 @@ $('fillLow').addEventListener('change', checkFill);
 
 /* ===== 얼굴 탐지 vs 인식 — 실제 카메라 체험 (face-api.js, 브라우저 안에서만 처리) ===== */
 (function () {
-  const FA_CDN = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/dist/face-api.js';
-  const FA_MODELS = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.15/model';
+  const FA_CDN = '../assets/vendor/face-api/face-api.js';
+  const FA_MODELS = '../assets/vendor/face-api/model';
   const MATCH_DIST = 0.55; // 이 거리보다 가까우면 같은 사람으로 판정
 
   const video = $('cam'), canvas = $('ov'), status = $('vsStatus');
