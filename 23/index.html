@@ -292,8 +292,8 @@
 
   <header>
     <span class="kicker">AI의 눈으로 찾는 물건</span>
-    <h1>찰칵! 네모 박스 탐험</h1>
-    <p class="lead">AI가 물건을 찾아 <b>위치를 네모 박스로</b> 짚어 줘요. 책상 위에 컵, 책, 가위 같은 물건을 1~3개 놓아 봐요.</p>
+    <h1>찰칵! 바운딩 박스 탐험</h1>
+    <p class="lead">AI가 물건을 찾아 <b>위치를 바운딩 박스로</b> 짚어 줘요. 책상 위에 컵, 책, 가위 같은 물건을 1~3개 놓아 봐요.</p>
     <img class="hero-art" src="../assets/art/23_desk.png" alt="" aria-hidden="true">
   </header>
 
@@ -328,7 +328,7 @@
       </div>
     </div>
     <div id="playControls">
-    <p class="caption">물건을 둘러싼 초록 네모를 <b>바운딩 박스</b>라고 해요. 옆의 %는 그 안에 물건이 있을 가능성이에요.</p>
+    <p class="caption">물건을 둘러싼 초록 네모 박스를 <b>바운딩 박스</b>라고 해요. 옆의 %는 그 안에 물건이 있을 가능성이에요.</p>
     <p class="caption">이 웹은 잘 보이는 물건을 <b>한 번에 5개까지</b> 찾아요. (엔트리 사물 인식은 3개까지 보여 줘요.)</p>
     <p class="stateline" id="stateline">준비되면 시작 버튼을 눌러요</p>
     <div class="btnrow">
@@ -375,7 +375,7 @@
   <div class="card" id="simCard" style="margin-top:16px">
     <p class="simreason" id="simReason" style="display:none"></p>
     <h2>연습 모드 — 그림에서 찾아 봐요</h2>
-    <p class="desc">카메라 대신 그림 속 물건을 AI가 찾는 모습을 보여 줄게요. 진짜 객체 탐지도 이렇게 <b>바운딩 박스</b>(위치를 짚는 네모)로 물건을 표시해요.</p>
+    <p class="desc">카메라 대신 그림 속 물건을 AI가 찾는 모습을 보여 줄게요. 진짜 객체 탐지도 이렇게 <b>바운딩 박스</b>(물체가 있다고 판단한 자리를 둘러싼 네모 표시)로 물건을 표시해요.</p>
     <div class="simstage">
       <span class="vf-br" aria-hidden="true"></span>
       <span class="vf-bl" aria-hidden="true"></span>
@@ -436,7 +436,7 @@
   
   <div class="itemlist">
     <h2>🔎 이런 물건을 찾을 수 있어요</h2>
-    <p class="sub">아래 물건을 카메라에 비추면 AI가 이름과 네모 박스로 짚어 줘요. 여러 개를 함께 놓아도 좋아요.</p>
+    <p class="sub">아래 물건을 카메라에 비추면 AI가 이름과 바운딩 박스로 짚어 줘요. 여러 개를 함께 놓아도 좋아요.</p>
     <div class="itemgrp"><span class="gl">학용품·책상</span><div class="chips"><span>컵</span><span>병</span><span>유리컵</span><span>책</span><span>가위</span><span>휴대전화</span><span>키보드</span><span>마우스</span><span>노트북</span><span>모니터</span><span>리모컨</span><span>시계</span><span>가방</span><span>손가방</span><span>우산</span><span>꽃병</span><span>화분</span><span>책상</span><span>의자</span><span>곰인형</span></div></div>
     <div class="itemgrp"><span class="gl">급식·음식</span><div class="chips"><span>사과</span><span>바나나</span><span>오렌지</span><span>샌드위치</span><span>피자</span><span>도넛</span><span>케이크</span><span>브로콜리</span><span>당근</span><span>핫도그</span><span>공</span><span>그릇</span><span>숟가락</span><span>포크</span><span>칼</span></div></div>
     <div class="itemgrp"><span class="gl">생활·기타</span><div class="chips"><span>칫솔</span><span>드라이어</span><span>전자레인지</span><span>오븐</span><span>토스터</span><span>냉장고</span><span>싱크대</span><span>넥타이</span><span>여행가방</span><span>새</span><span>고양이</span><span>강아지</span></div></div>
@@ -542,7 +542,7 @@ $('btnStart').onclick = async function () {
   const ok = await turnCameraOn(); if (!ok) return;
   this.innerHTML = '<svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" aria-hidden=\"true\"><rect x=\"6\" y=\"6\" width=\"12\" height=\"12\" rx=\"2\" stroke=\"currentColor\" stroke-width=\"2.4\"/></svg> 멈추기';
   this.classList.add('stop');
-  $('stateline').textContent = '물건을 비춰 봐요! 박스가 따라와요';
+  $('stateline').textContent = '물건을 비춰 봐요! 바운딩 박스가 따라와요';
 };
 
 function stopCam(msg) {
@@ -643,7 +643,7 @@ function render(detections) {
   setCount(next.length);
   if (personSeen) showToast();
   $('stateline').textContent = next.length
-    ? '박스가 위치를 짚고 있어요! 물건을 옮기면 따라와요'
+    ? '바운딩 박스가 위치를 짚고 있어요! 물건을 옮기면 따라와요'
     : '아직 물건을 못 찾았어요. 컵이나 책을 가까이 비춰 봐요';
 }
 

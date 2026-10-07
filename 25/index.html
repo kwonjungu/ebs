@@ -740,8 +740,8 @@
     <div id="allDoneBanner" class="all-done-banner" style="display:none;">
       <div class="emoji">🏆</div>
       <h2>자격 증명 완료!</h2>
-      <p style="color:#065F46;">배지 6개를 모두 획득했어요! 이제 나만의 AI 서비스 포트폴리오를 만들어 볼까요?</p>
-      <button class="btn btn-primary" onclick="goToScreen(2)" style="margin-top:16px;">포트폴리오 만들기 →</button>
+      <p style="color:#065F46;">배지 6개를 모두 획득했어요! 이제 나만의 AI 서비스 아이디어 카드를 만들어 볼까요?</p>
+      <button class="btn btn-primary" onclick="goToScreen(2)" style="margin-top:16px;">아이디어 카드 만들기 →</button>
     </div>
   </div>
 </div>
@@ -752,8 +752,8 @@
 <div class="screen" id="screen2">
   <div class="container">
     <div class="card">
-      <h2 class="card-title">📝 나만의 AI 서비스 포트폴리오</h2>
-      <p class="card-sub">문제·기능·데이터·확인할 점을 한 장에 정리한 것을 포트폴리오라고 해요. 칸을 채우면 오른쪽 카드가 실시간으로 완성돼요!</p>
+      <h2 class="card-title">📝 나만의 AI 서비스 아이디어 카드</h2>
+      <p class="card-sub">문제·기능·데이터·확인할 점을 한 장에 정리한 것을 아이디어 카드라고 해요. 칸을 채우면 오른쪽 카드가 실시간으로 완성돼요!</p>
       <div class="notice-box">🔒 닉네임 또는 번호만 입력하세요. 실명을 쓰지 않아도 돼요.</div>
 
       <div class="form-layout">
@@ -1139,7 +1139,7 @@ const QUIZZES = [
     "answer": "O",
     "badge": null,
     "correctFeedback": "✅ 분류는 미리 정해진 라벨로 데이터를 나누는 일이에요.",
-    "wrongHint": "💡 라벨가 미리 정해져 있는지 다시 떠올려 보세요."
+    "wrongHint": "💡 라벨이 미리 정해져 있는지 다시 떠올려 보세요."
   },
   {
     "gate": "관문 1",
@@ -1161,15 +1161,15 @@ const QUIZZES = [
     "gate": "관문 1",
     "tier": 3,
     "type": "choice",
-    "question": "사과·토마토만 배운 AI에 '배' 사진을 넣었더니 '사과 92%'가 나왔다. 옳은 해석은?",
-    "answer": "배를 배운 적이 없어 아는 답 중 사과를 고른 것일 수 있다",
+    "question": "사과·토마토만 학습한 AI에 '배' 사진을 넣었더니 '사과 92%'가 나왔다. 옳은 해석은?",
+    "answer": "배를 학습한 적이 없어 아는 답 중 사과를 고른 것일 수 있다",
     "badge": 0,
-    "correctFeedback": "✅ 배운 범위 밖에서는 높은 신뢰도도 그대로 믿기 어려워요.",
-    "wrongHint": "💡 이 AI가 '배'를 배운 적이 있는지 먼저 생각해 보세요.",
+    "correctFeedback": "✅ 학습한 범위 밖에서는 높은 신뢰도도 그대로 믿기 어려워요.",
+    "wrongHint": "💡 이 AI가 '배'를 학습한 적이 있는지 먼저 생각해 보세요.",
     "choices": [
       "92%니까 배는 거의 사과가 맞다",
       "신뢰도가 높으면 언제나 정답이다",
-      "배를 배운 적이 없어 아는 답 중 사과를 고른 것일 수 있다",
+      "배를 학습한 적이 없어 아는 답 중 사과를 고른 것일 수 있다",
       "정확도가 높은 모델이라 배도 잘 맞힌다"
     ]
   },
@@ -1209,7 +1209,7 @@ const QUIZZES = [
     "correctFeedback": "✅ 과적합은 옛 자료만 외운 것처럼 새 상황에 약해요.",
     "wrongHint": "💡 옛 자료는 잘 맞히는데 새 상황에서 틀리는 경우를 뭐라 했는지 떠올려 보세요.",
     "choices": [
-      "과소적합, 너무 적게 배운 상태",
+      "과소적합, 너무 적게 학습한 상태",
       "과적합, 학습 데이터에 지나치게 맞춰진 상태",
       "학습을 딱 알맞게 한 상태",
       "데이터가 많으니 문제가 없는 상태"
@@ -1219,11 +1219,11 @@ const QUIZZES = [
     "gate": "관문 3",
     "tier": 1,
     "type": "ox",
-    "question": "군집화는 정답 라벨가 없어도 비슷한 특징끼리 묶을 수 있다.",
+    "question": "군집화는 정답 라벨이 없어도 비슷한 특징끼리 묶을 수 있다.",
     "answer": "O",
     "badge": null,
     "correctFeedback": "✅ 군집화는 라벨 없이 비슷한 점들끼리 모으는 방법이에요.",
-    "wrongHint": "💡 군집화에 정답 라벨가 꼭 필요한지 다시 생각해 보세요."
+    "wrongHint": "💡 군집화에 정답 라벨이 꼭 필요한지 다시 생각해 보세요."
   },
   {
     "gate": "관문 3",
@@ -1232,11 +1232,11 @@ const QUIZZES = [
     "question": "매운맛·단맛 점수만 있고 그룹 이름이 없는 입맛 데이터를 나누려 한다. 알맞은 방법은?",
     "answer": "비슷한 점수끼리 묶는 군집화를 쓸 수 있다",
     "badge": null,
-    "correctFeedback": "✅ 라벨가 없을 때 비슷함으로 묶는 것이 군집화예요.",
-    "wrongHint": "💡 정답 라벨가 없을 때 쓰는 방법이 무엇이었는지 떠올려 보세요.",
+    "correctFeedback": "✅ 라벨이 없을 때 비슷함으로 묶는 것이 군집화예요.",
+    "wrongHint": "💡 정답 라벨이 없을 때 쓰는 방법이 무엇이었는지 떠올려 보세요.",
     "choices": [
-      "라벨가 없어 아무것도 할 수 없다",
-      "먼저 사람이 정답 라벨를 붙여야만 한다",
+      "라벨이 없어 아무것도 할 수 없다",
+      "먼저 사람이 정답 라벨을 붙여야만 한다",
       "비슷한 점수끼리 묶는 군집화를 쓸 수 있다",
       "정확도를 계산하면 그룹이 정해진다"
     ]
@@ -1271,11 +1271,11 @@ const QUIZZES = [
     "gate": "관문 4",
     "tier": 2,
     "type": "choice",
-    "question": "AI가 만든 상식 퀴즈에 '화성 위성은 3개'라는 자신 있는 문장이 있다. 바른 행동은?",
+    "question": "AI가 만든 상식 퀴즈에 '화성 위성은 3개'라는 확실해 보이는 문장이 있다. 바른 행동은?",
     "answer": "믿을 만한 자료와 비교해 사실인지 확인한다",
     "badge": null,
     "correctFeedback": "✅ 숫자·이름처럼 확인 가능한 정보는 근거 자료와 비교해야 해요.",
-    "wrongHint": "💡 자세하고 자신 있어 보이는 답일수록 더 확인해야 해요.",
+    "wrongHint": "💡 자세하고 확실해 보이는 답일수록 더 확인해야 해요.",
     "choices": [
       "그럴듯해 보이니 그대로 쓴다",
       "숫자가 있으니 무조건 정확하다",
@@ -1330,14 +1330,14 @@ const QUIZZES = [
     "tier": 3,
     "type": "choice",
     "question": "AI 스피커 전체 정확도가 82%로 높다. 데이터 편향에 대해 바르게 판단한 것은?",
-    "answer": "전체 점수가 높아도 특정 말투에선 더 자주 틀릴 수 있다",
+    "answer": "전체 정확도가 높아도 특정 말투에선 더 자주 틀릴 수 있다",
     "badge": 4,
     "correctFeedback": "✅ 전체 82%여도 지역 말투 50%처럼 상황별로 확인해야 해요.",
-    "wrongHint": "💡 전체 점수만으로 특정 상황의 오류까지 알 수 있을지 생각해 보세요.",
+    "wrongHint": "💡 전체 정확도만으로 특정 상황의 오류까지 알 수 있을지 생각해 보세요.",
     "choices": [
       "전체 정확도가 높으면 편향은 없다",
       "정확도가 높으면 모두에게 공정하다",
-      "전체 점수가 높아도 특정 말투에선 더 자주 틀릴 수 있다",
+      "전체 정확도가 높아도 특정 말투에선 더 자주 틀릴 수 있다",
       "틀린 사람이 발음을 잘못한 탓이다"
     ]
   },
@@ -2532,7 +2532,7 @@ document.querySelectorAll('#screen0 button').forEach(b => b.addEventListener('cl
   }
 
   /* 라이선스: 엠블럼·일련번호·등급·칭호·발급 시퀀스·틸트 5° */
-  const TITLE_MAP = { '분류':'가려내는', '예측':'내다보는', '군집화':'모아 보는', '음성 인식':'귀 기울이는', '생성형 AI':'만들어 내는' };
+  const TITLE_MAP = { '분류':'가려내는', '예측':'내다보는', '군집화':'모아 보는', '음성 인식':'글자로 바꾸는', '생성형 AI':'만들어 내는' };
   function gradeInfo(){
     const w = (typeof _wrongCount!=='undefined') ? _wrongCount : 0;
     if (w===0) return ['GOLD',''];
