@@ -15,9 +15,9 @@ printf 'secret' > "$WORK/secret.txt"
 
 if curl -s -o /dev/null "$BASE/__ebs_ping"; then echo "FAIL port $PORT already in use (stale server?)"; exit 1; fi
 "$EXE" --no-browser --port $PORT --root "$(cygpath -w "$APP")" >/dev/null 2>&1 &
-PID=$!
-WINPID=$(cat /proc/$PID/winpid 2>/dev/null)
-cleanup(){ taskkill //F //PID "$WINPID" >/dev/null 2>&1; rm -rf "$WORK"; }
+# 정리: 포트를 듣고 있는 프로세스를 찾아 종료 (실행 직후엔 /proc/$!/winpid가 비어 있을 수 있음)
+kill_port(){ for p in $(netstat -ano | tr -d '' | awk -v a="127.0.0.1:$1" '$2==a && $4=="LISTENING"{print $5}' | sort -u); do taskkill //F //PID "$p" >/dev/null 2>&1; done; }
+cleanup(){ kill_port $PORT; rm -rf "$WORK"; }
 trap cleanup EXIT
 curl -s --retry 20 --retry-connrefused --retry-delay 1 -o /dev/null "$BASE/__ebs_ping"
 
@@ -59,5 +59,7 @@ CPIDS=(); for i in 1 2 3 4 5 6 7 8; do curl -s -o "$WORK/big$i" "$BASE/big.bin" 
 ALLSAME=yes; for i in 1 2 3 4 5 6 7 8; do [ "$(sha "$WORK/big$i")" = "$(sha "$APP/big.bin")" ] || ALLSAME=no; done
 check "parallel big identical" "$ALLSAME" "yes"
 check "alive after aborts"   "$(body /__ebs_ping)" "ebs-ai-explorer"
+kill_port $PORT
+check "server stopped by cleanup" "$(curl -s -o /dev/null -w '%{http_code}' "$BASE/__ebs_ping")" "000"
 
 exit $FAIL
