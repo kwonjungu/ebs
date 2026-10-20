@@ -1993,7 +1993,7 @@ function probeAsset(file, cb) {
   const im = new Image();
   im.onload = () => { _assetOK[file] = true; cb(true); };
   im.onerror = () => { _assetOK[file] = false; cb(false); };
-  im.src = 'assets/' + file;
+  im.src = '../assets/' + file;
 }
 function swapBadgeEmojis(rootSel) {
   document.querySelectorAll(rootSel + ' .badge-item').forEach((item, i) => {
@@ -2003,7 +2003,7 @@ function swapBadgeEmojis(rootSel) {
       const em = item.querySelector('.badge-emoji');
       if (em && !item.querySelector('.badge-img')) {
         const img = document.createElement('img');
-        img.src = 'assets/' + file; img.className = 'badge-img'; img.alt = '';
+        img.src = '../assets/' + file; img.className = 'badge-img'; img.alt = '';
         em.replaceWith(img);
       }
     });
@@ -2016,14 +2016,14 @@ function applyAssets() {
     const card = document.querySelector('#screen0 .card');
     if (!card) return;
     const img = document.createElement('img');
-    img.id = 'heroImg'; img.src = 'assets/' + ASSETS.hero; img.className = 'hero-img'; img.alt = '마루';
+    img.id = 'heroImg'; img.src = '../assets/' + ASSETS.hero; img.className = 'hero-img'; img.alt = '마루';
     card.insertBefore(img, card.firstChild);
   });
   probeAsset(ASSETS.stamp, ok => {
     if (!ok) return;
     const stamp = document.getElementById('stamp');
     if (stamp && !document.getElementById('stampImg'))
-      stamp.innerHTML = '<img id="stampImg" src="assets/' + ASSETS.stamp + '" alt="합격 도장">';
+      stamp.innerHTML = '<img id="stampImg" src="../assets/' + ASSETS.stamp + '" alt="합격 도장">';
   });
 }
 
@@ -2066,7 +2066,7 @@ awardBadge = function(i){
   _awardBadge(i); updateXP(); saveProgress();
   probeAsset(ASSETS.badges[i], ok => {
     if (ok) document.getElementById('popupEmoji').innerHTML =
-      '<img class="badge-img" style="width:72px;height:72px;" src="assets/' + ASSETS.badges[i] + '" alt="">';
+      '<img class="badge-img" style="width:72px;height:72px;" src="../assets/' + ASSETS.badges[i] + '" alt="">';
   });
 };
 
@@ -2292,7 +2292,7 @@ document.querySelectorAll('#screen0 button').forEach(b => b.addEventListener('cl
     background:repeating-radial-gradient(circle at 30% 20%, #FFD65C 0 2px, transparent 2px 14px),
                repeating-radial-gradient(circle at 80% 90%, #A5B4FC 0 2px, transparent 2px 18px); }
   .preview-card::after { content:''; position:absolute; right:-40px; bottom:-40px; width:180px; height:180px;
-    background:url('assets/license_logo.png') center/contain no-repeat; opacity:.08; pointer-events:none; }
+    background:url('../assets/license_logo.png') center/contain no-repeat; opacity:.08; pointer-events:none; }
   .shield-item { border-radius:var(--r-md); min-height:64px; transition:all .2s; }
   .shield-item:has(input:checked) { border:2.5px solid var(--gold) !important;
     background:linear-gradient(160deg,#FFFDF4,#FFF6DF) !important; box-shadow:0 6px 16px -6px rgba(245,166,35,.4);
@@ -2305,7 +2305,7 @@ document.querySelectorAll('#screen0 button').forEach(b => b.addEventListener('cl
   /* ── 다짐·서명: 증서 ── */
   .pledge-sentence { background:#FFFDF5 !important; border:3px double var(--gold-deep) !important; border-radius:var(--r-md); position:relative; }
   .pledge-sentence::before, .pledge-sentence::after { content:''; position:absolute; top:8px; width:24px; height:24px;
-    background:url('assets/license_logo.png') center/contain no-repeat; opacity:.5; }
+    background:url('../assets/license_logo.png') center/contain no-repeat; opacity:.5; }
   .pledge-sentence::before { left:8px; } .pledge-sentence::after { right:8px; }
   .example-btn[aria-pressed="true"] { background:var(--grad-primary) !important; color:#fff !important; border-color:transparent !important; }
   .btn-issue-gold { background:var(--grad-gold) !important; color:#4A3007 !important; border:none !important; box-shadow:var(--sh-gold); }
@@ -2361,7 +2361,7 @@ document.querySelectorAll('#screen0 button').forEach(b => b.addEventListener('cl
     position:relative; overflow:hidden; padding-top:18px !important; transition:transform .25s; }
   .gallery-card::before { content:''; position:absolute; top:0; left:0; right:0; height:6px; background:var(--accent,var(--grad-gold)); }
   .gallery-card::after { content:''; position:absolute; right:8px; bottom:8px; width:28px; height:28px;
-    background:url('assets/stamp_seal.png') center/contain no-repeat; opacity:.7; }
+    background:url('../assets/stamp_seal.png') center/contain no-repeat; opacity:.7; }
   .gallery-card:hover { transform:translateY(-5px) rotate(-.6deg); }
   .gallery-card .g-medal { width:18px; height:18px; vertical-align:middle; margin-right:2px; }
   .gallery-new { animation:galleryIn 1.2s; }
@@ -2399,13 +2399,13 @@ document.querySelectorAll('#screen0 button').forEach(b => b.addEventListener('cl
   /* HUD 로고 */
   const pb=document.querySelector('.progress-bar');
   if (pb){ const lg=document.createElement('div'); lg.className='hud-logo';
-    lg.innerHTML='<img src="assets/license_logo.png" alt="" onerror="this.style.display=\'none\'"><span>AI 탐험가</span>';
+    lg.innerHTML='<img src="../assets/license_logo.png" alt="" onerror="this.style.display=\'none\'"><span>AI 탐험가</span>';
     pb.insertBefore(lg, pb.firstChild); }
 
   /* 시작 화면: 엠블럼 워터마크 + 오버라인 + CTA */
   const c0=document.querySelector('#screen0 .card');
   if (c0){
-    const em=document.createElement('img'); em.src='assets/license_logo.png'; em.className='hero-emblem'; em.alt='';
+    const em=document.createElement('img'); em.src='../assets/license_logo.png'; em.className='hero-emblem'; em.alt='';
     em.onerror=()=>em.remove(); c0.insertBefore(em, c0.firstChild);
     const h1=c0.querySelector('h1');
     if (h1){ const ov=document.createElement('span'); ov.className='mono-label hero-overline';
@@ -2430,7 +2430,7 @@ document.querySelectorAll('#screen0 button').forEach(b => b.addEventListener('cl
     const q = QUIZZES[state.quizIndex];
     const numEl=document.getElementById('quizNum');
     const gateIdx = parseInt(q.gate.replace(/[^0-9]/g,''),10)-1;
-    numEl.innerHTML = '<span class="quiz-gate-chip"><img src="assets/'+ASSETS.badges[gateIdx]+'" alt="" onerror="this.remove()">'
+    numEl.innerHTML = '<span class="quiz-gate-chip"><img src="../assets/'+ASSETS.badges[gateIdx]+'" alt="" onerror="this.remove()">'
       + q.gate + ' <span class="quiz-tier">' + '★'.repeat(q.tier) + '☆'.repeat(3-q.tier) + '</span></span>';
     document.getElementById('quizProgress').textContent = (state.quizIndex+1) + ' / ' + totalQ;
   };
@@ -2442,7 +2442,7 @@ document.querySelectorAll('#screen0 button').forEach(b => b.addEventListener('cl
       const fb=document.getElementById('quizFeedback');
       probeAsset(ASSETS.cheer, ok => {
         if (ok && !fb.querySelector('.cheer-mini')){
-          const im=document.createElement('img'); im.src='assets/'+ASSETS.cheer; im.className='cheer-mini'; im.alt='';
+          const im=document.createElement('img'); im.src='../assets/'+ASSETS.cheer; im.className='cheer-mini'; im.alt='';
           fb.insertBefore(im, fb.firstChild);
         }
       });
@@ -2458,7 +2458,7 @@ document.querySelectorAll('#screen0 button').forEach(b => b.addEventListener('cl
       const pop=document.getElementById('popupEmoji');
       if (!slot || !pop) return;
       const r0=pop.getBoundingClientRect(), r1=slot.getBoundingClientRect();
-      const fly=document.createElement('img'); fly.src='assets/'+ASSETS.badges[i]; fly.className='medal-fly';
+      const fly=document.createElement('img'); fly.src='../assets/'+ASSETS.badges[i]; fly.className='medal-fly';
       fly.onerror=()=>fly.remove();
       fly.style.left=r0.left+'px'; fly.style.top=r0.top+'px';
       document.body.appendChild(fly);
@@ -2474,7 +2474,7 @@ document.querySelectorAll('#screen0 button').forEach(b => b.addEventListener('cl
     const b=document.getElementById('allDoneBanner');
     if (b && !b.querySelector('.done-medals')){
       const row=document.createElement('div'); row.className='done-medals';
-      row.innerHTML = ASSETS.badges.map(f=>'<img src="assets/'+f+'" alt="" onerror="this.remove()">').join('');
+      row.innerHTML = ASSETS.badges.map(f=>'<img src="../assets/'+f+'" alt="" onerror="this.remove()">').join('');
       b.insertBefore(row, b.firstChild);
     }
   };
@@ -2506,7 +2506,7 @@ document.querySelectorAll('#screen0 button').forEach(b => b.addEventListener('cl
     /* 미리보기 배지 → 메달 PNG */
     const pbg=document.getElementById('prev-badges');
     if (pbg) pbg.innerHTML = state.earnedBadges.map(i =>
-      '<img src="assets/'+ASSETS.badges[i]+'" style="width:20px;height:20px;" onerror="this.outerHTML=\''+BADGES[i].emoji+'\'">').join('');
+      '<img src="../assets/'+ASSETS.badges[i]+'" style="width:20px;height:20px;" onerror="this.outerHTML=\''+BADGES[i].emoji+'\'">').join('');
   };
 
   /* 다짐·서명: 예시 칩 상태 + 펜 굵기 + 발급 버튼 게이팅 */
@@ -2546,7 +2546,7 @@ document.querySelectorAll('#screen0 button').forEach(b => b.addEventListener('cl
     const header=card.querySelector('.license-header');
     /* 엠블럼 + 일련번호(1회) */
     if (header && !header.querySelector('.lic-emblem')){
-      const im=document.createElement('img'); im.src='assets/license_logo.png'; im.className='lic-emblem'; im.alt='';
+      const im=document.createElement('img'); im.src='../assets/license_logo.png'; im.className='lic-emblem'; im.alt='';
       im.onerror=()=>im.remove(); header.insertBefore(im, header.firstChild);
       const flag=header.querySelector('.license-flag');
       if (flag){ flag.classList.add('mono-label'); flag.textContent='REPUBLIC OF AI EXPLORERS'; }
@@ -2581,7 +2581,7 @@ document.querySelectorAll('#screen0 button').forEach(b => b.addEventListener('cl
     /* 배지 → 메달 PNG */
     const lb=document.getElementById('lic-badges');
     if (lb) lb.innerHTML = state.earnedBadges.map(i =>
-      '<img class="lic-badge-img" src="assets/'+ASSETS.badges[i]+'" title="'+BADGES[i].name+'" onerror="this.outerHTML=\''+BADGES[i].emoji+'\'">').join('');
+      '<img class="lic-badge-img" src="../assets/'+ASSETS.badges[i]+'" title="'+BADGES[i].name+'" onerror="this.outerHTML=\''+BADGES[i].emoji+'\'">').join('');
     /* 발급 시퀀스: 카드 등장 → 인장+흔들림 (색종이·팡파레는 기존 타이밍) */
     card.classList.remove('card-entrance'); void card.offsetWidth; card.classList.add('card-entrance');
     setTimeout(() => { document.body.classList.add('screen-shake');
@@ -2590,7 +2590,7 @@ document.querySelectorAll('#screen0 button').forEach(b => b.addEventListener('cl
     const btnRow=document.querySelector('#screen4 .btn-row');
     if (btnRow && !document.getElementById('saveHint')){
       const p=document.createElement('p'); p.className='save-hint'; p.id='saveHint';
-      p.textContent='📸 스크린샷으로 저장해 선생님께 보여 주세요!';
+      p.textContent='📸 스크린샷으로 자격증을 저장해 두세요!';
       btnRow.parentNode.insertBefore(p, btnRow);
     }
   };
@@ -2614,7 +2614,7 @@ document.querySelectorAll('#screen0 button').forEach(b => b.addEventListener('cl
     const b=card.querySelector('.gallery-card-badges');
     if (b && !b.querySelector('img')){
       b.innerHTML = state.earnedBadges.length
-        ? state.earnedBadges.map(i=>'<img class="g-medal" src="assets/'+ASSETS.badges[i]+'" onerror="this.outerHTML=\''+BADGES[i].emoji+'\'">').join('')
+        ? state.earnedBadges.map(i=>'<img class="g-medal" src="../assets/'+ASSETS.badges[i]+'" onerror="this.outerHTML=\''+BADGES[i].emoji+'\'">').join('')
         : b.innerHTML;
     }
   }

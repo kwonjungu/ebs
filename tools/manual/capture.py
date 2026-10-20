@@ -309,6 +309,8 @@ def main():
             pg.click(LESSONS['cam_start'][1])
             pg.wait_for_function("document.querySelector('video') && document.querySelector('video').readyState >= 2", timeout=20000)
             pg.wait_for_timeout(2500)
+            # 가짜 카메라 이름(임시 파일 경로, 사용자 이름 포함)을 보통 이름으로 바꾼 뒤 찍는다
+            pg.evaluate("() => document.querySelectorAll('#ebsCamPicker select option').forEach((e, i) => e.textContent = i ? ('카메라 ' + (i + 1)) : '내장 카메라')"); pg.wait_for_timeout(200)
             base_png = tmp / 's07_base.png'; pg.screenshot(path=str(base_png))
             pg.close(); ctx.close(); browser.close()
 
@@ -342,7 +344,6 @@ def main():
             shoot_mock(ctx, 's09_tray', 'tray_menu.html', also=chk_tray)
             shoot_mock(ctx, 's10a_nofolder', 'msgbox.html', '?t=2', also=lambda pg: check_msgbox_text(pg, msgs[0], title))
             shoot_mock(ctx, 's10b_portbusy', 'msgbox.html', '?t=3', also=lambda pg: check_msgbox_text(pg, msgs[1], title))
-            shoot_mock(ctx, 's10c_url', 'addressbar.html')
             ctx.close(); browser.close()
         (HERE / 'callouts.computed.json').write_text(json.dumps(COMPUTED, ensure_ascii=False, indent=1, sort_keys=True), encoding='utf-8')
     finally:
